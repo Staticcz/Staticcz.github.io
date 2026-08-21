@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hoops Career — Phase 1 Mockup</title>
+<title>Hoops Career — 20 Game Season</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Teko:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -36,13 +36,11 @@
   .screen{display:none;min-height:100vh;padding:28px 24px 60px;}
   .screen.active{display:block;}
 
-  /* ---------- top brand strip ---------- */
   .brand{display:flex;align-items:baseline;gap:10px;margin-bottom:22px;max-width:1180px;margin-left:auto;margin-right:auto;}
   .brand .mark{width:10px;height:10px;background:var(--wood);border-radius:2px;transform:rotate(45deg);}
   .brand .name{font-family:'Teko',sans-serif;font-size:28px;letter-spacing:.04em;text-transform:uppercase;}
   .brand .tag{color:var(--chalk-dim);font-size:12px;letter-spacing:.08em;text-transform:uppercase;}
 
-  /* ---------- creation screen ---------- */
   .create-wrap{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1.3fr 1fr;gap:22px;}
   @media (max-width:940px){.create-wrap{grid-template-columns:1fr;}}
   .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px 22px;}
@@ -70,7 +68,6 @@
   .derived-note{font-size:12px;color:var(--chalk-dim);margin-top:8px;line-height:1.5;}
   .derived-note b{color:var(--wood);font-weight:600;}
 
-  /* ---------- scouting card ---------- */
   .scout-card{position:relative;background:linear-gradient(160deg,var(--panel-3),var(--panel-2));border:1px solid var(--line);border-radius:14px;padding:22px;overflow:hidden;}
   .scout-card .ribbon{position:absolute;top:14px;right:-34px;background:var(--wood);color:var(--ink);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 40px;transform:rotate(35deg);}
   .scout-card .jersey{font-family:'Teko',sans-serif;font-size:64px;line-height:1;color:var(--wood);font-weight:700;}
@@ -96,7 +93,8 @@
   .btn-row{display:flex;gap:10px;margin-top:18px;}
   .helper-line{font-size:12px;color:var(--chalk-dim);margin-top:10px;}
 
-  /* ---------- game screen ---------- */
+  .season-bar{max-width:1180px;margin:0 auto 16px;display:flex;justify-content:space-between;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 16px;font-size:14px;font-weight:600;color:var(--chalk);}
+
   .game-wrap{max-width:1180px;margin:0 auto;}
   .jumbotron{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 22px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:14px;margin-bottom:16px;}
   .jb-team{display:flex;flex-direction:column;gap:2px;}
@@ -150,7 +148,6 @@
   .start-cta{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:14px;text-align:center;padding:20px;}
   .start-cta p{color:var(--chalk-dim);font-size:13px;max-width:360px;}
 
-  /* ---------- decision modal ---------- */
   .modal-overlay{position:fixed;inset:0;background:rgba(6,9,14,.72);backdrop-filter:blur(2px);display:none;align-items:flex-end;justify-content:center;z-index:50;}
   .modal-overlay.show{display:flex;}
   .modal-card{width:100%;max-width:640px;background:var(--panel);border:1px solid var(--red);border-top-width:3px;border-radius:14px 14px 0 0;padding:22px 24px 26px;box-shadow:0 -10px 40px rgba(0,0,0,.5);animation:slideup .25s ease;}
@@ -167,7 +164,6 @@
   .modal-result{margin-top:16px;font-size:13.5px;color:var(--teal);display:none;}
   .modal-result.show{display:block;}
 
-  /* ---------- box score overlay ---------- */
   .box-overlay{position:fixed;inset:0;background:rgba(6,9,14,.86);display:none;align-items:center;justify-content:center;z-index:60;padding:20px;}
   .box-overlay.show{display:flex;}
   .box-card{max-width:560px;width:100%;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:26px 28px;max-height:88vh;overflow-y:auto;}
@@ -187,7 +183,7 @@
 
 <!-- ============ CREATE SCREEN ============ -->
 <section id="screen-create" class="screen active">
-  <div class="brand"><span class="mark"></span><span class="name">Hoops Career</span><span class="tag">Phase 1 — Player Creation</span></div>
+  <div class="brand"><span class="mark"></span><span class="name">Hoops Career</span><span class="tag">Player Creation</span></div>
   <div class="panel" id="saved-banner" style="display:none;max-width:1180px;margin:0 auto 18px;">
     <div class="section-title">Saved Career Found</div>
     <p style="font-size:13px;color:var(--chalk-dim);margin:0 0 12px;" id="saved-banner-text"></p>
@@ -225,6 +221,16 @@
           </div>
         </div>
         <div class="field-row">
+          <div class="field"><label for="f-team">Team</label>
+            <select id="f-team">
+              <option value="RANDOM" selected>Random (auto)</option>
+            </select>
+          </div>
+          <div class="field"><label for="f-hand">Preferred Hand</label>
+            <select id="f-hand"><option>Right</option><option>Left</option></select>
+          </div>
+        </div>
+        <div class="field-row">
           <div class="field"><label>Height</label>
             <div class="field-trio">
               <select id="f-heightft"><option>5</option><option selected>6</option><option>7</option></select>
@@ -239,16 +245,13 @@
           <div class="field"><label for="f-age">Starting Age</label><input id="f-age" type="number" value="19" min="18" max="22"></div>
         </div>
         <div class="field-row">
-          <div class="field"><label for="f-hand">Preferred Hand</label>
-            <select id="f-hand"><option>Right</option><option>Left</option></select>
-          </div>
           <div class="field"><label for="f-jersey">Jersey Number</label><input id="f-jersey" type="number" value="23" min="0" max="99"></div>
         </div>
         <div class="derived-note" id="physical-note"></div>
       </div>
 
       <div class="panel">
-        <div class="section-title">Attributes</div>
+        <div class="section-title">Attributes <span style="color:var(--chalk-dim);font-weight:400;text-transform:none;letter-spacing:0;">(limits based on archetype)</span></div>
         <div class="attr-cols">
           <div>
             <div class="attr-group"><h4>Finishing</h4>
@@ -291,7 +294,7 @@
           </div>
           <div class="slider-row"><label>Stamina</label><input type="range" id="a-stamina" min="25" max="99"><span class="val" id="v-stamina"></span></div>
         </div>
-        <div class="helper-line">Changing position or archetype resets sliders to that preset's baseline — nudge anything after.</div>
+        <div class="helper-line">Changing position or archetype resets sliders to that preset's baseline — nudge anything after. Limits adjust automatically.</div>
       </div>
 
       <div class="panel">
@@ -329,8 +332,8 @@
       </div>
       <div class="panel" style="margin-top:16px;">
         <div class="section-title">Ready</div>
-        <p style="font-size:13px;color:var(--chalk-dim);line-height:1.6;margin:0 0 4px;">You'll suit up for the <b style="color:var(--chalk)">Bay City Volts</b> against a fictional opponent generated for this mockup. Attributes, physical measurables, and tendencies above will directly drive the shot math, foul risk, and which decision events can fire during the game.</p>
-        <button class="btn btn-primary btn-block" id="btn-enter-league" style="margin-top:14px;">Enter the League →</button>
+        <p style="font-size:13px;color:var(--chalk-dim);line-height:1.6;margin:0 0 4px;">You'll suit up for your chosen team (or random if left on auto) and play a full <b style="color:var(--chalk)">20-game season</b>. Attributes, physical measurables, and tendencies above will directly drive the shot math, foul risk, and which decision events can fire during each game.</p>
+        <button class="btn btn-primary btn-block" id="btn-enter-league" style="margin-top:14px;">Start 20-Game Season →</button>
       </div>
     </div>
   </div>
@@ -339,7 +342,12 @@
 <!-- ============ GAME SCREEN ============ -->
 <section id="screen-game" class="screen">
   <div class="game-wrap">
-    <div class="brand"><span class="mark"></span><span class="name">Hoops Career</span><span class="tag">Live Game</span></div>
+    <div class="brand"><span class="mark"></span><span class="name">Hoops Career</span><span class="tag">Season</span></div>
+
+    <div class="season-bar">
+      <span id="season-game-label">Game 1 of 20</span>
+      <span id="season-record">Record: 0-0</span>
+    </div>
 
     <div class="jumbotron">
       <div class="jb-team"><span class="team-name" id="jb-user-name">BAY CITY VOLTS</span><span class="team-score display" id="jb-user-score">0</span></div>
@@ -416,7 +424,17 @@
     <h2 id="box-result">FINAL</h2>
     <div class="final-line" id="box-final-line"></div>
     <table class="box-table" id="box-table"></table>
-    <button class="btn btn-primary btn-block" id="btn-box-close" style="margin-top:18px;">Back to Locker Room</button>
+    <button class="btn btn-primary btn-block" id="btn-box-close" style="margin-top:18px;">Next Game</button>
+  </div>
+</div>
+
+<!-- ============ SEASON SUMMARY OVERLAY ============ -->
+<div class="box-overlay" id="season-overlay">
+  <div class="box-card">
+    <h2 id="season-title">Season Complete</h2>
+    <div class="final-line" id="season-record-summary"></div>
+    <table class="box-table" id="season-table"></table>
+    <button class="btn btn-primary btn-block" id="btn-season-close" style="margin-top:18px;">Back to Locker Room</button>
   </div>
 </div>
 
@@ -425,6 +443,7 @@
    1. CONFIG / DATA
    ========================================================= */
 const POSITION_LABELS = {PG:'Point Guard',SG:'Shooting Guard',SF:'Small Forward',PF:'Power Forward',C:'Center'};
+const ALL_TEAMS = ['Bay City Volts','Northgate Comets','Redline Hawks','Granite Kings','Ironside Grizzlies','Steel City Wolves'];
 
 const POSITION_PRESETS = {
   PG:{closeShot:62,drivingLayup:78,drivingDunk:52,standingDunk:38,postControl:32,midRange:68,threePoint:74,freeThrow:78,passAccuracy:84,ballHandle:87,speedWithBall:85,interiorDefense:38,perimeterDefense:68,steal:74,block:32,speed:86,acceleration:87,strength:52,vertical:64,stamina:82},
@@ -442,20 +461,26 @@ const ARCHETYPE_PRESETS = {
   'Post Scorer':{shoot:65,three:15,dunk:55,drive:30,pass:35,isolation:30,postUp:85,steal:30,blockAttempt:50,aggression:50,foul:50,trashTalk:40,badge:'Fearless Finisher'}
 };
 
+const ARCHETYPE_LIMIT_OVERRIDES = {
+  Sharpshooter:{threePoint:99,midRange:99,freeThrow:99},
+  Slasher:{drivingLayup:99,drivingDunk:99,closeShot:99,vertical:99,speed:90,acceleration:90},
+  Playmaker:{passAccuracy:99,ballHandle:99,speedWithBall:99},
+  'Lockdown Defender':{steal:99,block:99,perimeterDefense:99,interiorDefense:90},
+  'Post Scorer':{postControl:99,closeShot:99,strength:99,standingDunk:99}
+};
+
 const ATTR_KEYS = ['closeShot','drivingLayup','drivingDunk','standingDunk','postControl','midRange','threePoint','freeThrow','passAccuracy','ballHandle','speedWithBall','interiorDefense','perimeterDefense','steal','block','speed','acceleration','strength','vertical','stamina'];
 const TEND_KEYS = ['shoot','three','dunk','drive','pass','isolation','postUp','steal','blockAttempt','aggression','foul','trashTalk'];
 
 const TEAMMATE_NAMES = ['Jordan Blake','Tariq Simmons','Devon Cole','Elijah Price','Sam Okafor'];
 const OPP_NAMES = ['Malik Reyes','Trevor Voss','Isaiah Cross','Bryce Halden','Nate Ferro'];
-const OPP_TEAMS = ['Ironside Grizzlies','Steel City Wolves','Northgate Comets','Redline Hawks','Granite Kings'];
 
 /* =========================================================
    2. STATE
    ========================================================= */
-let player = null;          // created in buildPlayerFromForm()
-let effectiveCache = null;  // derived attribute bonuses from physicals
-
-let game = null; // live game state, created in startGame()
+let player = null;
+let season = null;       // season object: { playerTeam, schedule[], currentGameIndex, record:{wins,losses}, games[], complete }
+let game = null;
 let tickTimer = null;
 let currentSpeed = 1200;
 
@@ -470,15 +495,32 @@ function $(id){return document.getElementById(id);}
 /* =========================================================
    4. PLAYER CREATION SCREEN LOGIC
    ========================================================= */
+function applyArchetypeLimits(arch){
+  const overrides = ARCHETYPE_LIMIT_OVERRIDES[arch] || {};
+  ATTR_KEYS.forEach(k=>{
+    const slider = $('a-'+k);
+    const max = overrides[k] || 85;
+    slider.min = 25;
+    slider.max = max;
+    let val = parseInt(slider.value);
+    if(val < 25) val = 25;
+    if(val > max) val = max;
+    slider.value = val;
+  });
+  refreshAllReadouts();
+}
+
 function applyPositionPreset(pos){
   const preset = POSITION_PRESETS[pos];
   ATTR_KEYS.forEach(k=>{ $('a-'+k).value = preset[k]; });
+  applyArchetypeLimits($('f-archetype').value);
   refreshAllReadouts();
   renderScoutCard();
 }
 function applyArchetypePreset(name){
   const preset = ARCHETYPE_PRESETS[name];
   TEND_KEYS.forEach(k=>{ $('t-'+k).value = preset[k]; });
+  applyArchetypeLimits(name);
   refreshAllReadouts();
   renderScoutCard();
 }
@@ -546,11 +588,16 @@ function buildPlayerFromForm(){
   const {attrs,tends} = readFormAttributes();
   const arch = $('f-archetype').value;
   const bonuses = computePhysicalBonuses();
+  let teamSelect = $('f-team').value;
+  if(teamSelect === 'RANDOM'){
+    teamSelect = pick(ALL_TEAMS);
+  }
   return {
     firstName: $('f-first').value||'Player',
     lastName: $('f-last').value||'One',
     position: $('f-position').value,
     archetype: arch,
+    team: teamSelect,
     heightIn: heightInches(),
     weight: parseInt($('f-weight').value)||210,
     wingspan: parseInt($('f-wingspan').value)||heightInches()+2,
@@ -577,6 +624,15 @@ function buildPlayerFromForm(){
 $('f-position').addEventListener('change', e=> applyPositionPreset(e.target.value));
 $('f-archetype').addEventListener('change', e=> applyArchetypePreset(e.target.value));
 
+// Populate team dropdown
+const teamSelectEl = $('f-team');
+ALL_TEAMS.forEach(t=>{
+  const opt = document.createElement('option');
+  opt.value = t;
+  opt.textContent = t;
+  teamSelectEl.appendChild(opt);
+});
+
 $('btn-enter-league').addEventListener('click', ()=>{
   player = buildPlayerFromForm();
   $('screen-create').classList.remove('active');
@@ -586,15 +642,63 @@ $('btn-enter-league').addEventListener('click', ()=>{
 });
 
 /* =========================================================
-   5. GAME SETUP
+   5. SEASON MANAGEMENT
+   ========================================================= */
+function generateSeasonSchedule(playerTeam){
+  const opponents = ALL_TEAMS.filter(t=>t!==playerTeam);
+  let schedule = [];
+  for(let i=0;i<4;i++){
+    schedule.push(...opponents);
+  }
+  // Shuffle
+  for(let i=schedule.length-1;i>0;i--){
+    const j = Math.floor(rand()*(i+1));
+    [schedule[i], schedule[j]] = [schedule[j], schedule[i]];
+  }
+  return schedule;
+}
+
+function startNewSeason(){
+  const schedule = generateSeasonSchedule(player.team);
+  season = {
+    playerTeam: player.team,
+    schedule,
+    currentGameIndex: 0,
+    record: {wins:0, losses:0},
+    games: [], // array of {opponent, userScore, oppScore, won}
+    complete: false
+  };
+  updateSeasonUI();
+}
+
+function updateSeasonUI(){
+  if(!season) return;
+  const gameNum = Math.min(season.currentGameIndex + 1, 20);
+  $('season-game-label').textContent = `Game ${gameNum} of 20`;
+  $('season-record').textContent = `Record: ${season.record.wins}-${season.record.losses}`;
+}
+
+/* =========================================================
+   6. GAME SETUP
    ========================================================= */
 function primeGameScreen(){
   $('strip-jersey').textContent = '#'+player.jersey;
   $('strip-name').textContent = player.firstName+' '+player.lastName;
   $('strip-pos').textContent = player.position+' · '+player.archetype;
-  $('jb-opp-name').textContent = pick(OPP_TEAMS).toUpperCase();
+
+  if(!season || season.playerTeam !== player.team){
+    startNewSeason();
+  }
+  $('jb-user-name').textContent = player.team.toUpperCase();
+  if(season.schedule[season.currentGameIndex]){
+    $('jb-opp-name').textContent = season.schedule[season.currentGameIndex].toUpperCase();
+  } else {
+    $('jb-opp-name').textContent = pick(ALL_TEAMS.filter(t=>t!==player.team)).toUpperCase();
+  }
+
   resetGameState();
   renderStatPanel();
+  updateSeasonUI();
 }
 
 function resetGameState(){
@@ -609,7 +713,9 @@ function resetGameState(){
     eventTicks: pickEventTicks(96),
     running:false, finished:false,
     logHistory:[],
-    oppOverall
+    oppOverall,
+    userTeamName: $('jb-user-name').textContent,
+    oppTeamName: $('jb-opp-name').textContent
   };
   $('jb-user-score').textContent='0'; $('jb-opp-score').textContent='0';
   $('jb-qtr').textContent='Q1'; $('jb-clock').textContent='12:00';
@@ -618,6 +724,7 @@ function resetGameState(){
   $('feed-poss-count').textContent='0 possessions';
   $('btn-start-game').disabled=false; $('btn-start-game').textContent='Tip It Off';
   $('box-overlay').classList.remove('show');
+  $('season-overlay').classList.remove('show');
 }
 function pickEventTicks(total){
   const count = 7;
@@ -633,7 +740,7 @@ $('btn-new-career').addEventListener('click', ()=>{
   if(player && !confirm('Start a new career? This erases your saved game.')) return;
   clearInterval(tickTimer);
   clearSavedCareer();
-  player = null; game = null;
+  player = null; game = null; season = null;
   $('screen-game').classList.remove('active');
   $('screen-create').classList.add('active');
   initSavedBanner();
@@ -650,13 +757,14 @@ document.querySelectorAll('#speed-group button').forEach(btn=>{
 });
 
 $('btn-start-game').addEventListener('click', ()=>{
+  if(game.finished) return;
   const isFreshStart = game.possessionCount===0;
   game.running = true;
   $('btn-start-game').disabled = true;
   $('btn-start-game').textContent = 'Game In Progress';
   $('jb-status').textContent='Live';
   if(isFreshStart){
-    appendLog(`Tip-off! ${player.firstName} ${player.lastName} and the Bay City Volts take the floor against the ${$('jb-opp-name').textContent}.`, 'hi');
+    appendLog(`Tip-off! ${player.firstName} ${player.lastName} and the ${player.team} take the floor against the ${$('jb-opp-name').textContent}.`, 'hi');
   } else {
     appendLog(`Play resumes.`, 'hi');
   }
@@ -665,7 +773,7 @@ $('btn-start-game').addEventListener('click', ()=>{
 });
 
 /* =========================================================
-   6. DERIVED / EFFECTIVE ATTRIBUTES
+   7. DERIVED / EFFECTIVE ATTRIBUTES
    ========================================================= */
 function eff(key){
   const base = player.attributes[key];
@@ -704,7 +812,7 @@ function turnoverChance(){
   const bh = eff('ballHandle');
   return clamp(0.20 - (bh/100)*0.15 + (game.oppOverall-70)/600, 0.03, 0.34);
 }
-function defendChance(kind){ // chance the user's defense (steal/block) succeeds on opp possession
+function defendChance(kind){
   const attr = eff(kind==='steal'?'steal':'block');
   const tend = player.tendencies[kind==='steal'?'steal':'blockAttempt'];
   return clamp(0.06 + (attr/100)*0.16 + (tend/100)*0.08 - (game.oppOverall-70)/700, 0.02, 0.4);
@@ -712,7 +820,7 @@ function defendChance(kind){ // chance the user's defense (steal/block) succeeds
 function foulDrawChance(){ return clamp(0.16 + (player.tendencies.aggression/100)*0.10, 0.05, 0.4); }
 
 /* =========================================================
-   7. DECISION EVENT POOL
+   8. DECISION EVENT POOL
    ========================================================= */
 function scoreDiff(){ return game.score.user - game.score.opp; }
 function isLastPeriod(){ return game.quarter>=4; }
@@ -936,7 +1044,7 @@ function resolveDefend(kind, mod){
   else successChance = 0.5 + eff('perimeterDefense')/300 + mod;
   const success = rand()<clamp(successChance,0.03,0.7);
   if(kind==='steal'){
-    if(success){ game.stats.stl++; game.momentum+=5; return {text:`${player.firstName} ${player.lastName} pokes it away — steal! Ball back to Bay City.`}; }
+    if(success){ game.stats.stl++; game.momentum+=5; return {text:`${player.firstName} ${player.lastName} pokes it away — steal! Ball back to ${player.team}.`}; }
     game.momentum-=2; return {text:`${player.firstName} ${player.lastName} reaches in but the ball handler gets by. Bucket allowed.`, oppPts:2};
   }
   if(kind==='block'){
@@ -981,14 +1089,13 @@ function resolveFlopAttempt(){
 }
 
 /* =========================================================
-   8. GAME TICK / SIM LOOP
+   9. GAME TICK / SIM LOOP
    ========================================================= */
 function gameTick(){
   if(!game.running) return;
   game.possessionCount++;
   const idx = game.possessionCount;
 
-  // clock/quarter advance
   const secs = 18+Math.floor(rand()*14);
   game.clock -= secs;
   if(game.clock<=0){
@@ -1082,7 +1189,7 @@ function simulateOppPossession(){
 }
 
 /* =========================================================
-   9. EVENT MODAL FLOW
+   10. EVENT MODAL FLOW
    ========================================================= */
 function fireDecisionEvent(){
   const ev = pickEligibleEvent();
@@ -1115,7 +1222,7 @@ function fireDecisionEvent(){
 }
 
 /* =========================================================
-   10. FOULS / EJECTIONS
+   11. FOULS / EJECTIONS
    ========================================================= */
 function handleFoulOut(){
   game.fouledOut = true;
@@ -1139,7 +1246,7 @@ function renderTechRow(){
 }
 
 /* =========================================================
-   11. RENDER: JUMBOTRON / STATS / FEED
+   12. RENDER: JUMBOTRON / STATS / FEED
    ========================================================= */
 function updateJumbotron(){
   $('jb-user-score').textContent = game.score.user;
@@ -1182,7 +1289,7 @@ function renderFeedFromHistory(){
   ).join('') || '<div class="feed-line">No plays recorded yet.</div>';
 }
 
-/* passive rebound flavor: occasionally grant a rebound stat on generic misses for realism */
+/* passive rebound flavor */
 setInterval(()=>{
   if(game && game.running && !game.fouledOut && !game.ejected && rand()<0.18){
     const chance = clamp(0.15+player.physicalBonuses.reboundRating/300,0.1,0.5);
@@ -1191,12 +1298,12 @@ setInterval(()=>{
 }, 2600);
 
 /* =========================================================
-   12. END OF GAME / BOX SCORE
+   13. END OF GAME / BOX SCORE / SEASON SUMMARY
    ========================================================= */
 function buildBoxScore(){
   const won = game.score.user>game.score.opp;
   $('box-result').textContent = won?'VICTORY':'DEFEAT';
-  $('box-final-line').textContent = `Bay City Volts ${game.score.user} — ${game.score.opp} ${$('jb-opp-name').textContent}`;
+  $('box-final-line').textContent = `${player.team} ${game.score.user} — ${game.score.opp} ${game.oppTeamName}`;
   const s = game.stats;
   const rows = [
     ['Points',s.pts],['Rebounds',s.reb],['Assists',s.ast],['Steals',s.stl],['Blocks',s.blk],['Turnovers',s.tov],
@@ -1210,27 +1317,87 @@ function endGame(){
   clearInterval(tickTimer);
   game.running=false; game.finished=true;
   updateJumbotron();
-  $('jb-status').textContent='Final';
   const won = game.score.user>game.score.opp;
-  appendLog(`FINAL: Bay City ${game.score.user} — ${$('jb-opp-name').textContent} ${game.score.opp}. ${won?'Volts win!':'Tough loss.'}`,'hi');
+  appendLog(`FINAL: ${player.team} ${game.score.user} — ${game.oppTeamName} ${game.score.opp}. ${won?'Win!':'Loss.'}`,'hi');
+
+  // Record result in season
+  if(season && !season.games[season.currentGameIndex]){
+    season.games[season.currentGameIndex] = {
+      opponent: game.oppTeamName,
+      userScore: game.score.user,
+      oppScore: game.score.opp,
+      won
+    };
+    if(won) season.record.wins++; else season.record.losses++;
+    if(season.currentGameIndex >= 19){
+      season.complete = true;
+    }
+  }
   buildBoxScore();
   $('box-overlay').classList.add('show');
+  $('btn-box-close').textContent = season.complete ? 'View Season Summary' : 'Next Game';
+  updateSeasonUI();
   persistCareer();
 }
-$('btn-box-close').addEventListener('click', ()=> $('box-overlay').classList.remove('show'));
+
+$('btn-box-close').addEventListener('click', ()=>{
+  $('box-overlay').classList.remove('show');
+  if(season.complete){
+    showSeasonSummary();
+  } else {
+    season.currentGameIndex++;
+    if(season.currentGameIndex >= 20) season.complete = true;
+    if(season.currentGameIndex < 20){
+      setupCurrentGame();
+      game.running = false;
+      $('btn-start-game').disabled = false;
+      $('btn-start-game').textContent = 'Tip It Off';
+      $('jb-status').textContent = 'Next game ready';
+      $('feed-body').innerHTML = '<div class="feed-line">Next game ready — hit "Tip It Off" to start.</div>';
+    } else {
+      showSeasonSummary();
+    }
+  }
+  persistCareer();
+});
+
+function setupCurrentGame(){
+  $('jb-user-name').textContent = player.team.toUpperCase();
+  const opp = season.schedule[season.currentGameIndex] || pick(ALL_TEAMS.filter(t=>t!==player.team));
+  $('jb-opp-name').textContent = opp.toUpperCase();
+  resetGameState();
+  renderStatPanel();
+  updateSeasonUI();
+}
+
+function showSeasonSummary(){
+  $('season-title').textContent = 'Season Complete';
+  $('season-record-summary').textContent = `${player.team} — ${season.record.wins}-${season.record.losses}`;
+  const rows = season.schedule.map((opp,i)=>{
+    const g = season.games[i];
+    const result = g ? (g.won?'W':'L') : '—';
+    const score = g ? `${g.userScore}-${g.oppScore}` : '';
+    return `<tr><td>${i+1}</td><td>${opp}</td><td>${result}</td><td>${score}</td></tr>`;
+  }).join('');
+  $('season-table').innerHTML = rows || '<tr><td>No games</td></tr>';
+  $('season-overlay').classList.add('show');
+}
+$('btn-season-close').addEventListener('click', ()=>{
+  $('season-overlay').classList.remove('show');
+});
 
 /* =========================================================
-   13. SAVE / LOAD (localStorage)
+   14. SAVE / LOAD (localStorage)
    ========================================================= */
-const SAVE_KEY = 'hoopsCareerSaveV1';
+const SAVE_KEY = 'hoopsCareerSaveV2';
 
 function persistCareer(){
   if(!player) return;
   try{
     const data = {
       player,
+      season: season ? JSON.parse(JSON.stringify(season)) : null,
       game: game ? Object.assign({}, game, {eventTicks: Array.from(game.eventTicks||[])}) : null,
-      oppName: $('jb-opp-name') ? $('jb-opp-name').textContent : '',
       screen: $('screen-game').classList.contains('active') ? 'game' : 'create',
       savedAt: Date.now()
     };
@@ -1259,21 +1426,29 @@ function flashSaveStatus(msg){
 function restoreCareer(data){
   clearInterval(tickTimer);
   player = data.player;
+  season = data.season || null;
+
   $('screen-create').classList.remove('active');
   $('screen-game').classList.add('active');
   $('strip-jersey').textContent = '#'+player.jersey;
   $('strip-name').textContent = player.firstName+' '+player.lastName;
   $('strip-pos').textContent = player.position+' · '+player.archetype;
+  $('jb-user-name').textContent = player.team.toUpperCase();
+
+  if(!season){
+    startNewSeason();
+  } else {
+    updateSeasonUI();
+  }
 
   if(!data.game){
-    $('jb-opp-name').textContent = pick(OPP_TEAMS).toUpperCase();
-    resetGameState();
+    setupCurrentGame();
     return;
   }
 
   game = data.game;
   game.eventTicks = new Set(game.eventTicks||[]);
-  $('jb-opp-name').textContent = data.oppName || pick(OPP_TEAMS).toUpperCase();
+  $('jb-opp-name').textContent = season.schedule[season.currentGameIndex] ? season.schedule[season.currentGameIndex].toUpperCase() : (data.game.oppTeamName || pick(ALL_TEAMS.filter(t=>t!==player.team)));
   updateJumbotron();
   renderStatPanel();
   renderFeedFromHistory();
@@ -1283,8 +1458,14 @@ function restoreCareer(data){
     $('btn-start-game').disabled = true;
     $('btn-start-game').textContent = 'Game Complete';
     $('jb-status').textContent = 'Final';
-    buildBoxScore();
-    $('box-overlay').classList.add('show');
+    if(season.complete){
+      $('box-overlay').classList.remove('show');
+      showSeasonSummary();
+    } else {
+      buildBoxScore();
+      $('box-overlay').classList.add('show');
+      $('btn-box-close').textContent = 'Next Game';
+    }
   } else if(game.possessionCount>0){
     game.running = false;
     $('btn-start-game').disabled = false;
@@ -1302,13 +1483,16 @@ function initSavedBanner(){
   if(data && data.player){
     banner.style.display='block';
     const p = data.player;
-    let statusTxt = 'Player created, game not started yet';
-    if(data.game){
-      if(data.game.finished) statusTxt = `Final — Bay City ${data.game.score.user}, Opponent ${data.game.score.opp}`;
-      else if(data.game.possessionCount>0) statusTxt = `In progress — ${data.game.score.user}–${data.game.score.opp}, ${data.game.quarter>4?'OT':'Q'+data.game.quarter}`;
-      else statusTxt = 'Ready to tip off';
+    let statusTxt = 'Player created, season not started yet';
+    if(data.season){
+      const rec = data.season.record;
+      if(data.season.complete){
+        statusTxt = `Season complete — ${rec.wins}-${rec.losses}`;
+      } else {
+        statusTxt = `Game ${Math.min(data.season.currentGameIndex+1,20)} of 20 — Record ${rec.wins}-${rec.losses}`;
+      }
     }
-    $('saved-banner-text').textContent = `${p.firstName} ${p.lastName} · ${POSITION_LABELS[p.position]} · OVR ${p.overall} — ${statusTxt}. Saved ${new Date(data.savedAt).toLocaleString()}.`;
+    $('saved-banner-text').textContent = `${p.firstName} ${p.lastName} · ${POSITION_LABELS[p.position]} · OVR ${p.overall} · Team: ${p.team} — ${statusTxt}. Saved ${new Date(data.savedAt).toLocaleString()}.`;
   } else {
     banner.style.display='none';
   }
@@ -1324,8 +1508,9 @@ $('btn-delete-save').addEventListener('click', ()=>{
 $('btn-save-career').addEventListener('click', persistCareer);
 
 /* =========================================================
-   14. INIT
+   15. INIT
    ========================================================= */
+// Populate team dropdown done earlier
 applyPositionPreset('SF');
 applyArchetypePreset('Slasher');
 renderScoutCard();
