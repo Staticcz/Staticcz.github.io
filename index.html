@@ -188,6 +188,14 @@
 <!-- ============ CREATE SCREEN ============ -->
 <section id="screen-create" class="screen active">
   <div class="brand"><span class="mark"></span><span class="name">Hoops Career</span><span class="tag">Phase 1 — Player Creation</span></div>
+  <div class="panel" id="saved-banner" style="display:none;max-width:1180px;margin:0 auto 18px;">
+    <div class="section-title">Saved Career Found</div>
+    <p style="font-size:13px;color:var(--chalk-dim);margin:0 0 12px;" id="saved-banner-text"></p>
+    <div class="btn-row" style="margin-top:0;">
+      <button class="btn btn-primary" id="btn-continue-career">Continue Career</button>
+      <button class="btn" id="btn-delete-save">Delete Save</button>
+    </div>
+  </div>
   <div class="create-wrap">
     <div>
       <div class="panel">
@@ -347,8 +355,10 @@
         <button data-speed="120">Very Fast</button>
       </div>
       <div class="spacer"></div>
+      <button class="btn" id="btn-save-career">Save Career</button>
       <button class="btn" id="btn-new-career">New Career</button>
     </div>
+    <div class="helper-line" id="save-status-line" style="text-align:right;margin-top:-8px;margin-bottom:8px;"></div>
 
     <div class="game-grid">
       <div class="feed-panel">
@@ -572,6 +582,7 @@ $('btn-enter-league').addEventListener('click', ()=>{
   $('screen-create').classList.remove('active');
   $('screen-game').classList.add('active');
   primeGameScreen();
+  persistCareer();
 });
 
 /* =========================================================
@@ -597,6 +608,7 @@ function resetGameState(){
     possessionCount:0, totalPossessions: 96,
     eventTicks: pickEventTicks(96),
     running:false, finished:false,
+    logHistory:[],
     oppOverall
   };
   $('jb-user-score').textContent='0'; $('jb-opp-score').textContent='0';
@@ -618,9 +630,13 @@ function pickEventTicks(total){
 }
 
 $('btn-new-career').addEventListener('click', ()=>{
+  if(player && !confirm('Start a new career? This erases your saved game.')) return;
   clearInterval(tickTimer);
+  clearSavedCareer();
+  player = null; game = null;
   $('screen-game').classList.remove('active');
   $('screen-create').classList.add('active');
+  initSavedBanner();
 });
 
 /* Speed controls */
@@ -634,12 +650,18 @@ document.querySelectorAll('#speed-group button').forEach(btn=>{
 });
 
 $('btn-start-game').addEventListener('click', ()=>{
+  const isFreshStart = game.possessionCount===0;
   game.running = true;
   $('btn-start-game').disabled = true;
   $('btn-start-game').textContent = 'Game In Progress';
   $('jb-status').textContent='Live';
-  appendLog(`Tip-off! ${player.firstName} ${player.lastName} and the Bay City Volts take the floor against the ${$('jb-opp-name').textContent}.`, 'hi');
+  if(isFreshStart){
+    appendLog(`Tip-off! ${player.firstName} ${player.lastName} and the Bay City Volts take the floor against the ${$('jb-opp-name').textContent}.`, 'hi');
+  } else {
+    appendLog(`Play resumes.`, 'hi');
+  }
   tickTimer = setInterval(gameTick, currentSpeed);
+  persistCareer();
 });
 
 /* =========================================================
@@ -995,6 +1017,7 @@ function gameTick(){
   renderStatPanel();
   updateJumbotron();
   $('feed-poss-count').textContent = `${idx} possessions`;
+  if(idx%4===0) persistCareer();
 
   if(game.possessionCount>=game.totalPossessions){ endGame(); }
 }
@@ -1080,6 +1103,7 @@ function fireDecisionEvent(){
       $('modal-result').classList.add('show');
       appendLog(`[Decision] ${outcome.text||''}`, 'choice');
       renderStatPanel(); updateJumbotron();
+      persistCareer();
       setTimeout(()=>{
         $('modal-overlay').classList.remove('show');
         if(!game.finished){ tickTimer=setInterval(gameTick, currentSpeed); }
@@ -1137,10 +1161,25 @@ function renderStatPanel(){
 function appendLog(text, cls){
   const wrap = document.createElement('div');
   wrap.className = 'feed-line'+(cls?' '+cls:'');
-  const t = document.createElement('span'); t.className='t'; t.textContent = `[${$('jb-qtr').textContent} ${$('jb-clock').textContent}]`;
+  const tag = `[${$('jb-qtr').textContent} ${$('jb-clock').textContent}]`;
+  const t = document.createElement('span'); t.className='t'; t.textContent = tag;
   wrap.appendChild(t);
   wrap.appendChild(document.createTextNode(text));
   $('feed-body').prepend(wrap);
+  if(game){
+    game.logHistory = game.logHistory||[];
+    game.logHistory.unshift({text,cls,tag});
+    if(game.logHistory.length>80) game.logHistory.length = 80;
+  }
+}
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function renderFeedFromHistory(){
+  const items = (game.logHistory||[]);
+  $('feed-body').innerHTML = items.map(it=>
+    `<div class="feed-line${it.cls?' '+it.cls:''}"><span class="t">${escapeHtml(it.tag)}</span>${escapeHtml(it.text)}</div>`
+  ).join('') || '<div class="feed-line">No plays recorded yet.</div>';
 }
 
 /* passive rebound flavor: occasionally grant a rebound stat on generic misses for realism */
@@ -1154,13 +1193,8 @@ setInterval(()=>{
 /* =========================================================
    12. END OF GAME / BOX SCORE
    ========================================================= */
-function endGame(){
-  clearInterval(tickTimer);
-  game.running=false; game.finished=true;
-  updateJumbotron();
-  $('jb-status').textContent='Final';
+function buildBoxScore(){
   const won = game.score.user>game.score.opp;
-  appendLog(`FINAL: Bay City ${game.score.user} — ${$('jb-opp-name').textContent} ${game.score.opp}. ${won?'Volts win!':'Tough loss.'}`,'hi');
   $('box-result').textContent = won?'VICTORY':'DEFEAT';
   $('box-final-line').textContent = `Bay City Volts ${game.score.user} — ${game.score.opp} ${$('jb-opp-name').textContent}`;
   const s = game.stats;
@@ -1171,16 +1205,131 @@ function endGame(){
     ['Status', game.ejected?'Ejected':(game.fouledOut?'Fouled Out':'Played full game')]
   ];
   $('box-table').innerHTML = rows.map(r=>`<tr><td class="l">${r[0]}</td><td class="v">${r[1]}</td></tr>`).join('');
+}
+function endGame(){
+  clearInterval(tickTimer);
+  game.running=false; game.finished=true;
+  updateJumbotron();
+  $('jb-status').textContent='Final';
+  const won = game.score.user>game.score.opp;
+  appendLog(`FINAL: Bay City ${game.score.user} — ${$('jb-opp-name').textContent} ${game.score.opp}. ${won?'Volts win!':'Tough loss.'}`,'hi');
+  buildBoxScore();
   $('box-overlay').classList.add('show');
+  persistCareer();
 }
 $('btn-box-close').addEventListener('click', ()=> $('box-overlay').classList.remove('show'));
 
 /* =========================================================
-   13. INIT
+   13. SAVE / LOAD (localStorage)
+   ========================================================= */
+const SAVE_KEY = 'hoopsCareerSaveV1';
+
+function persistCareer(){
+  if(!player) return;
+  try{
+    const data = {
+      player,
+      game: game ? Object.assign({}, game, {eventTicks: Array.from(game.eventTicks||[])}) : null,
+      oppName: $('jb-opp-name') ? $('jb-opp-name').textContent : '',
+      screen: $('screen-game').classList.contains('active') ? 'game' : 'create',
+      savedAt: Date.now()
+    };
+    localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+    flashSaveStatus('Saved just now.');
+  }catch(e){
+    console.error('Save failed', e);
+    flashSaveStatus('Save failed — storage may be full.');
+  }
+}
+function readSavedCareer(){
+  try{
+    const raw = localStorage.getItem(SAVE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){ return null; }
+}
+function clearSavedCareer(){ localStorage.removeItem(SAVE_KEY); }
+function flashSaveStatus(msg){
+  const el = $('save-status-line');
+  if(!el) return;
+  el.textContent = msg;
+  clearTimeout(flashSaveStatus._t);
+  flashSaveStatus._t = setTimeout(()=>{ el.textContent=''; }, 2600);
+}
+
+function restoreCareer(data){
+  clearInterval(tickTimer);
+  player = data.player;
+  $('screen-create').classList.remove('active');
+  $('screen-game').classList.add('active');
+  $('strip-jersey').textContent = '#'+player.jersey;
+  $('strip-name').textContent = player.firstName+' '+player.lastName;
+  $('strip-pos').textContent = player.position+' · '+player.archetype;
+
+  if(!data.game){
+    $('jb-opp-name').textContent = pick(OPP_TEAMS).toUpperCase();
+    resetGameState();
+    return;
+  }
+
+  game = data.game;
+  game.eventTicks = new Set(game.eventTicks||[]);
+  $('jb-opp-name').textContent = data.oppName || pick(OPP_TEAMS).toUpperCase();
+  updateJumbotron();
+  renderStatPanel();
+  renderFeedFromHistory();
+  $('feed-poss-count').textContent = `${game.possessionCount} possessions`;
+
+  if(game.finished){
+    $('btn-start-game').disabled = true;
+    $('btn-start-game').textContent = 'Game Complete';
+    $('jb-status').textContent = 'Final';
+    buildBoxScore();
+    $('box-overlay').classList.add('show');
+  } else if(game.possessionCount>0){
+    game.running = false;
+    $('btn-start-game').disabled = false;
+    $('btn-start-game').textContent = 'Resume Game';
+    $('jb-status').textContent = 'Paused — resume to continue';
+  } else {
+    $('btn-start-game').disabled = false;
+    $('btn-start-game').textContent = 'Tip It Off';
+  }
+}
+
+function initSavedBanner(){
+  const data = readSavedCareer();
+  const banner = $('saved-banner');
+  if(data && data.player){
+    banner.style.display='block';
+    const p = data.player;
+    let statusTxt = 'Player created, game not started yet';
+    if(data.game){
+      if(data.game.finished) statusTxt = `Final — Bay City ${data.game.score.user}, Opponent ${data.game.score.opp}`;
+      else if(data.game.possessionCount>0) statusTxt = `In progress — ${data.game.score.user}–${data.game.score.opp}, ${data.game.quarter>4?'OT':'Q'+data.game.quarter}`;
+      else statusTxt = 'Ready to tip off';
+    }
+    $('saved-banner-text').textContent = `${p.firstName} ${p.lastName} · ${POSITION_LABELS[p.position]} · OVR ${p.overall} — ${statusTxt}. Saved ${new Date(data.savedAt).toLocaleString()}.`;
+  } else {
+    banner.style.display='none';
+  }
+}
+$('btn-continue-career').addEventListener('click', ()=>{
+  const data = readSavedCareer();
+  if(data) restoreCareer(data);
+});
+$('btn-delete-save').addEventListener('click', ()=>{
+  clearSavedCareer();
+  initSavedBanner();
+});
+$('btn-save-career').addEventListener('click', persistCareer);
+
+/* =========================================================
+   14. INIT
    ========================================================= */
 applyPositionPreset('SF');
 applyArchetypePreset('Slasher');
 renderScoutCard();
+initSavedBanner();
 </script>
 </body>
 </html>
