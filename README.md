@@ -1,1 +1,0 @@
-# Staticcz.github.io
