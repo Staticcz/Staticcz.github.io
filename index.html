@@ -5,490 +5,132 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Static's Hooper Generator</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: #fff;
-      padding: 20px;
+      min-height: 100vh; display: flex; justify-content: center; align-items: center;
+      color: #fff; padding: 20px;
     }
-
     .screen {
-      display: none;
-      width: 100%;
-      max-width: 900px;
-      background: rgba(0, 0, 0, 0.6);
-      border-radius: 20px;
-      padding: 40px 30px;
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-      text-align: center;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      transition: all 0.3s ease;
-      max-height: 90vh;
-      overflow-y: auto;
+      display: none; width: 100%; max-width: 900px; background: rgba(0,0,0,0.6);
+      border-radius: 20px; padding: 40px 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+      text-align: center; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);
+      transition: all 0.3s ease; max-height: 90vh; overflow-y: auto;
     }
-
-    .screen.active {
-      display: block;
-    }
-
+    .screen.active { display: block; }
     h1 {
-      font-size: 3rem;
-      font-weight: 900;
-      letter-spacing: 2px;
-      margin-bottom: 10px;
+      font-size: 3rem; font-weight: 900; letter-spacing: 2px; margin-bottom: 10px;
       background: linear-gradient(45deg, #ff6b35, #ffd166);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      text-transform: uppercase;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-transform: uppercase;
     }
-
-    h2 {
-      font-size: 1.8rem;
-      margin-bottom: 20px;
-      color: #ffd166;
-    }
-
-    h3 {
-      color: #ffd166;
-      margin-bottom: 10px;
-    }
-
-    p {
-      font-size: 1.1rem;
-      margin-bottom: 25px;
-      color: #ddd;
-    }
-
-    .button-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      justify-content: center;
-      margin-top: 20px;
-    }
-
+    h2 { font-size: 1.8rem; margin-bottom: 20px; color: #ffd166; }
+    h3 { color: #ffd166; margin-bottom: 10px; }
+    p { font-size: 1.1rem; margin-bottom: 25px; color: #ddd; }
+    .button-group { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-top: 20px; }
     .btn {
-      padding: 15px 30px;
-      font-size: 1.2rem;
-      font-weight: bold;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #fff;
-      background: #1e3a8a;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-      min-width: 180px;
+      padding: 15px 30px; font-size: 1.2rem; font-weight: bold; border: none; border-radius: 12px;
+      cursor: pointer; transition: all 0.2s ease; text-transform: uppercase; letter-spacing: 1px;
+      color: #fff; background: #1e3a8a; box-shadow: 0 5px 15px rgba(0,0,0,0.3); min-width: 180px;
     }
-
-    .btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-      filter: brightness(1.1);
+    .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.5); filter: brightness(1.1); }
+    .btn:active { transform: translateY(0); }
+    .btn-save { background: #6d28d9; }
+    .btn-save.selected { background: #10b981; box-shadow: 0 0 20px rgba(16,185,129,0.6); }
+    .btn-highschool { background: #e67e22; }
+    .btn-college { background: #2980b9; }
+    .btn-back { background: #555; margin-top: 20px; min-width: auto; padding: 10px 20px; font-size: 0.9rem; }
+    .btn-small { padding: 8px 16px; font-size: 0.9rem; min-width: auto; background: #444; }
+    .btn-danger { background: #8b0000; }
+    .hidden { display: none; }
+    .path-options { margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.2); }
+    .selected-save-info { background: rgba(255,255,255,0.1); padding: 10px; border-radius: 10px; margin-top: 20px; font-weight: bold; color: #ffd166; }
+    /* Form Styles */
+    .form-group { margin-bottom: 20px; text-align: left; }
+    .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #ffd166; font-size: 0.9rem; }
+    .form-group input, .form-group select {
+      width: 100%; padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.1); color: #fff; font-size: 1rem;
     }
-
-    .btn:active {
-      transform: translateY(0);
-    }
-
-    .btn-save {
-      background: #6d28d9;
-    }
-
-    .btn-save.selected {
-      background: #10b981;
-      box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
-    }
-
-    .btn-highschool {
-      background: #e67e22;
-    }
-
-    .btn-college {
-      background: #2980b9;
-    }
-
-    .btn-back {
-      background: #555;
-      margin-top: 20px;
-      min-width: auto;
-      padding: 10px 20px;
-      font-size: 0.9rem;
-    }
-
-    .btn-small {
-      padding: 8px 16px;
-      font-size: 0.9rem;
-      min-width: auto;
-      background: #444;
-    }
-
-    .btn-danger {
-      background: #8b0000;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    .path-options {
-      margin-top: 30px;
-      padding-top: 20px;
-      border-top: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .selected-save-info {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 10px;
-      border-radius: 10px;
-      margin-top: 20px;
-      font-weight: bold;
-      color: #ffd166;
-    }
-
-    /* Character Creation Form Styles */
-    .form-group {
-      margin-bottom: 20px;
-      text-align: left;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: bold;
-      color: #ffd166;
-      font-size: 0.9rem;
-    }
-
-    .form-group input,
-    .form-group select {
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
-      font-size: 1rem;
-    }
-
-    .form-group select option {
-      background: #1a1a2e;
-      color: #fff;
-    }
-
-    .row {
-      display: flex;
-      gap: 15px;
-      flex-wrap: wrap;
-    }
-
-    .row .form-group {
-      flex: 1;
-    }
-
-    .build-options {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-    }
-
+    .form-group select option { background: #1a1a2e; color: #fff; }
+    .row { display: flex; gap: 15px; flex-wrap: wrap; }
+    .row .form-group { flex: 1; }
+    .build-options { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
     .build-option {
-      display: inline-block;
-      padding: 10px 20px;
-      border-radius: 20px;
-      background: rgba(255, 255, 255, 0.1);
-      cursor: pointer;
-      border: 2px solid transparent;
-      transition: all 0.2s;
-      user-select: none;
+      display: inline-block; padding: 10px 20px; border-radius: 20px; background: rgba(255,255,255,0.1);
+      cursor: pointer; border: 2px solid transparent; transition: all 0.2s; user-select: none;
     }
-
-    .build-option.selected {
-      border-color: #ffd166;
-      background: rgba(255, 209, 102, 0.2);
-      color: #ffd166;
-    }
-
-    .build-option input {
-      display: none;
-    }
-
-    .validation-error {
-      color: #ff6b6b;
-      font-size: 0.9rem;
-      margin-top: 5px;
-    }
-
+    .build-option.selected { border-color: #ffd166; background: rgba(255,209,102,0.2); color: #ffd166; }
+    .build-option input { display: none; }
+    .validation-error { color: #ff6b6b; font-size: 0.9rem; margin-top: 5px; }
     /* Team Selection */
-    .team-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-      margin-top: 20px;
-      max-height: 400px;
-      overflow-y: auto;
-      padding: 10px;
-    }
-
+    .team-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 20px; max-height: 400px; overflow-y: auto; padding: 10px; }
     .team-card {
-      background: rgba(255, 255, 255, 0.1);
-      border: 2px solid transparent;
-      border-radius: 10px;
-      padding: 15px 20px;
-      cursor: pointer;
-      transition: all 0.2s;
-      min-width: 150px;
-      text-align: center;
+      background: rgba(255,255,255,0.1); border: 2px solid transparent; border-radius: 10px; padding: 15px 20px;
+      cursor: pointer; transition: all 0.2s; min-width: 150px; text-align: center;
     }
-
-    .team-card:hover {
-      background: rgba(255, 209, 102, 0.2);
-      border-color: #ffd166;
-      transform: translateY(-2px);
-    }
-
-    .team-card h3 {
-      margin-bottom: 5px;
-      font-size: 1.1rem;
-    }
-
-    .team-card p {
-      font-size: 0.8rem;
-      color: #ccc;
-      margin-bottom: 0;
-    }
-
-    .checkbox-label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      justify-content: center;
-      margin-bottom: 10px;
-      font-size: 1rem;
-    }
-
-    .checkbox-label input {
-      width: auto;
-      margin: 0;
-    }
-
+    .team-card:hover { background: rgba(255,209,102,0.2); border-color: #ffd166; transform: translateY(-2px); }
+    .team-card h3 { margin-bottom: 5px; font-size: 1.1rem; }
+    .team-card p { font-size: 0.8rem; color: #ccc; margin-bottom: 0; }
+    .checkbox-label { display: flex; align-items: center; gap: 8px; justify-content: center; margin-bottom: 10px; font-size: 1rem; }
+    .checkbox-label input { width: auto; margin: 0; }
     /* Career Hub */
-    .player-summary {
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 15px;
-      padding: 20px;
-      margin-bottom: 25px;
-    }
-
-    .player-summary h3 {
-      color: #ffd166;
-      margin-bottom: 10px;
-    }
-
-    .player-summary .stat-line {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-
-    .player-summary .stat {
-      background: rgba(0, 0, 0, 0.3);
-      padding: 10px;
-      border-radius: 8px;
-      min-width: 80px;
-    }
-
-    .player-summary .stat span {
-      display: block;
-      font-size: 0.8rem;
-      color: #aaa;
-    }
-
-    .player-summary .stat strong {
-      font-size: 1.4rem;
-    }
-
+    .player-summary { background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; margin-bottom: 25px; }
+    .player-summary h3 { color: #ffd166; margin-bottom: 10px; }
+    .player-summary .stat-line { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+    .player-summary .stat { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; min-width: 80px; }
+    .player-summary .stat span { display: block; font-size: 0.8rem; color: #aaa; }
+    .player-summary .stat strong { font-size: 1.4rem; }
     /* Roster Table */
-    .roster-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 20px;
-    }
-
-    .roster-table th,
-    .roster-table td {
-      padding: 10px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-      text-align: left;
-    }
-
-    .roster-table th {
-      background: rgba(255, 255, 255, 0.1);
-      color: #ffd166;
-    }
-
-    .roster-table td {
-      color: #ddd;
-    }
-
-    .roster-table tr:hover {
-      background: rgba(255, 255, 255, 0.05);
-    }
-
-    .interaction-btn {
-      padding: 5px 10px;
-      font-size: 0.8rem;
-      background: #444;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      color: #fff;
-    }
-
-    .interaction-btn:hover {
-      background: #666;
-    }
-
-    /* Team Screen Navigation */
-    .team-tabs {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      margin-bottom: 20px;
-    }
-
-    .team-tab {
-      padding: 8px 16px;
-      background: rgba(255, 255, 255, 0.1);
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      color: #fff;
-    }
-
-    .team-tab.active {
-      background: #ffd166;
-      color: #000;
-    }
-
-    .team-tab-content {
-      display: none;
-    }
-
-    .team-tab-content.active {
-      display: block;
-    }
-
-    /* Game Simulation Styles */
-    .scoreboard {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      margin-bottom: 20px;
-      font-size: 1.5rem;
-    }
-
-    .team-score {
-      background: rgba(0, 0, 0, 0.4);
-      padding: 15px;
-      border-radius: 10px;
-      min-width: 150px;
-    }
-
-    .team-score h3 {
-      margin-bottom: 5px;
-      font-size: 1.2rem;
-    }
-
-    .score-number {
-      font-size: 2.5rem;
-      font-weight: bold;
-    }
-
-    .vs {
-      font-size: 1.8rem;
-      color: #ffd166;
-    }
-
-    .event-text {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 20px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-      font-size: 1.2rem;
-    }
-
-    .choice-btn {
-      margin: 5px;
-    }
-
-    .result-message {
-      background: rgba(255, 209, 102, 0.2);
-      padding: 15px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-      color: #ffd166;
-      font-weight: bold;
-    }
-
-    .final-stats {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      justify-content: center;
-      margin: 20px 0;
-    }
-
-    .final-stat {
-      background: rgba(0, 0, 0, 0.4);
-      padding: 10px;
-      border-radius: 8px;
-      min-width: 80px;
-    }
-
-    .final-stat span {
-      display: block;
-      font-size: 0.8rem;
-      color: #aaa;
-    }
-
-    .final-stat strong {
-      font-size: 1.3rem;
-    }
+    .roster-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    .roster-table th, .roster-table td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.2); text-align: left; }
+    .roster-table th { background: rgba(255,255,255,0.1); color: #ffd166; }
+    .roster-table td { color: #ddd; }
+    .roster-table tr:hover { background: rgba(255,255,255,0.05); }
+    .interaction-btn { padding: 5px 10px; font-size: 0.8rem; background: #444; border: none; border-radius: 5px; cursor: pointer; color: #fff; }
+    .interaction-btn:hover { background: #666; }
+    /* Team Screen Tabs */
+    .team-tabs { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
+    .team-tab { padding: 8px 16px; background: rgba(255,255,255,0.1); border: none; border-radius: 5px; cursor: pointer; color: #fff; }
+    .team-tab.active { background: #ffd166; color: #000; }
+    .team-tab-content { display: none; }
+    .team-tab-content.active { display: block; }
+    /* Game Simulation */
+    .game-container { display: flex; gap: 20px; }
+    .game-left { flex: 1; }
+    .game-right { width: 200px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; }
+    .scoreboard { display: flex; justify-content: space-around; align-items: center; margin-bottom: 20px; font-size: 1.5rem; }
+    .team-score { background: rgba(0,0,0,0.4); padding: 15px; border-radius: 10px; min-width: 150px; }
+    .team-score h3 { margin-bottom: 5px; font-size: 1.2rem; }
+    .score-number { font-size: 2.5rem; font-weight: bold; }
+    .vs { font-size: 1.8rem; color: #ffd166; }
+    .foul-box { background: rgba(0,0,0,0.5); border-radius: 8px; padding: 10px; margin-bottom: 10px; }
+    .foul-box h4 { color: #ffd166; margin-bottom: 5px; }
+    .foul-box p { margin: 5px 0; font-size: 0.9rem; }
+    .play-log { background: rgba(0,0,0,0.3); border-radius: 10px; padding: 10px; height: 300px; overflow-y: auto; text-align: left; font-size: 0.9rem; }
+    .play-log p { margin: 5px 0; color: #ccc; }
+    .current-play { margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 10px; }
+    .event-text { font-size: 1.2rem; margin-bottom: 15px; }
+    .choice-btn { margin: 5px; }
+    .result-message { background: rgba(255,209,102,0.2); padding: 10px; border-radius: 8px; margin-bottom: 10px; color: #ffd166; font-weight: bold; }
+    .final-stats { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin: 20px 0; }
+    .final-stat { background: rgba(0,0,0,0.4); padding: 10px; border-radius: 8px; min-width: 80px; }
+    .final-stat span { display: block; font-size: 0.8rem; color: #aaa; }
+    .final-stat strong { font-size: 1.3rem; }
   </style>
 </head>
 <body>
 
-  <!-- MAIN MENU SCREEN -->
+  <!-- MAIN MENU -->
   <div id="main-menu" class="screen active">
     <h1>Static's Hooper Generator</h1>
     <p>Choose a save file to begin your basketball journey</p>
-
     <div class="button-group">
       <button class="btn btn-save" data-save="1">Save 1</button>
       <button class="btn btn-save" data-save="2">Save 2</button>
       <button class="btn btn-save" data-save="3">Save 3</button>
     </div>
-
     <div id="selected-save-info" class="selected-save-info hidden"></div>
-
     <div id="path-options" class="path-options hidden">
       <h2>Choose Your Starting Path</h2>
       <div class="button-group">
@@ -498,73 +140,34 @@
     </div>
   </div>
 
-  <!-- CHARACTER CREATION SCREEN -->
+  <!-- CHARACTER CREATION -->
   <div id="character-creation" class="screen">
     <h2>Create Your Player</h2>
     <p>Fill in the details to build your future hooper.</p>
-
     <div class="row">
-      <div class="form-group">
-        <label for="first-name">First Name</label>
-        <input type="text" id="first-name" placeholder="Enter first name">
-      </div>
-      <div class="form-group">
-        <label for="last-name">Last Name</label>
-        <input type="text" id="last-name" placeholder="Enter last name">
-      </div>
+      <div class="form-group"><label for="first-name">First Name</label><input type="text" id="first-name" placeholder="Enter first name"></div>
+      <div class="form-group"><label for="last-name">Last Name</label><input type="text" id="last-name" placeholder="Enter last name"></div>
     </div>
-
     <div class="row">
       <div class="form-group">
         <label>Height</label>
         <div style="display: flex; gap: 10px;">
-          <select id="height-feet" style="flex: 1;">
-            <option value="5">5'</option>
-            <option value="6">6'</option>
-            <option value="7">7'</option>
-          </select>
-          <select id="height-inches" style="flex: 1;">
-            <option value="0">0"</option>
-            <option value="1">1"</option>
-            <option value="2">2"</option>
-            <option value="3">3"</option>
-            <option value="4">4"</option>
-            <option value="5">5"</option>
-            <option value="6">6"</option>
-            <option value="7">7"</option>
-            <option value="8">8"</option>
-            <option value="9">9"</option>
-            <option value="10">10"</option>
-            <option value="11">11"</option>
-          </select>
+          <select id="height-feet" style="flex:1;"><option value="5">5'</option><option value="6">6'</option><option value="7">7'</option></select>
+          <select id="height-inches" style="flex:1;"><option value="0">0"</option><option value="1">1"</option><option value="2">2"</option><option value="3">3"</option><option value="4">4"</option><option value="5">5"</option><option value="6">6"</option><option value="7">7"</option><option value="8">8"</option><option value="9">9"</option><option value="10">10"</option><option value="11">11"</option></select>
         </div>
       </div>
-      <div class="form-group">
-        <label for="weight">Weight (lbs)</label>
-        <input type="number" id="weight" min="140" max="300" value="180">
-      </div>
-      <div class="form-group">
-        <label for="wingspan">Wingspan (inches)</label>
-        <input type="number" id="wingspan" min="60" max="90" value="72">
-      </div>
+      <div class="form-group"><label for="weight">Weight (lbs)</label><input type="number" id="weight" min="140" max="300" value="180"></div>
+      <div class="form-group"><label for="wingspan">Wingspan (inches)</label><input type="number" id="wingspan" min="60" max="90" value="72"></div>
     </div>
-
     <div class="row">
       <div class="form-group">
         <label for="position">Position</label>
         <select id="position">
-          <option value="PG">PG</option>
-          <option value="SG">SG</option>
-          <option value="SF">SF</option>
-          <option value="PF">PF</option>
-          <option value="C">C</option>
-          <option value="PG/SG">PG/SG</option>
-          <option value="SG/SF">SG/SF</option>
-          <option value="PF/C">PF/C</option>
+          <option value="PG">PG</option><option value="SG">SG</option><option value="SF">SF</option><option value="PF">PF</option><option value="C">C</option>
+          <option value="PG/SG">PG/SG</option><option value="SG/SF">SG/SF</option><option value="PF/C">PF/C</option>
         </select>
       </div>
     </div>
-
     <div class="form-group">
       <label>Select Your Build(s) (up to 2)</label>
       <div class="build-options" id="build-options">
@@ -579,7 +182,6 @@
       </div>
       <div class="validation-error" id="build-error"></div>
     </div>
-
     <div class="button-group">
       <button class="btn btn-small" id="randomize-player">Randomize</button>
       <button class="btn" id="create-player">Create Player</button>
@@ -587,28 +189,21 @@
     <button class="btn btn-back" id="back-to-menu">Back to Main Menu</button>
   </div>
 
-  <!-- TEAM SELECTION SCREEN -->
+  <!-- TEAM SELECTION -->
   <div id="team-selection" class="screen">
     <h2>Select Your Team</h2>
     <p id="team-selection-subtitle"></p>
-
     <div id="aau-checkbox-container" class="hidden">
-      <label class="checkbox-label">
-        <input type="checkbox" id="aau-only-checkbox">
-        AAU Only
-      </label>
+      <label class="checkbox-label"><input type="checkbox" id="aau-only-checkbox"> AAU Only</label>
     </div>
-
     <div id="team-grid" class="team-grid"></div>
-
     <button class="btn btn-back" id="back-to-character">Back</button>
   </div>
 
-  <!-- CAREER HUB SCREEN -->
+  <!-- CAREER HUB -->
   <div id="career-hub" class="screen">
     <h2>Career Hub</h2>
     <div class="player-summary" id="player-summary"></div>
-
     <div class="button-group">
       <button class="btn" id="play-btn">Play Next Game</button>
       <button class="btn" id="team-btn">Team</button>
@@ -617,28 +212,39 @@
     </div>
   </div>
 
-  <!-- GAME SIMULATION SCREEN -->
+  <!-- GAME SIMULATION -->
   <div id="game-screen" class="screen">
     <h2>Game Simulation</h2>
-    <div class="scoreboard" id="game-scoreboard">
-      <div class="team-score">
-        <h3 id="user-team-name">Your Team</h3>
-        <span class="score-number" id="user-score">0</span>
+    <div class="game-container">
+      <div class="game-left">
+        <div class="scoreboard">
+          <div class="team-score"><h3 id="user-team-name">Your Team</h3><span class="score-number" id="user-score">0</span></div>
+          <span class="vs">vs</span>
+          <div class="team-score"><h3 id="opp-team-name">Opponent</h3><span class="score-number" id="opp-score">0</span></div>
+        </div>
+        <div class="play-log" id="play-log"></div>
+        <div class="current-play" id="current-play-area">
+          <div class="event-text" id="game-event-text"></div>
+          <div id="game-choices" class="button-group"></div>
+          <div id="game-result-message" class="result-message hidden"></div>
+          <button id="next-play-btn" class="btn hidden">Next Play</button>
+        </div>
       </div>
-      <span class="vs">vs</span>
-      <div class="team-score">
-        <h3 id="opp-team-name">Opponent</h3>
-        <span class="score-number" id="opp-score">0</span>
+      <div class="game-right" id="foul-panel">
+        <div class="foul-box">
+          <h4>Your Player</h4>
+          <p>Points: <span id="foul-points">0</span></p>
+          <p>Personal Fouls: <span id="personal-fouls">0</span></p>
+          <p>Technical Fouls: <span id="tech-fouls">0</span></p>
+          <p>Status: <span id="player-status">Active</span></p>
+        </div>
+        <div class="foul-box">
+          <h4>Team Fouls</h4>
+          <p>Your Team: <span id="team-fouls">0</span></p>
+          <p>Opponent: <span id="opp-team-fouls">0</span></p>
+        </div>
       </div>
     </div>
-
-    <div id="game-event-area">
-      <div class="event-text" id="game-event-text">Loading...</div>
-      <div id="game-choices" class="button-group"></div>
-      <div id="game-result-message" class="result-message hidden"></div>
-      <button id="continue-game" class="btn hidden">Continue</button>
-    </div>
-
     <div id="game-final-area" class="hidden">
       <h3>Final Result</h3>
       <div class="final-stats" id="final-player-stats"></div>
@@ -656,30 +262,17 @@
       <button class="team-tab" data-tab="gm">GM</button>
       <button class="team-tab" data-tab="teammates">Teammates</button>
     </div>
-
-    <div id="roster-tab" class="team-tab-content active">
-      <div id="team-roster-container"></div>
-    </div>
-    <div id="coach-tab" class="team-tab-content">
-      <p>Coach interactions coming soon.</p>
-    </div>
-    <div id="gm-tab" class="team-tab-content">
-      <p>GM interactions coming soon.</p>
-    </div>
-    <div id="teammates-tab" class="team-tab-content">
-      <p>Teammate interactions coming soon.</p>
-    </div>
-
+    <div id="roster-tab" class="team-tab-content active"><div id="team-roster-container"></div></div>
+    <div id="coach-tab" class="team-tab-content"><p>Coach interactions coming soon.</p></div>
+    <div id="gm-tab" class="team-tab-content"><p>GM interactions coming soon.</p></div>
+    <div id="teammates-tab" class="team-tab-content"><p>Teammate interactions coming soon.</p></div>
     <button class="btn btn-back" id="back-to-hub-from-team">Back to Career Hub</button>
   </div>
 
   <!-- ROSTERS SCREEN -->
   <div id="rosters-screen" class="screen">
     <h2>League Rosters</h2>
-    <div class="form-group">
-      <label for="team-select">Select Team</label>
-      <select id="team-select"></select>
-    </div>
+    <div class="form-group"><label for="team-select">Select Team</label><select id="team-select"></select></div>
     <div id="other-roster-container"></div>
     <button class="btn btn-back" id="back-to-hub-from-rosters">Back to Career Hub</button>
   </div>
@@ -694,166 +287,129 @@
   <script>
     // ---------- TEAM DATA ----------
     const highSchoolTeams = [
-      { name: "Montverde Academy", state: "FL" },
-      { name: "IMG Academy", state: "FL" },
-      { name: "Oak Hill Academy", state: "VA" },
-      { name: "Sierra Canyon", state: "CA" },
-      { name: "Prolific Prep", state: "CA" },
-      { name: "Sunrise Christian Academy", state: "KS" },
-      { name: "Link Academy", state: "MO" },
-      { name: "AZ Compass Prep", state: "AZ" },
-      { name: "La Lumiere School", state: "IN" },
-      { name: "Wasatch Academy", state: "UT" },
-      { name: "Brewster Academy", state: "NH" },
-      { name: "Paul VI Catholic", state: "VA" },
-      { name: "Camden High School", state: "NJ" },
-      { name: "Duncanville High School", state: "TX" },
-      { name: "Centennial High School", state: "CA" },
-      { name: "Columbus High School", state: "FL" },
-      { name: "Cardinal Hayes", state: "NY" },
-      { name: "Roselle Catholic", state: "NJ" },
-      { name: "St. Frances Academy", state: "MD" },
-      { name: "Bishop Gorman", state: "NV" },
-      { name: "Long Island Lutheran", state: "NY" },
-      { name: "Harvard-Westlake", state: "CA" },
-      { name: "Notre Dame High School", state: "CA" },
-      { name: "DeMatha Catholic", state: "MD" },
-      { name: "Gonzaga College High School", state: "DC" },
-      { name: "St. Vincent-St. Mary", state: "OH" },
-      { name: "Simeon Career Academy", state: "IL" },
-      { name: "Whitney Young", state: "IL" },
-      { name: "Westtown School", state: "PA" },
-      { name: "Oak Cliff Faith Family Academy", state: "TX" }
+      { name: "Montverde Academy", state: "FL" }, { name: "IMG Academy", state: "FL" }, { name: "Oak Hill Academy", state: "VA" },
+      { name: "Sierra Canyon", state: "CA" }, { name: "Prolific Prep", state: "CA" }, { name: "Sunrise Christian Academy", state: "KS" },
+      { name: "Link Academy", state: "MO" }, { name: "AZ Compass Prep", state: "AZ" }, { name: "La Lumiere School", state: "IN" },
+      { name: "Wasatch Academy", state: "UT" }, { name: "Brewster Academy", state: "NH" }, { name: "Paul VI Catholic", state: "VA" },
+      { name: "Camden High School", state: "NJ" }, { name: "Duncanville High School", state: "TX" }, { name: "Centennial High School", state: "CA" },
+      { name: "Columbus High School", state: "FL" }, { name: "Cardinal Hayes", state: "NY" }, { name: "Roselle Catholic", state: "NJ" },
+      { name: "St. Frances Academy", state: "MD" }, { name: "Bishop Gorman", state: "NV" }, { name: "Long Island Lutheran", state: "NY" },
+      { name: "Harvard-Westlake", state: "CA" }, { name: "Notre Dame High School", state: "CA" }, { name: "DeMatha Catholic", state: "MD" },
+      { name: "Gonzaga College High School", state: "DC" }, { name: "St. Vincent-St. Mary", state: "OH" }, { name: "Simeon Career Academy", state: "IL" },
+      { name: "Whitney Young", state: "IL" }, { name: "Westtown School", state: "PA" }, { name: "Oak Cliff Faith Family Academy", state: "TX" }
     ];
-
     const aauTeams = [
-      { name: "Team Takeover", region: "DC" },
-      { name: "Expressions Elite", region: "MA" },
-      { name: "MoKan Elite", region: "MO" },
-      { name: "Mac Irvin Fire", region: "IL" },
-      { name: "Houston Hoops", region: "TX" },
-      { name: "Drive Nation", region: "TX" },
-      { name: "Oakland Soldiers", region: "CA" },
-      { name: "Compton Magic", region: "CA" },
-      { name: "Team WhyNot", region: "CA" },
-      { name: "NY Renaissance", region: "NY" },
-      { name: "PSA Cardinals", region: "NY" },
-      { name: "Team Final", region: "PA" },
-      { name: "Boo Williams", region: "VA" },
-      { name: "E1T1", region: "FL" },
-      { name: "Nightrydas Elite", region: "FL" },
-      { name: "Vegas Elite", region: "NV" },
-      { name: "Indy Heat", region: "IN" },
-      { name: "All Ohio Red", region: "OH" },
-      { name: "MeanStreets", region: "IL" },
-      { name: "Bradley Beal Elite", region: "MO" }
+      { name: "Team Takeover", region: "DC" }, { name: "Expressions Elite", region: "MA" }, { name: "MoKan Elite", region: "MO" },
+      { name: "Mac Irvin Fire", region: "IL" }, { name: "Houston Hoops", region: "TX" }, { name: "Drive Nation", region: "TX" },
+      { name: "Oakland Soldiers", region: "CA" }, { name: "Compton Magic", region: "CA" }, { name: "Team WhyNot", region: "CA" },
+      { name: "NY Renaissance", region: "NY" }, { name: "PSA Cardinals", region: "NY" }, { name: "Team Final", region: "PA" },
+      { name: "Boo Williams", region: "VA" }, { name: "E1T1", region: "FL" }, { name: "Nightrydas Elite", region: "FL" },
+      { name: "Vegas Elite", region: "NV" }, { name: "Indy Heat", region: "IN" }, { name: "All Ohio Red", region: "OH" },
+      { name: "MeanStreets", region: "IL" }, { name: "Bradley Beal Elite", region: "MO" }
     ];
-
     const collegeTeams = [
-      { name: "Duke", conference: "ACC" },
-      { name: "Kentucky", conference: "SEC" },
-      { name: "North Carolina", conference: "ACC" },
-      { name: "Kansas", conference: "Big 12" },
-      { name: "UCLA", conference: "Pac-12" },
-      { name: "Gonzaga", conference: "WCC" },
-      { name: "Michigan State", conference: "Big Ten" },
-      { name: "Villanova", conference: "Big East" },
-      { name: "Arizona", conference: "Pac-12" },
-      { name: "Baylor", conference: "Big 12" },
-      { name: "Houston", conference: "Big 12" },
-      { name: "Illinois", conference: "Big Ten" },
-      { name: "Indiana", conference: "Big Ten" },
-      { name: "Ohio State", conference: "Big Ten" },
-      { name: "Texas", conference: "Big 12" },
-      { name: "Alabama", conference: "SEC" },
-      { name: "Tennessee", conference: "SEC" },
-      { name: "Florida", conference: "SEC" },
-      { name: "Auburn", conference: "SEC" },
-      { name: "Arkansas", conference: "SEC" },
-      { name: "Creighton", conference: "Big East" },
-      { name: "Xavier", conference: "Big East" },
-      { name: "San Diego State", conference: "Mountain West" },
-      { name: "Miami", conference: "ACC" },
-      { name: "Virginia", conference: "ACC" },
-      { name: "Wisconsin", conference: "Big Ten" },
-      { name: "Purdue", conference: "Big Ten" },
-      { name: "Marquette", conference: "Big East" },
-      { name: "Iowa State", conference: "Big 12" },
-      { name: "Texas Tech", conference: "Big 12" }
+      { name: "Duke", conference: "ACC" }, { name: "Kentucky", conference: "SEC" }, { name: "North Carolina", conference: "ACC" },
+      { name: "Kansas", conference: "Big 12" }, { name: "UCLA", conference: "Pac-12" }, { name: "Gonzaga", conference: "WCC" },
+      { name: "Michigan State", conference: "Big Ten" }, { name: "Villanova", conference: "Big East" }, { name: "Arizona", conference: "Pac-12" },
+      { name: "Baylor", conference: "Big 12" }, { name: "Houston", conference: "Big 12" }, { name: "Illinois", conference: "Big Ten" },
+      { name: "Indiana", conference: "Big Ten" }, { name: "Ohio State", conference: "Big Ten" }, { name: "Texas", conference: "Big 12" },
+      { name: "Alabama", conference: "SEC" }, { name: "Tennessee", conference: "SEC" }, { name: "Florida", conference: "SEC" },
+      { name: "Auburn", conference: "SEC" }, { name: "Arkansas", conference: "SEC" }, { name: "Creighton", conference: "Big East" },
+      { name: "Xavier", conference: "Big East" }, { name: "San Diego State", conference: "Mountain West" }, { name: "Miami", conference: "ACC" },
+      { name: "Virginia", conference: "ACC" }, { name: "Wisconsin", conference: "Big Ten" }, { name: "Purdue", conference: "Big Ten" },
+      { name: "Marquette", conference: "Big East" }, { name: "Iowa State", conference: "Big 12" }, { name: "Texas Tech", conference: "Big 12" }
     ];
 
-    // ---------- EVENT TEMPLATES ----------
+    // ---------- EVENT TEMPLATES (4 choices each) ----------
     const eventTemplates = [
       {
         text: "You're wide open at the top of the key.",
         choices: [
-          { text: "Shoot the three", effects: { playerStats: { points: 3, threeAttempts: 1 }, teamScoreDelta: 3, opponentScoreDelta: 0, relationships: { coach: 2, teammates: -1 } }, resultMsg: "You drain the three! Coach loves your confidence." },
-          { text: "Pass to the open teammate", effects: { playerStats: { assists: 1 }, teamScoreDelta: 2, opponentScoreDelta: 0, relationships: { coach: -1, teammates: 3 } }, resultMsg: "You pass up the shot; teammate scores. Coach wanted you to shoot." }
+          { text: "Shoot the three", effects: { playerStats: { points: 3 }, teamScoreDelta: 3, relationships: { coach: 2, teammates: -1 } }, resultMsg: "You drain the three! Coach loves your confidence." },
+          { text: "Drive to the basket", effects: { playerStats: { points: 2 }, teamScoreDelta: 2, relationships: { coach: 1, teammates: 0 }, foulRisk: 0.2 }, resultMsg: "You finish strong at the rim." },
+          { text: "Pass to the open teammate", effects: { playerStats: { assists: 1 }, teamScoreDelta: 2, relationships: { coach: -1, teammates: 3 } }, resultMsg: "You pass up the shot; teammate scores. Coach wanted you to shoot." },
+          { text: "Pump fake and draw foul", effects: { playerStats: { }, teamScoreDelta: 0, relationships: { coach: 0, teammates: 0 }, foulRisk: 0.5, technicalRisk: 0 }, resultMsg: "You draw a foul, but no points. Coach is neutral." }
         ]
       },
       {
         text: "You're guarding the opponent's best scorer in the post.",
         choices: [
           { text: "Play aggressive defense", effects: { playerStats: { steals: 1, fouls: 1 }, teamScoreDelta: 0, opponentScoreDelta: -2, relationships: { coach: 1, teammates: 0 } }, resultMsg: "You force a turnover but pick up a foul. Coach likes the intensity." },
-          { text: "Play conservative", effects: { playerStats: { }, teamScoreDelta: 0, opponentScoreDelta: 2, relationships: { coach: -1, teammates: 0 } }, resultMsg: "You stay out of foul trouble but allow an easy basket." }
+          { text: "Play conservative", effects: { playerStats: { }, teamScoreDelta: 0, opponentScoreDelta: 2, relationships: { coach: -1, teammates: 0 } }, resultMsg: "You stay out of foul trouble but allow an easy basket." },
+          { text: "Double-team him", effects: { playerStats: { }, teamScoreDelta: 0, opponentScoreDelta: -1, relationships: { coach: 1, teammates: 1 }, foulRisk: 0.3 }, resultMsg: "The double-team forces a tough shot, but you risk a foul." },
+          { text: "Trash-talk him", effects: { playerStats: { }, teamScoreDelta: 0, opponentScoreDelta: 0, relationships: { coach: -1, teammates: 0 }, technicalRisk: 0.2 }, resultMsg: "You get in his head, but also draw a technical foul warning." }
         ]
       },
       {
         text: "Your team is on a fast break, you have the ball.",
         choices: [
-          { text: "Drive for the layup", effects: { playerStats: { points: 2 }, teamScoreDelta: 2, opponentScoreDelta: 0, relationships: { coach: 1, teammates: 0 } }, resultMsg: "You finish strong at the rim!" },
-          { text: "Pull up for a mid-range jumper", effects: { playerStats: { points: 2 }, teamScoreDelta: 2, opponentScoreDelta: 0, relationships: { coach: 0, teammates: 1 } }, resultMsg: "You knock down the jumper." },
-          { text: "Pass to the trailing big man", effects: { playerStats: { assists: 1 }, teamScoreDelta: 2, opponentScoreDelta: 0, relationships: { coach: 0, teammates: 2 } }, resultMsg: "Great unselfish play, the big man slams it home." }
+          { text: "Drive for the layup", effects: { playerStats: { points: 2 }, teamScoreDelta: 2, relationships: { coach: 1, teammates: 0 } }, resultMsg: "You finish strong at the rim!" },
+          { text: "Pull up for a mid-range jumper", effects: { playerStats: { points: 2 }, teamScoreDelta: 2, relationships: { coach: 0, teammates: 1 } }, resultMsg: "You knock down the jumper." },
+          { text: "Pass to the trailing big man", effects: { playerStats: { assists: 1 }, teamScoreDelta: 2, relationships: { coach: 0, teammates: 2 } }, resultMsg: "Great unselfish play, the big man slams it home." },
+          { text: "Try a flashy dunk", effects: { playerStats: { points: 2 }, teamScoreDelta: 2, relationships: { coach: 0, teammates: 1 }, injuryRisk: 0.1 }, resultMsg: "You throw down a monster dunk! The crowd erupts." }
         ]
       },
       {
         text: "You're double-teamed near the baseline.",
         choices: [
-          { text: "Force a shot", effects: { playerStats: { points: 0, turnovers: 1 }, teamScoreDelta: 0, opponentScoreDelta: 0, relationships: { coach: -2, teammates: -1 } }, resultMsg: "You force it and turn it over. Bad decision." },
-          { text: "Pass out to the open shooter", effects: { playerStats: { assists: 1 }, teamScoreDelta: 3, opponentScoreDelta: 0, relationships: { coach: 1, teammates: 2 } }, resultMsg: "Great vision! The shooter knocks down the three." }
+          { text: "Force a shot", effects: { playerStats: { turnovers: 1 }, teamScoreDelta: 0, relationships: { coach: -2, teammates: -1 } }, resultMsg: "You force it and turn it over. Bad decision." },
+          { text: "Pass out to the open shooter", effects: { playerStats: { assists: 1 }, teamScoreDelta: 3, relationships: { coach: 1, teammates: 2 } }, resultMsg: "Great vision! The shooter knocks down the three." },
+          { text: "Call timeout", effects: { playerStats: { }, teamScoreDelta: 0, relationships: { coach: 1, teammates: 0 } }, resultMsg: "You wisely call timeout to reset the offense." },
+          { text: "Try to split the double team", effects: { playerStats: { points: 2 }, teamScoreDelta: 2, relationships: { coach: 0, teammates: 0 }, turnoverRisk: 0.3 }, resultMsg: "You split the defenders and score!" }
         ]
       },
       {
         text: "Rebound opportunity on the defensive end.",
         choices: [
-          { text: "Box out and grab the board", effects: { playerStats: { rebounds: 1 }, teamScoreDelta: 0, opponentScoreDelta: 0, relationships: { coach: 1, teammates: 1 } }, resultMsg: "You secure the rebound." },
-          { text: "Leak out for a fast break", effects: { playerStats: { }, teamScoreDelta: 2, opponentScoreDelta: 0, relationships: { coach: -1, teammates: 0 } }, resultMsg: "Your team gets the board and you get an easy basket, but coach wanted you to rebound." }
+          { text: "Box out and grab the board", effects: { playerStats: { rebounds: 1 }, teamScoreDelta: 0, relationships: { coach: 1, teammates: 1 } }, resultMsg: "You secure the rebound." },
+          { text: "Leak out for a fast break", effects: { playerStats: { }, teamScoreDelta: 2, relationships: { coach: -1, teammates: 0 } }, resultMsg: "Your team gets the board and you get an easy basket, but coach wanted you to rebound." },
+          { text: "Tap it to a teammate", effects: { playerStats: { assists: 1, rebounds: 1 }, teamScoreDelta: 0, relationships: { coach: 1, teammates: 2 } }, resultMsg: "You tip it to a teammate for the board, then assist." },
+          { text: "Go for the steal instead", effects: { playerStats: { steals: 1, fouls: 1 }, teamScoreDelta: 0, opponentScoreDelta: -1, relationships: { coach: 0, teammates: 0 } }, resultMsg: "You gamble for a steal and get it, but pick up a foul." }
         ]
       },
       {
         text: "You have the ball at the top of the key with 10 seconds left in the half.",
         choices: [
-          { text: "Take the last shot", effects: { playerStats: { points: 2 }, teamScoreDelta: 2, opponentScoreDelta: 0, relationships: { coach: 1, teammates: 0 } }, resultMsg: "You hit the buzzer-beater!" },
-          { text: "Pass to the open shooter", effects: { playerStats: { assists: 1 }, teamScoreDelta: 2, opponentScoreDelta: 0, relationships: { coach: 0, teammates: 2 } }, resultMsg: "The shooter makes it; teammate chemistry up." }
+          { text: "Take the last shot", effects: { playerStats: { points: 2 }, teamScoreDelta: 2, relationships: { coach: 1, teammates: 0 } }, resultMsg: "You hit the buzzer-beater!" },
+          { text: "Pass to the open shooter", effects: { playerStats: { assists: 1 }, teamScoreDelta: 2, relationships: { coach: 0, teammates: 2 } }, resultMsg: "The shooter makes it; teammate chemistry up." },
+          { text: "Drive and dish", effects: { playerStats: { assists: 1, points: 0 }, teamScoreDelta: 2, relationships: { coach: 1, teammates: 2 } }, resultMsg: "You drive and dish for an easy layup." },
+          { text: "Hold for last shot but miss", effects: { playerStats: { }, teamScoreDelta: 0, relationships: { coach: -1, teammates: -1 } }, resultMsg: "You hold too long and miss. Bad possession." }
         ]
       },
       {
         text: "You're at the free throw line for two shots.",
         choices: [
-          { text: "Focus and make both", effects: { playerStats: { points: 2 }, teamScoreDelta: 2, opponentScoreDelta: 0, relationships: { coach: 1, teammates: 0 } }, resultMsg: "You calmly sink both free throws." },
-          { text: "Take a quick first shot", effects: { playerStats: { points: 1 }, teamScoreDelta: 1, opponentScoreDelta: 0, relationships: { coach: -1, teammates: 0 } }, resultMsg: "You make one of two. Coach wanted a better routine." }
+          { text: "Focus and make both", effects: { playerStats: { points: 2 }, teamScoreDelta: 2, relationships: { coach: 1, teammates: 0 } }, resultMsg: "You calmly sink both free throws." },
+          { text: "Take a quick first shot", effects: { playerStats: { points: 1 }, teamScoreDelta: 1, relationships: { coach: -1, teammates: 0 } }, resultMsg: "You make one of two. Coach wanted a better routine." },
+          { text: "Try to draw a lane violation", effects: { playerStats: { }, teamScoreDelta: 0, relationships: { coach: 0, teammates: 0 } }, resultMsg: "You miss both, but the refs miss a violation." },
+          { text: "Use the opportunity to rest", effects: { playerStats: { }, teamScoreDelta: 0, relationships: { coach: 0, teammates: 0 }, staminaBoost: 5 }, resultMsg: "You take a deep breath. No points but you feel refreshed." }
         ]
       },
       {
         text: "Your matchup is playing physical and trash-talking.",
         choices: [
-          { text: "Respond with a big play", effects: { playerStats: { points: 2 }, teamScoreDelta: 2, opponentScoreDelta: 0, relationships: { coach: 1, teammates: 1 } }, resultMsg: "You silence him with a bucket." },
+          { text: "Respond with a big play", effects: { playerStats: { points: 2 }, teamScoreDelta: 2, relationships: { coach: 1, teammates: 1 } }, resultMsg: "You silence him with a bucket." },
           { text: "Stay calm and defend harder", effects: { playerStats: { steals: 1 }, teamScoreDelta: 0, opponentScoreDelta: -2, relationships: { coach: 1, teammates: 0 } }, resultMsg: "Your defense forces a turnover." },
-          { text: "Trash-talk back", effects: { playerStats: { }, teamScoreDelta: 0, opponentScoreDelta: 0, relationships: { coach: -1, teammates: 0 } }, resultMsg: "You get caught up and lose focus. Coach is not happy." }
+          { text: "Trash-talk back", effects: { playerStats: { }, teamScoreDelta: 0, opponentScoreDelta: 0, relationships: { coach: -1, teammates: 0 }, technicalRisk: 0.2 }, resultMsg: "You get caught up and lose focus. Coach is not happy." },
+          { text: "Complain to the referee", effects: { playerStats: { }, teamScoreDelta: 0, opponentScoreDelta: 0, relationships: { coach: -1, teammates: 0 }, technicalRisk: 0.5 }, resultMsg: "You complain and get a technical foul warning." }
         ]
       },
       {
         text: "Your team is down by 1 with 20 seconds left.",
         choices: [
-          { text: "Take the game-winning shot", effects: { playerStats: { points: 2 }, teamScoreDelta: 2, opponentScoreDelta: 0, relationships: { coach: 2, teammates: 2 } }, resultMsg: "You hit the game winner! Hero!" },
-          { text: "Pass to the open teammate", effects: { playerStats: { assists: 1 }, teamScoreDelta: 2, opponentScoreDelta: 0, relationships: { coach: 0, teammates: 3 } }, resultMsg: "Your teammate hits the winner. Great team play." }
+          { text: "Take the game-winning shot", effects: { playerStats: { points: 2 }, teamScoreDelta: 2, relationships: { coach: 2, teammates: 2 } }, resultMsg: "You hit the game winner! Hero!" },
+          { text: "Pass to the open teammate", effects: { playerStats: { assists: 1 }, teamScoreDelta: 2, relationships: { coach: 0, teammates: 3 } }, resultMsg: "Your teammate hits the winner. Great team play." },
+          { text: "Drive and draw a foul", effects: { playerStats: { points: 0 }, teamScoreDelta: 0, relationships: { coach: 1, teammates: 0 }, foulRisk: 0.6 }, resultMsg: "You draw a foul but the refs swallow the whistle." },
+          { text: "Call a timeout to set up a play", effects: { playerStats: { }, teamScoreDelta: 2, relationships: { coach: 2, teammates: 1 } }, resultMsg: "The timeout leads to a wide-open layup." }
         ]
       },
       {
         text: "You're assigned to guard the opponent's best three-point shooter.",
         choices: [
           { text: "Tight defense", effects: { playerStats: { }, teamScoreDelta: 0, opponentScoreDelta: -3, relationships: { coach: 1, teammates: 0 } }, resultMsg: "You lock him down. Great defense!" },
-          { text: "Sag off and help on drives", effects: { playerStats: { }, teamScoreDelta: 0, opponentScoreDelta: 0, relationships: { coach: -1, teammates: 0 } }, resultMsg: "He gets a couple open looks." }
+          { text: "Sag off and help on drives", effects: { playerStats: { }, teamScoreDelta: 0, opponentScoreDelta: 0, relationships: { coach: -1, teammates: 0 } }, resultMsg: "He gets a couple open looks." },
+          { text: "Deny him the ball", effects: { playerStats: { steals: 1 }, teamScoreDelta: 0, opponentScoreDelta: -1, relationships: { coach: 1, teammates: 0 } }, resultMsg: "You deny him and get a steal." },
+          { text: "Bump him off his spot", effects: { playerStats: { fouls: 1 }, teamScoreDelta: 0, opponentScoreDelta: -1, relationships: { coach: 0, teammates: 0 } }, resultMsg: "You bump him, he misses, but you get called for a foul." }
         ]
       }
     ];
@@ -866,8 +422,8 @@
       teamRoster: [],
       leagueTeams: [],
       otherRosters: {},
-      difficulty: 'Realism', // Default difficulty; will implement selection later
-      teamRecord: { wins: 0, losses: 0 }, // Simple record
+      difficulty: 'Realism',
+      teamRecord: { wins: 0, losses: 0 },
       currentGame: null
     };
 
@@ -898,7 +454,6 @@
     const teamSelectionSubtitle = document.getElementById('team-selection-subtitle');
     const playerSummaryDiv = document.getElementById('player-summary');
 
-    // Career Hub buttons
     const playBtn = document.getElementById('play-btn');
     const teamBtn = document.getElementById('team-btn');
     const rostersBtn = document.getElementById('rosters-btn');
@@ -913,32 +468,34 @@
     const oppTeamName = document.getElementById('opp-team-name');
     const userScoreEl = document.getElementById('user-score');
     const oppScoreEl = document.getElementById('opp-score');
+    const playLog = document.getElementById('play-log');
     const gameEventText = document.getElementById('game-event-text');
     const gameChoices = document.getElementById('game-choices');
     const gameResultMessage = document.getElementById('game-result-message');
-    const continueGameBtn = document.getElementById('continue-game');
+    const nextPlayBtn = document.getElementById('next-play-btn');
     const gameFinalArea = document.getElementById('game-final-area');
     const finalPlayerStats = document.getElementById('final-player-stats');
     const finalRelationships = document.getElementById('final-relationships');
     const finishGameBtn = document.getElementById('finish-game');
+    // Foul panel
+    const foulPoints = document.getElementById('foul-points');
+    const personalFouls = document.getElementById('personal-fouls');
+    const techFouls = document.getElementById('tech-fouls');
+    const playerStatus = document.getElementById('player-status');
+    const teamFoulsEl = document.getElementById('team-fouls');
+    const oppTeamFoulsEl = document.getElementById('opp-team-fouls');
 
-    // Team screen tabs
+    // Team screen
     const teamTabs = document.querySelectorAll('.team-tab');
     const teamTabContents = document.querySelectorAll('.team-tab-content');
     const teamRosterContainer = document.getElementById('team-roster-container');
-
-    // Rosters screen
     const teamSelect = document.getElementById('team-select');
     const otherRosterContainer = document.getElementById('other-roster-container');
-
-    // Retirement screen
     const retirementSummary = document.getElementById('retirement-summary');
 
     // ---------- SCREEN NAVIGATION ----------
     function showScreen(screenId) {
-      document.querySelectorAll('.screen').forEach(screen => {
-        screen.classList.remove('active');
-      });
+      document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
       document.getElementById(screenId).classList.add('active');
     }
 
@@ -955,32 +512,20 @@
     });
 
     // ---------- START PATH SELECTION ----------
-    startHighschoolBtn.addEventListener('click', function() {
-      state.currentPath = 'highschool';
-      showScreen('character-creation');
-    });
-
-    startCollegeBtn.addEventListener('click', function() {
-      state.currentPath = 'college';
-      showScreen('character-creation');
-    });
+    startHighschoolBtn.addEventListener('click', () => { state.currentPath = 'highschool'; showScreen('character-creation'); });
+    startCollegeBtn.addEventListener('click', () => { state.currentPath = 'college'; showScreen('character-creation'); });
 
     // ---------- BUILD SELECTION ----------
     const selectedBuilds = new Set();
-
     buildOptionsContainer.addEventListener('click', function(e) {
       const buildOption = e.target.closest('.build-option');
       if (!buildOption) return;
       const buildName = buildOption.dataset.build;
-      
       if (selectedBuilds.has(buildName)) {
         selectedBuilds.delete(buildName);
         buildOption.classList.remove('selected');
       } else {
-        if (selectedBuilds.size >= 2) {
-          buildError.textContent = 'You can select up to 2 builds.';
-          return;
-        }
+        if (selectedBuilds.size >= 2) { buildError.textContent = 'You can select up to 2 builds.'; return; }
         selectedBuilds.add(buildName);
         buildOption.classList.add('selected');
         buildError.textContent = '';
@@ -989,29 +534,22 @@
 
     // ---------- RANDOMIZE PLAYER ----------
     function randomizePlayer() {
-      const firstNames = ['Jay', 'Mike', 'Chris', 'Tyler', 'Darius', 'Kobe', 'LeBron', 'Zion', 'Cam', 'Jalen'];
-      const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Davis', 'Miller', 'Wilson', 'Moore', 'Taylor'];
-      document.getElementById('first-name').value = firstNames[Math.floor(Math.random() * firstNames.length)];
-      document.getElementById('last-name').value = lastNames[Math.floor(Math.random() * lastNames.length)];
-      
+      const firstNames = ['Jay','Mike','Chris','Tyler','Darius','Kobe','LeBron','Zion','Cam','Jalen'];
+      const lastNames = ['Smith','Johnson','Williams','Brown','Jones','Davis','Miller','Wilson','Moore','Taylor'];
+      document.getElementById('first-name').value = firstNames[Math.floor(Math.random()*firstNames.length)];
+      document.getElementById('last-name').value = lastNames[Math.floor(Math.random()*lastNames.length)];
       const feet = [5,6,7][Math.floor(Math.random()*3)];
       const inches = Math.floor(Math.random()*12);
       document.getElementById('height-feet').value = feet;
       document.getElementById('height-inches').value = inches;
-      
       const totalInches = feet*12 + inches;
-      const baseWeight = Math.max(140, Math.min(300, Math.round(totalInches * 2.3 + 20)));
-      document.getElementById('weight').value = baseWeight;
-      
-      document.getElementById('wingspan').value = Math.floor(Math.random()*31) + 60;
-      
+      document.getElementById('weight').value = Math.max(140, Math.min(300, Math.round(totalInches*2.3+20)));
+      document.getElementById('wingspan').value = Math.floor(Math.random()*31)+60;
       const positions = ['PG','SG','SF','PF','C','PG/SG','SG/SF','PF/C'];
       document.getElementById('position').value = positions[Math.floor(Math.random()*positions.length)];
-      
       selectedBuilds.clear();
       document.querySelectorAll('.build-option').forEach(opt => opt.classList.remove('selected'));
       buildError.textContent = '';
-      
       const buildNames = ['Slasher','Sharpshooter','Playmaker','Defender','Rebounder','Athletic','Post Scorer','Shot Creator'];
       const numBuilds = Math.random() < 0.5 ? 1 : 2;
       const randomBuilds = [];
@@ -1019,108 +557,72 @@
         const b = buildNames[Math.floor(Math.random()*buildNames.length)];
         if (!randomBuilds.includes(b)) randomBuilds.push(b);
       }
-      randomBuilds.forEach(b => {
-        selectedBuilds.add(b);
-        document.querySelector(`.build-option[data-build="${b}"]`).classList.add('selected');
-      });
+      randomBuilds.forEach(b => { selectedBuilds.add(b); document.querySelector(`.build-option[data-build="${b}"]`).classList.add('selected'); });
     }
-
     randomizePlayerBtn.addEventListener('click', randomizePlayer);
 
     // ---------- PLAYER ATTRIBUTE GENERATION ----------
     function generatePlayer(data) {
-      const potential = Math.floor(Math.random() * 99) + 1;
+      const potential = Math.floor(Math.random()*99)+1;
       let overall;
-      if (potential <= 20) overall = 58 + Math.floor(Math.random() * 6);
-      else if (potential <= 40) overall = 62 + Math.floor(Math.random() * 7);
-      else if (potential <= 60) overall = 66 + Math.floor(Math.random() * 7);
-      else if (potential <= 80) overall = 70 + Math.floor(Math.random() * 7);
-      else overall = 74 + Math.floor(Math.random() * 7);
+      if (potential <= 20) overall = 58 + Math.floor(Math.random()*6);
+      else if (potential <= 40) overall = 62 + Math.floor(Math.random()*7);
+      else if (potential <= 60) overall = 66 + Math.floor(Math.random()*7);
+      else if (potential <= 80) overall = 70 + Math.floor(Math.random()*7);
+      else overall = 74 + Math.floor(Math.random()*7);
 
       const templates = {
-        'PG':  { inside: 55, mid: 70, three: 75, play: 80, rebound: 40, per_def: 70, int_def: 40, ath: 70, iq: 75 },
-        'SG':  { inside: 60, mid: 75, three: 80, play: 70, rebound: 40, per_def: 70, int_def: 40, ath: 75, iq: 70 },
-        'SF':  { inside: 65, mid: 70, three: 70, play: 60, rebound: 55, per_def: 65, int_def: 50, ath: 70, iq: 65 },
-        'PF':  { inside: 70, mid: 60, three: 55, play: 50, rebound: 75, per_def: 50, int_def: 65, ath: 65, iq: 60 },
-        'C':   { inside: 75, mid: 50, three: 40, play: 45, rebound: 80, per_def: 40, int_def: 75, ath: 60, iq: 60 },
-        'PG/SG':{ inside: 57, mid: 72, three: 77, play: 75, rebound: 40, per_def: 70, int_def: 40, ath: 72, iq: 72 },
-        'SG/SF':{ inside: 62, mid: 72, three: 75, play: 65, rebound: 47, per_def: 67, int_def: 45, ath: 72, iq: 67 },
-        'PF/C': { inside: 72, mid: 55, three: 47, play: 47, rebound: 77, per_def: 45, int_def: 70, ath: 62, iq: 60 }
+        'PG':  { inside:55, mid:70, three:75, play:80, rebound:40, per_def:70, int_def:40, ath:70, iq:75 },
+        'SG':  { inside:60, mid:75, three:80, play:70, rebound:40, per_def:70, int_def:40, ath:75, iq:70 },
+        'SF':  { inside:65, mid:70, three:70, play:60, rebound:55, per_def:65, int_def:50, ath:70, iq:65 },
+        'PF':  { inside:70, mid:60, three:55, play:50, rebound:75, per_def:50, int_def:65, ath:65, iq:60 },
+        'C':   { inside:75, mid:50, three:40, play:45, rebound:80, per_def:40, int_def:75, ath:60, iq:60 },
+        'PG/SG':{ inside:57, mid:72, three:77, play:75, rebound:40, per_def:70, int_def:40, ath:72, iq:72 },
+        'SG/SF':{ inside:62, mid:72, three:75, play:65, rebound:47, per_def:67, int_def:45, ath:72, iq:67 },
+        'PF/C': { inside:72, mid:55, three:47, play:47, rebound:77, per_def:45, int_def:70, ath:62, iq:60 }
       };
-
       let baseSkills = {};
       const pos = data.position;
       if (pos.includes('/')) {
-        const [pos1, pos2] = pos.split('/');
-        const t1 = templates[pos1];
-        const t2 = templates[pos2];
-        for (const key in t1) {
-          baseSkills[key] = Math.round((t1[key] + t2[key]) / 2);
-        }
+        const [pos1,pos2] = pos.split('/');
+        const t1 = templates[pos1], t2 = templates[pos2];
+        for (const key in t1) baseSkills[key] = Math.round((t1[key]+t2[key])/2);
       } else {
         baseSkills = { ...templates[pos] };
       }
-
       const buildModifiers = {
-        'Slasher':       { inside: 8, mid: -2, three: -4, play: 0, rebound: 0, per_def: 0, int_def: 0, ath: 6, iq: -2 },
-        'Sharpshooter':  { inside: -4, mid: 8, three: 10, play: -2, rebound: -2, per_def: 0, int_def: -2, ath: 0, iq: 2 },
-        'Playmaker':     { inside: -2, mid: 0, three: 0, play: 10, rebound: -2, per_def: 0, int_def: -2, ath: 2, iq: 6 },
-        'Defender':      { inside: -2, mid: -2, three: -4, play: -2, rebound: 2, per_def: 8, int_def: 8, ath: 4, iq: 4 },
-        'Rebounder':     { inside: 2, mid: -4, three: -6, play: -2, rebound: 12, per_def: 0, int_def: 4, ath: 2, iq: -2 },
-        'Athletic':      { inside: 2, mid: -2, three: -2, play: 0, rebound: 2, per_def: 2, int_def: 0, ath: 12, iq: -2 },
-        'Post Scorer':   { inside: 10, mid: 4, three: -6, play: -2, rebound: 2, per_def: -2, int_def: 2, ath: 0, iq: 0 },
-        'Shot Creator':  { inside: 0, mid: 8, three: 2, play: 4, rebound: -4, per_def: 0, int_def: -2, ath: 2, iq: 2 }
+        'Slasher':       { inside:8, mid:-2, three:-4, play:0, rebound:0, per_def:0, int_def:0, ath:6, iq:-2 },
+        'Sharpshooter':  { inside:-4, mid:8, three:10, play:-2, rebound:-2, per_def:0, int_def:-2, ath:0, iq:2 },
+        'Playmaker':     { inside:-2, mid:0, three:0, play:10, rebound:-2, per_def:0, int_def:-2, ath:2, iq:6 },
+        'Defender':      { inside:-2, mid:-2, three:-4, play:-2, rebound:2, per_def:8, int_def:8, ath:4, iq:4 },
+        'Rebounder':     { inside:2, mid:-4, three:-6, play:-2, rebound:12, per_def:0, int_def:4, ath:2, iq:-2 },
+        'Athletic':      { inside:2, mid:-2, three:-2, play:0, rebound:2, per_def:2, int_def:0, ath:12, iq:-2 },
+        'Post Scorer':   { inside:10, mid:4, three:-6, play:-2, rebound:2, per_def:-2, int_def:2, ath:0, iq:0 },
+        'Shot Creator':  { inside:0, mid:8, three:2, play:4, rebound:-4, per_def:0, int_def:-2, ath:2, iq:2 }
       };
-
       for (const build of data.builds) {
         const mod = buildModifiers[build];
-        if (mod) {
-          for (const key in mod) {
-            baseSkills[key] += mod[key];
-          }
-        }
+        if (mod) for (const key in mod) baseSkills[key] += mod[key];
       }
-
-      const totalInches = data.heightFeet * 12 + data.heightInches;
-      if (totalInches >= 78) {
-        baseSkills.rebound += 5;
-        baseSkills.int_def += 5;
-        baseSkills.ath -= 3;
-        baseSkills.per_def -= 2;
-      } else if (totalInches <= 73) {
-        baseSkills.per_def += 3;
-        baseSkills.ath += 3;
-        baseSkills.rebound -= 3;
-        baseSkills.int_def -= 3;
-      }
-      if (data.wingspan > totalInches + 4) {
-        baseSkills.rebound += 3;
-        baseSkills.int_def += 3;
-        baseSkills.per_def += 2;
-      } else if (data.wingspan < totalInches - 2) {
-        baseSkills.ath += 2;
-        baseSkills.per_def += 1;
-      }
-
-      for (const key in baseSkills) {
-        baseSkills[key] = Math.max(40, Math.min(99, baseSkills[key]));
-      }
-
+      const totalInches = data.heightFeet*12 + data.heightInches;
+      if (totalInches >= 78) { baseSkills.rebound += 5; baseSkills.int_def += 5; baseSkills.ath -= 3; baseSkills.per_def -= 2; }
+      else if (totalInches <= 73) { baseSkills.per_def += 3; baseSkills.ath += 3; baseSkills.rebound -= 3; baseSkills.int_def -= 3; }
+      if (data.wingspan > totalInches+4) { baseSkills.rebound += 3; baseSkills.int_def += 3; baseSkills.per_def += 2; }
+      else if (data.wingspan < totalInches-2) { baseSkills.ath += 2; baseSkills.per_def += 1; }
+      for (const key in baseSkills) baseSkills[key] = Math.max(40, Math.min(99, baseSkills[key]));
       const targetOverall = overall;
       const baseOverall = 70;
-      const scaleFactor = (targetOverall - 40) / (baseOverall - 40);
+      const scaleFactor = (targetOverall-40)/(baseOverall-40);
       const finalSkills = {};
       for (const key in baseSkills) {
-        let val = 40 + (baseSkills[key] - 40) * scaleFactor;
-        val += Math.floor(Math.random() * 5) - 2;
+        let val = 40 + (baseSkills[key]-40)*scaleFactor;
+        val += Math.floor(Math.random()*5)-2;
         val = Math.max(40, Math.min(99, Math.round(val)));
         finalSkills[key] = val;
       }
-
       const skillValues = Object.values(finalSkills);
-      const avg = skillValues.reduce((a,b) => a+b, 0) / skillValues.length;
+      const avg = skillValues.reduce((a,b)=>a+b,0)/skillValues.length;
       const finalOverall = Math.round(avg);
-
       return {
         firstName: data.firstName,
         lastName: data.lastName,
@@ -1133,22 +635,9 @@
         potential: potential,
         overall: finalOverall,
         skills: finalSkills,
-        seasonStats: {
-          gamesPlayed: 0,
-          points: 0,
-          assists: 0,
-          rebounds: 0,
-          steals: 0,
-          blocks: 0,
-          turnovers: 0,
-          minutes: 0
-        },
+        seasonStats: { gamesPlayed:0, points:0, assists:0, rebounds:0, steals:0, blocks:0, turnovers:0, minutes:0 },
         careerStats: {},
-        relationships: {
-          coach: 50,
-          teammates: 50,
-          gm: 50
-        },
+        relationships: { coach:50, teammates:50, gm:50 },
         currentTeam: null,
         season: 1,
         age: state.currentPath === 'highschool' ? 14 : 18,
@@ -1165,38 +654,13 @@
       const wingspan = parseInt(document.getElementById('wingspan').value);
       const position = document.getElementById('position').value;
 
-      if (!firstName || !lastName) {
-        alert('Please enter both first and last name.');
-        return;
-      }
-      if (isNaN(weight) || weight < 140 || weight > 300) {
-        alert('Weight must be between 140 and 300 lbs.');
-        return;
-      }
-      if (isNaN(wingspan) || wingspan < 60 || wingspan > 90) {
-        alert('Wingspan must be between 60 and 90 inches.');
-        return;
-      }
-      if (selectedBuilds.size === 0) {
-        buildError.textContent = 'Please select at least one build.';
-        return;
-      }
+      if (!firstName || !lastName) { alert('Please enter both first and last name.'); return; }
+      if (isNaN(weight) || weight < 140 || weight > 300) { alert('Weight must be between 140 and 300 lbs.'); return; }
+      if (isNaN(wingspan) || wingspan < 60 || wingspan > 90) { alert('Wingspan must be between 60 and 90 inches.'); return; }
+      if (selectedBuilds.size === 0) { buildError.textContent = 'Please select at least one build.'; return; }
 
-      const playerData = {
-        firstName,
-        lastName,
-        heightFeet,
-        heightInches,
-        weight,
-        wingspan,
-        position,
-        builds: [...selectedBuilds]
-      };
-
+      const playerData = { firstName, lastName, heightFeet, heightInches, weight, wingspan, position, builds: [...selectedBuilds] };
       state.player = generatePlayer(playerData);
-      console.log('Player created:', state.player);
-
-      // Prepare team selection screen
       prepareTeamSelection();
       showScreen('team-selection');
     });
@@ -1208,21 +672,13 @@
       aauOnlyCheckbox.checked = false;
       updateTeamGrid();
     }
-
     function updateTeamGrid() {
       const isHighSchool = state.currentPath === 'highschool';
       const showAAU = isHighSchool && aauOnlyCheckbox.checked;
       let teams = [];
-      if (isHighSchool) {
-        teams = showAAU ? aauTeams : highSchoolTeams;
-        teamSelectionSubtitle.textContent = showAAU ? 'AAU Teams' : 'High School Teams';
-      } else {
-        teams = collegeTeams;
-        teamSelectionSubtitle.textContent = 'College Teams';
-      }
-
-      state.leagueTeams = teams; // store for later use in rosters
-
+      if (isHighSchool) { teams = showAAU ? aauTeams : highSchoolTeams; teamSelectionSubtitle.textContent = showAAU ? 'AAU Teams' : 'High School Teams'; }
+      else { teams = collegeTeams; teamSelectionSubtitle.textContent = 'College Teams'; }
+      state.leagueTeams = teams;
       teamGrid.innerHTML = '';
       teams.forEach(team => {
         const card = document.createElement('div');
@@ -1233,39 +689,31 @@
         teamGrid.appendChild(card);
       });
     }
-
     aauOnlyCheckbox.addEventListener('change', updateTeamGrid);
 
     function selectTeam(team) {
       state.player.currentTeam = team;
       generateTeamRoster(team);
-      console.log('Team selected:', team);
       showCareerHub();
     }
 
     // ---------- ROSTER GENERATION ----------
-    function generateRandomPlayer(namePrefix) {
-      const firstNames = ['Jay', 'Mike', 'Chris', 'Tyler', 'Darius', 'Kobe', 'LeBron', 'Zion', 'Cam', 'Jalen', 'Devin', 'Malik', 'Isaiah', 'Tre', 'Jordan'];
-      const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Davis', 'Miller', 'Wilson', 'Moore', 'Taylor', 'Anderson', 'Thomas', 'Jackson', 'White', 'Harris'];
-      const positions = ['PG', 'SG', 'SF', 'PF', 'C'];
-      const pos = positions[Math.floor(Math.random() * positions.length)];
-      const overall = Math.floor(Math.random() * 20) + 55; // 55-74 range for teammates/opponents
+    function generateRandomPlayer() {
+      const firstNames = ['Jay','Mike','Chris','Tyler','Darius','Kobe','LeBron','Zion','Cam','Jalen','Devin','Malik','Isaiah','Tre','Jordan'];
+      const lastNames = ['Smith','Johnson','Williams','Brown','Jones','Davis','Miller','Wilson','Moore','Taylor','Anderson','Thomas','Jackson','White','Harris'];
+      const positions = ['PG','SG','SF','PF','C'];
       return {
-        firstName: firstNames[Math.floor(Math.random() * firstNames.length)],
-        lastName: lastNames[Math.floor(Math.random() * lastNames.length)],
-        position: pos,
-        overall: overall,
+        firstName: firstNames[Math.floor(Math.random()*firstNames.length)],
+        lastName: lastNames[Math.floor(Math.random()*lastNames.length)],
+        position: positions[Math.floor(Math.random()*positions.length)],
+        overall: Math.floor(Math.random()*20)+55,
         isUser: false
       };
     }
-
     function generateTeamRoster(team) {
       const roster = [];
-      const userPlayer = { ...state.player, isUser: true };
-      roster.push(userPlayer);
-      for (let i = 0; i < 9; i++) {
-        roster.push(generateRandomPlayer());
-      }
+      roster.push({ ...state.player, isUser: true });
+      for (let i = 0; i < 9; i++) roster.push(generateRandomPlayer());
       state.teamRoster = roster;
     }
 
@@ -1273,10 +721,9 @@
     function showCareerHub() {
       const p = state.player;
       const stats = p.seasonStats;
-      const avgPoints = stats.gamesPlayed ? (stats.points / stats.gamesPlayed).toFixed(1) : '0.0';
-      const avgAssists = stats.gamesPlayed ? (stats.assists / stats.gamesPlayed).toFixed(1) : '0.0';
-      const avgRebounds = stats.gamesPlayed ? (stats.rebounds / stats.gamesPlayed).toFixed(1) : '0.0';
-
+      const avgPoints = stats.gamesPlayed ? (stats.points/stats.gamesPlayed).toFixed(1) : '0.0';
+      const avgAssists = stats.gamesPlayed ? (stats.assists/stats.gamesPlayed).toFixed(1) : '0.0';
+      const avgRebounds = stats.gamesPlayed ? (stats.rebounds/stats.gamesPlayed).toFixed(1) : '0.0';
       playerSummaryDiv.innerHTML = `
         <h3>${p.firstName} ${p.lastName}</h3>
         <p>${p.position} | ${p.heightFeet}'${p.heightInches}" | ${p.weight} lbs | Overall: ${p.overall}</p>
@@ -1287,112 +734,78 @@
           <div class="stat"><span>RPG</span><strong>${avgRebounds}</strong></div>
         </div>
       `;
-
       showScreen('career-hub');
     }
 
-    // ---------- CAREER HUB BUTTON HANDLERS ----------
-    playBtn.addEventListener('click', () => {
-      startNewGame();
-      showScreen('game-screen');
-    });
-
-    teamBtn.addEventListener('click', () => {
-      displayTeamRoster();
-      // Reset to roster tab
-      document.querySelectorAll('.team-tab').forEach(tab => tab.classList.remove('active'));
-      document.querySelector('.team-tab[data-tab="roster"]').classList.add('active');
-      document.querySelectorAll('.team-tab-content').forEach(c => c.classList.remove('active'));
-      document.getElementById('roster-tab').classList.add('active');
-      showScreen('team-screen');
-    });
-
-    rostersBtn.addEventListener('click', () => {
-      populateTeamSelect();
-      if (state.leagueTeams.length > 0) {
-        displayOtherTeamRoster(state.leagueTeams[0]);
-      }
-      showScreen('rosters-screen');
-    });
-
-    retireBtn.addEventListener('click', () => {
-      displayRetirementSummary();
-      showScreen('retirement-screen');
-    });
-
-    // Navigation back to hub
+    // ---------- NAVIGATION HANDLERS ----------
+    playBtn.addEventListener('click', () => { startNewGame(); showScreen('game-screen'); });
+    teamBtn.addEventListener('click', () => { displayTeamRoster(); resetTeamTabs(); showScreen('team-screen'); });
+    rostersBtn.addEventListener('click', () => { populateTeamSelect(); if (state.leagueTeams.length) displayOtherTeamRoster(state.leagueTeams[0]); showScreen('rosters-screen'); });
+    retireBtn.addEventListener('click', () => { displayRetirementSummary(); showScreen('retirement-screen'); });
     backToHubFromGame.addEventListener('click', () => showScreen('career-hub'));
     backToHubFromTeam.addEventListener('click', () => showScreen('career-hub'));
     backToHubFromRosters.addEventListener('click', () => showScreen('career-hub'));
     backToHubFromRetirement.addEventListener('click', () => showScreen('career-hub'));
 
-    // ---------- TEAM SCREEN ----------
+    function resetTeamTabs() {
+      document.querySelectorAll('.team-tab').forEach(t => t.classList.remove('active'));
+      document.querySelector('.team-tab[data-tab="roster"]').classList.add('active');
+      document.querySelectorAll('.team-tab-content').forEach(c => c.classList.remove('active'));
+      document.getElementById('roster-tab').classList.add('active');
+    }
+
     function displayTeamRoster() {
       let html = '<table class="roster-table"><tr><th>Name</th><th>Position</th><th>Overall</th></tr>';
-      state.teamRoster.forEach(player => {
-        html += `<tr><td>${player.firstName} ${player.lastName} ${player.isUser ? '(You)' : ''}</td><td>${player.position}</td><td>${player.overall}</td></tr>`;
+      state.teamRoster.forEach(p => {
+        html += `<tr><td>${p.firstName} ${p.lastName} ${p.isUser ? '(You)' : ''}</td><td>${p.position}</td><td>${p.overall}</td></tr>`;
       });
       html += '</table>';
       teamRosterContainer.innerHTML = html;
     }
 
-    // Team tabs
     teamTabs.forEach(tab => {
       tab.addEventListener('click', function() {
         const tabName = this.dataset.tab;
         teamTabs.forEach(t => t.classList.remove('active'));
         this.classList.add('active');
         teamTabContents.forEach(c => c.classList.remove('active'));
-        document.getElementById(tabName + '-tab').classList.add('active');
-        if (tabName === 'roster') {
-          displayTeamRoster();
-        }
+        document.getElementById(tabName+'-tab').classList.add('active');
+        if (tabName === 'roster') displayTeamRoster();
       });
     });
 
-    // ---------- ROSTERS SCREEN ----------
     function populateTeamSelect() {
       teamSelect.innerHTML = '';
       state.leagueTeams.forEach(team => {
         const option = document.createElement('option');
-        option.value = team.name;
-        option.textContent = team.name;
+        option.value = team.name; option.textContent = team.name;
         teamSelect.appendChild(option);
       });
       teamSelect.onchange = function() {
         const selectedTeam = state.leagueTeams.find(t => t.name === this.value);
-        if (selectedTeam) {
-          displayOtherTeamRoster(selectedTeam);
-        }
+        if (selectedTeam) displayOtherTeamRoster(selectedTeam);
       };
     }
 
     function displayOtherTeamRoster(team) {
       if (!state.otherRosters[team.name]) {
         const roster = [];
-        for (let i = 0; i < 10; i++) {
-          roster.push(generateRandomPlayer());
-        }
+        for (let i = 0; i < 10; i++) roster.push(generateRandomPlayer());
         state.otherRosters[team.name] = roster;
       }
       const roster = state.otherRosters[team.name];
       let html = `<h3>${team.name} Roster</h3>`;
       html += '<table class="roster-table"><tr><th>Name</th><th>Position</th><th>Overall</th></tr>';
-      roster.forEach(player => {
-        html += `<tr><td>${player.firstName} ${player.lastName}</td><td>${player.position}</td><td>${player.overall}</td></tr>`;
-      });
+      roster.forEach(p => { html += `<tr><td>${p.firstName} ${p.lastName}</td><td>${p.position}</td><td>${p.overall}</td></tr>`; });
       html += '</table>';
       otherRosterContainer.innerHTML = html;
     }
 
-    // ---------- RETIREMENT SCREEN ----------
     function displayRetirementSummary() {
-      const p = state.player;
-      const stats = p.seasonStats;
-      const avgPoints = stats.gamesPlayed ? (stats.points / stats.gamesPlayed).toFixed(1) : '0.0';
-      const avgAssists = stats.gamesPlayed ? (stats.assists / stats.gamesPlayed).toFixed(1) : '0.0';
-      const avgRebounds = stats.gamesPlayed ? (stats.rebounds / stats.gamesPlayed).toFixed(1) : '0.0';
-
+      const p = state.player; const stats = p.seasonStats;
+      const avgPoints = stats.gamesPlayed ? (stats.points/stats.gamesPlayed).toFixed(1) : '0.0';
+      const avgAssists = stats.gamesPlayed ? (stats.assists/stats.gamesPlayed).toFixed(1) : '0.0';
+      const avgRebounds = stats.gamesPlayed ? (stats.rebounds/stats.gamesPlayed).toFixed(1) : '0.0';
       retirementSummary.innerHTML = `
         <h3>${p.firstName} ${p.lastName}</h3>
         <p>Position: ${p.position} | Overall: ${p.overall}</p>
@@ -1408,238 +821,371 @@
 
     // ---------- GAME SIMULATION ----------
     function startNewGame() {
-      // Choose opponent: random team from league excluding user's team
+      // Reset game screen elements
+      playLog.innerHTML = '';
+      gameFinalArea.classList.add('hidden');
+      nextPlayBtn.classList.add('hidden');
+      gameChoices.innerHTML = '';
+      gameResultMessage.classList.add('hidden');
+      gameEventText.textContent = '';
+      // Reset foul panel
+      personalFouls.textContent = '0';
+      techFouls.textContent = '0';
+      playerStatus.textContent = 'Active';
+      teamFoulsEl.textContent = '0';
+      oppTeamFoulsEl.textContent = '0';
+
+      // Choose opponent
       const availableTeams = state.leagueTeams.filter(t => t.name !== state.player.currentTeam.name);
-      if (availableTeams.length === 0) {
-        alert('No opponents available.');
-        return;
-      }
-      const opponent = availableTeams[Math.floor(Math.random() * availableTeams.length)];
+      if (!availableTeams.length) { alert('No opponents available.'); return; }
+      const opponent = availableTeams[Math.floor(Math.random()*availableTeams.length)];
 
       // Generate opponent roster if not cached
       if (!state.otherRosters[opponent.name]) {
         const roster = [];
-        for (let i = 0; i < 10; i++) {
-          roster.push(generateRandomPlayer());
-        }
+        for (let i = 0; i < 10; i++) roster.push(generateRandomPlayer());
         state.otherRosters[opponent.name] = roster;
       }
       const oppRoster = state.otherRosters[opponent.name];
 
       // Compute team averages
-      const userAvgOverall = state.teamRoster.reduce((sum, p) => sum + p.overall, 0) / state.teamRoster.length;
-      const oppAvgOverall = oppRoster.reduce((sum, p) => sum + p.overall, 0) / oppRoster.length;
+      const userAvgOverall = state.teamRoster.reduce((sum,p) => sum + p.overall, 0) / state.teamRoster.length;
+      const oppAvgOverall = oppRoster.reduce((sum,p) => sum + p.overall, 0) / oppRoster.length;
 
-      // Generate base scores (without events)
-      // High school/AAU games lower scoring, college higher
-      let scoreRange = [55, 85]; // default
-      if (state.currentPath === 'college') {
-        scoreRange = [60, 95];
-      }
-      const baseUserScore = Math.round(scoreRange[0] + (userAvgOverall - 55) * 0.5 + (Math.random() * 10 - 5));
-      const baseOppScore = Math.round(scoreRange[0] + (oppAvgOverall - 55) * 0.5 + (Math.random() * 10 - 5));
+      // Generate base scores
+      let scoreRange = [55,85];
+      if (state.currentPath === 'college') scoreRange = [60,95];
+      const baseUserScore = Math.round(scoreRange[0] + (userAvgOverall-55)*0.5 + (Math.random()*10-5));
+      const baseOppScore = Math.round(scoreRange[0] + (oppAvgOverall-55)*0.5 + (Math.random()*10-5));
 
-      // Generate player baseline stats
-      const player = state.player;
-      const baselineStats = generateBaselineStats(player);
+      // Generate baseline player stats
+      const baselineStats = generateBaselineStats(state.player);
 
-      // Select random events (5-10)
-      const numEvents = Math.floor(Math.random() * 6) + 5; // 5-10
-      const selectedEvents = [];
+      // Generate plays: mix of normal and interactive
+      const totalPlays = Math.floor(Math.random()*20)+40; // 40-60 plays
+      const interactivePlays = [];
+      const numInteractive = Math.floor(Math.random()*6)+5; // 5-10 key moments
       const eventPool = [...eventTemplates];
-      for (let i = 0; i < numEvents; i++) {
-        if (eventPool.length === 0) break;
-        const idx = Math.floor(Math.random() * eventPool.length);
-        selectedEvents.push(eventPool.splice(idx, 1)[0]);
+      for (let i = 0; i < numInteractive && eventPool.length; i++) {
+        const idx = Math.floor(Math.random()*eventPool.length);
+        interactivePlays.push({ type: 'interactive', event: eventPool.splice(idx,1)[0] });
       }
 
-      // Initialize game state object
+      // Build play list with random positions for interactive events
+      const plays = [];
+      let interactiveIndex = 0;
+      for (let i = 0; i < totalPlays; i++) {
+        if (interactiveIndex < interactivePlays.length && Math.random() < 0.15) {
+          plays.push(interactivePlays[interactiveIndex]);
+          interactiveIndex++;
+        } else {
+          plays.push(generateNormalPlay());
+        }
+      }
+      // Ensure any remaining interactive plays are inserted at the end
+      while (interactiveIndex < interactivePlays.length) {
+        plays.push(interactivePlays[interactiveIndex]);
+        interactiveIndex++;
+      }
+
       state.currentGame = {
         opponent: opponent,
         userTeamName: state.player.currentTeam.name,
         oppTeamName: opponent.name,
-        baseUserScore: baseUserScore,
-        baseOppScore: baseOppScore,
         currentUserScore: baseUserScore,
         currentOppScore: baseOppScore,
-        events: selectedEvents,
-        currentEventIndex: 0,
+        plays: plays,
+        currentPlayIndex: 0,
         playerGameStats: baselineStats,
-        relationshipsDelta: { coach: 0, teammates: 0, gm: 0 },
-        isGameOver: false,
-        log: []
+        relationshipsDelta: { coach:0, teammates:0, gm:0 },
+        personalFouls: 0,
+        techFouls: 0,
+        teamFouls: 0,
+        oppTeamFouls: 0,
+        playerEjected: false,
+        playerFouledOut: false,
+        isGameOver: false
       };
 
-      // Render initial scoreboard
       updateScoreboard();
-      renderCurrentEvent();
+      updateFoulPanel();
+      processNextPlay();
+    }
+
+    function generateNormalPlay() {
+      const player = state.player;
+      const isUserAction = Math.random() < 0.5; // 50% chance user action
+      let text, effects = {};
+
+      if (isUserAction) {
+        // User does something
+        const actions = [
+          { text: `${player.firstName} makes a layup`, stats: { points: 2 }, scoreDelta: 2 },
+          { text: `${player.firstName} hits a mid-range jumper`, stats: { points: 2 }, scoreDelta: 2 },
+          { text: `${player.firstName} drills a three-pointer`, stats: { points: 3 }, scoreDelta: 3 },
+          { text: `${player.firstName} grabs a defensive rebound`, stats: { rebounds: 1 }, scoreDelta: 0 },
+          { text: `${player.firstName} dishes an assist`, stats: { assists: 1 }, scoreDelta: 2 },
+          { text: `${player.firstName} gets a steal`, stats: { steals: 1 }, scoreDelta: 0, opponentScoreDelta: -2 },
+          { text: `${player.firstName} commits a turnover`, stats: { turnovers: 1 }, scoreDelta: 0, opponentScoreDelta: 2 },
+          { text: `${player.firstName} blocks a shot`, stats: { blocks: 1 }, scoreDelta: 0, opponentScoreDelta: -2 },
+          { text: `${player.firstName} draws a foul`, stats: { }, scoreDelta: 0, foulRisk: 0.3 },
+          { text: `${player.firstName} misses a shot`, stats: { }, scoreDelta: 0 }
+        ];
+        const action = actions[Math.floor(Math.random()*actions.length)];
+        text = action.text;
+        effects.playerStats = action.stats;
+        effects.teamScoreDelta = action.scoreDelta || 0;
+        effects.opponentScoreDelta = action.opponentScoreDelta || 0;
+        if (action.foulRisk && Math.random() < action.foulRisk) {
+          effects.playerStats.fouls = (effects.playerStats.fouls || 0) + 1;
+          effects.teamFouls = 1;
+          effects.personalFoul = 1;
+        }
+      } else {
+        // Opponent or team does something
+        const oppName = state.currentGame ? state.currentGame.oppTeamName : "Opponent";
+        const actions = [
+          { text: `${oppName} makes a layup`, scoreDelta: 2 },
+          { text: `${oppName} hits a three-pointer`, scoreDelta: 3 },
+          { text: `${oppName} grabs an offensive rebound`, scoreDelta: 0 },
+          { text: `${oppName} turns the ball over`, scoreDelta: 0, opponentScoreDelta: -2 },
+          { text: `Your team gets a steal`, scoreDelta: 0, opponentScoreDelta: -2 },
+          { text: `Your team commits a foul`, teamFouls: 1, opponentScoreDelta: 1 },
+          { text: `${oppName} misses a shot`, scoreDelta: 0 },
+          { text: `${oppName} draws a foul`, opponentFoulRisk: 0.3 }
+        ];
+        const action = actions[Math.floor(Math.random()*actions.length)];
+        text = action.text;
+        effects.teamScoreDelta = action.scoreDelta || 0;
+        effects.opponentScoreDelta = action.opponentScoreDelta || 0;
+        if (action.teamFouls) { effects.teamFouls = 1; effects.opponentScoreDelta = 1; }
+        if (action.opponentFoulRisk && Math.random() < action.opponentFoulRisk) {
+          effects.oppTeamFouls = 1;
+          effects.teamScoreDelta = 1; // free throws for user team
+        }
+      }
+      return { type: 'normal', text, effects };
     }
 
     function generateBaselineStats(player) {
-      // Generate realistic baseline based on overall and position
       const overall = player.overall;
       const pos = player.position;
-      // Base points per game roughly 10-30 depending on overall
-      let points = Math.round(8 + (overall - 40) * 0.35 + (Math.random() * 6 - 3));
-      let assists = Math.round(2 + (overall - 40) * 0.15 + (Math.random() * 3 - 1.5));
-      let rebounds = Math.round(2 + (overall - 40) * 0.2 + (Math.random() * 3 - 1.5));
-      let steals = Math.round(0.5 + (overall - 40) * 0.05 + (Math.random() * 1.5 - 0.75));
-      let blocks = Math.round(0.3 + (overall - 40) * 0.05 + (Math.random() * 1 - 0.5));
-      let turnovers = Math.round(1 + (Math.random() * 2));
-
-      // Adjust for position
-      if (pos.includes('PG') || pos.includes('SG')) {
-        assists += 2;
-        rebounds -= 1;
-        steals += 1;
-      } else if (pos.includes('SF')) {
-        rebounds += 1;
-      } else if (pos.includes('PF') || pos.includes('C')) {
-        rebounds += 4;
-        assists -= 1;
-        blocks += 1;
-        points -= 2;
-      }
-
-      // Clamp to reasonable values
+      let points = Math.round(8 + (overall-40)*0.35 + (Math.random()*6-3));
+      let assists = Math.round(2 + (overall-40)*0.15 + (Math.random()*3-1.5));
+      let rebounds = Math.round(2 + (overall-40)*0.2 + (Math.random()*3-1.5));
+      let steals = Math.round(0.5 + (overall-40)*0.05 + (Math.random()*1.5-0.75));
+      let blocks = Math.round(0.3 + (overall-40)*0.05 + (Math.random()*1-0.5));
+      let turnovers = Math.round(1 + Math.random()*2);
+      if (pos.includes('PG') || pos.includes('SG')) { assists += 2; rebounds -= 1; steals += 1; }
+      else if (pos.includes('SF')) { rebounds += 1; }
+      else if (pos.includes('PF') || pos.includes('C')) { rebounds += 4; assists -= 1; blocks += 1; points -= 2; }
       points = Math.max(0, Math.min(50, points));
       assists = Math.max(0, Math.min(20, assists));
       rebounds = Math.max(0, Math.min(20, rebounds));
       steals = Math.max(0, Math.min(10, steals));
       blocks = Math.max(0, Math.min(10, blocks));
       turnovers = Math.max(0, Math.min(10, turnovers));
-
-      return {
-        points,
-        assists,
-        rebounds,
-        steals,
-        blocks,
-        turnovers,
-        minutes: Math.round(20 + Math.random() * 15)
-      };
+      return { points, assists, rebounds, steals, blocks, turnovers, minutes: Math.round(20+Math.random()*15), fouls: 0 };
     }
 
     function updateScoreboard() {
-      const game = state.currentGame;
-      userTeamName.textContent = game.userTeamName;
-      oppTeamName.textContent = game.oppTeamName;
-      userScoreEl.textContent = game.currentUserScore;
-      oppScoreEl.textContent = game.currentOppScore;
+      const g = state.currentGame;
+      userTeamName.textContent = g.userTeamName;
+      oppTeamName.textContent = g.oppTeamName;
+      userScoreEl.textContent = g.currentUserScore;
+      oppScoreEl.textContent = g.currentOppScore;
     }
 
-    function renderCurrentEvent() {
-      const game = state.currentGame;
-      gameEventText.classList.remove('hidden');
-      gameChoices.innerHTML = '';
-      gameResultMessage.classList.add('hidden');
-      continueGameBtn.classList.add('hidden');
-      gameFinalArea.classList.add('hidden');
+    function updateFoulPanel() {
+      const g = state.currentGame;
+      foulPoints.textContent = g.playerGameStats.points;
+      personalFouls.textContent = g.personalFouls;
+      techFouls.textContent = g.techFouls;
+      playerStatus.textContent = g.playerEjected ? 'Ejected' : g.playerFouledOut ? 'Fouled Out' : 'Active';
+      teamFoulsEl.textContent = g.teamFouls;
+      oppTeamFoulsEl.textContent = g.oppTeamFouls;
+    }
 
-      if (game.currentEventIndex >= game.events.length) {
+    function processNextPlay() {
+      const g = state.currentGame;
+      if (g.currentPlayIndex >= g.plays.length || g.isGameOver) {
         endGame();
         return;
       }
+      const play = g.plays[g.currentPlayIndex];
+      if (play.type === 'interactive') {
+        showInteractiveEvent(play.event);
+      } else {
+        showNormalPlay(play);
+      }
+    }
 
-      const event = game.events[game.currentEventIndex];
+    function showNormalPlay(play) {
+      const g = state.currentGame;
+      gameEventText.textContent = play.text;
+      gameChoices.innerHTML = '';
+      gameResultMessage.classList.add('hidden');
+      nextPlayBtn.classList.remove('hidden');
+      // Apply effects immediately, but wait for click to move to next play
+      // We'll apply effects when next is clicked to ensure log order.
+      // Instead, we store pending effects.
+      g.pendingEffects = play.effects;
+      // Disable next button until we apply? We'll apply on click.
+    }
+
+    nextPlayBtn.addEventListener('click', () => {
+      const g = state.currentGame;
+      if (!g) return;
+      // Apply pending effects from last normal play
+      if (g.pendingEffects) {
+        applyEffects(g.pendingEffects);
+        // Log the play text to play log
+        addToLog(g.pendingText || gameEventText.textContent);
+        g.pendingEffects = null;
+        g.pendingText = null;
+      }
+      g.currentPlayIndex++;
+      processNextPlay();
+    });
+
+    function showInteractiveEvent(event) {
+      const g = state.currentGame;
+      g.pendingEffects = null;
       gameEventText.textContent = event.text;
+      gameChoices.innerHTML = '';
+      gameResultMessage.classList.add('hidden');
+      nextPlayBtn.classList.add('hidden');
       event.choices.forEach((choice, idx) => {
         const btn = document.createElement('button');
         btn.className = 'btn choice-btn';
         btn.textContent = choice.text;
-        btn.addEventListener('click', () => makeChoice(idx));
+        btn.addEventListener('click', () => makeChoice(idx, event));
         gameChoices.appendChild(btn);
       });
     }
 
-    function makeChoice(choiceIndex) {
-      const game = state.currentGame;
-      const event = game.events[game.currentEventIndex];
-      const choice = event.choices[choiceIndex];
-
-      // Apply effects
-      if (choice.effects) {
-        if (choice.effects.teamScoreDelta) {
-          game.currentUserScore += choice.effects.teamScoreDelta;
-        }
-        if (choice.effects.opponentScoreDelta) {
-          game.currentOppScore += choice.effects.opponentScoreDelta;
-        }
-        if (choice.effects.playerStats) {
-          const stats = game.playerGameStats;
-          const delta = choice.effects.playerStats;
-          if (delta.points) stats.points += delta.points;
-          if (delta.assists) stats.assists += delta.assists;
-          if (delta.rebounds) stats.rebounds += delta.rebounds;
-          if (delta.steals) stats.steals += delta.steals;
-          if (delta.blocks) stats.blocks += delta.blocks;
-          if (delta.turnovers) stats.turnovers += delta.turnovers;
-          if (delta.fouls) stats.fouls = (stats.fouls || 0) + delta.fouls;
-        }
-        if (choice.effects.relationships) {
-          const rel = choice.effects.relationships;
-          game.relationshipsDelta.coach += rel.coach || 0;
-          game.relationshipsDelta.teammates += rel.teammates || 0;
-          game.relationshipsDelta.gm += rel.gm || 0;
-        }
-      }
-
-      // Reveal result
+    function makeChoice(idx, event) {
+      const g = state.currentGame;
+      const choice = event.choices[idx];
+      gameChoices.innerHTML = '';
       gameResultMessage.textContent = choice.resultMsg;
       gameResultMessage.classList.remove('hidden');
-      gameChoices.innerHTML = '';
-      gameEventText.classList.add('hidden'); // hide event text to emphasize result
-      continueGameBtn.classList.remove('hidden');
 
-      updateScoreboard();
+      // Prepare effects object, merging choice.effects with potential random risks
+      const effects = { ...choice.effects };
+      // Handle risks
+      if (effects.foulRisk && Math.random() < effects.foulRisk) {
+        effects.playerStats = { ...effects.playerStats, fouls: (effects.playerStats.fouls || 0) + 1 };
+        effects.personalFoul = 1;
+      }
+      if (effects.technicalRisk && Math.random() < effects.technicalRisk) {
+        effects.techFoul = 1;
+      }
+      if (effects.turnoverRisk && Math.random() < effects.turnoverRisk) {
+        effects.playerStats = { ...effects.playerStats, turnovers: (effects.playerStats.turnovers || 0) + 1 };
+        effects.teamScoreDelta = (effects.teamScoreDelta || 0) - 2;
+      }
+      if (effects.injuryRisk && Math.random() < effects.injuryRisk) {
+        // Simulate injury: for now just reduce minutes, no long-term effect
+        effects.playerStats.minutes = -5; // placeholder
+        addToLog("You feel a slight tweak in your ankle.");
+      }
+
+      // Apply the effects immediately (since it's interactive, no pending)
+      applyEffects(effects);
+      // Log the event and result
+      addToLog(`${gameEventText.textContent} → ${choice.text}: ${choice.resultMsg}`);
+      
+      g.currentPlayIndex++;
+      processNextPlay();
     }
 
-    continueGameBtn.addEventListener('click', () => {
-      const game = state.currentGame;
-      game.currentEventIndex++;
-      if (game.currentEventIndex >= game.events.length) {
-        endGame();
-      } else {
-        renderCurrentEvent();
+    function applyEffects(effects) {
+      const g = state.currentGame;
+      if (!effects) return;
+
+      // Score
+      g.currentUserScore += effects.teamScoreDelta || 0;
+      g.currentOppScore += effects.opponentScoreDelta || 0;
+
+      // Player stats
+      if (effects.playerStats) {
+        const s = g.playerGameStats;
+        if (effects.playerStats.points) s.points += effects.playerStats.points;
+        if (effects.playerStats.assists) s.assists += effects.playerStats.assists;
+        if (effects.playerStats.rebounds) s.rebounds += effects.playerStats.rebounds;
+        if (effects.playerStats.steals) s.steals += effects.playerStats.steals;
+        if (effects.playerStats.blocks) s.blocks += effects.playerStats.blocks;
+        if (effects.playerStats.turnovers) s.turnovers += effects.playerStats.turnovers;
+        if (effects.playerStats.minutes) s.minutes += effects.playerStats.minutes;
+        if (effects.playerStats.fouls) s.fouls += effects.playerStats.fouls;
       }
-    });
+
+      // Fouls
+      if (effects.personalFoul) {
+        g.personalFouls++;
+        g.teamFouls++;
+        if (g.personalFouls >= 5) { // foul out threshold
+          g.playerFouledOut = true;
+          addToLog("You have fouled out!");
+        }
+      }
+      if (effects.techFoul) {
+        g.techFouls++;
+        if (g.techFouls >= 2) {
+          g.playerEjected = true;
+          addToLog("You have been ejected!");
+        }
+      }
+      if (effects.teamFouls) g.teamFouls += effects.teamFouls;
+      if (effects.oppTeamFouls) g.oppTeamFouls += effects.oppTeamFouls;
+
+      // Relationships
+      if (effects.relationships) {
+        g.relationshipsDelta.coach += effects.relationships.coach || 0;
+        g.relationshipsDelta.teammates += effects.relationships.teammates || 0;
+        g.relationshipsDelta.gm += effects.relationships.gm || 0;
+      }
+
+      updateScoreboard();
+      updateFoulPanel();
+    }
+
+    function addToLog(text) {
+      const p = document.createElement('p');
+      p.textContent = text;
+      playLog.appendChild(p);
+      playLog.scrollTop = playLog.scrollHeight;
+    }
 
     function endGame() {
-      const game = state.currentGame;
-      game.isGameOver = true;
-      gameEventText.classList.add('hidden');
+      const g = state.currentGame;
+      g.isGameOver = true;
+      gameEventText.textContent = '';
       gameChoices.innerHTML = '';
       gameResultMessage.classList.add('hidden');
-      continueGameBtn.classList.add('hidden');
+      nextPlayBtn.classList.add('hidden');
       gameFinalArea.classList.remove('hidden');
 
-      // Determine win/loss
-      const userWon = game.currentUserScore > game.currentOppScore;
-      // Update team record
-      if (userWon) {
-        state.teamRecord.wins++;
-      } else {
-        state.teamRecord.losses++;
-      }
+      const userWon = g.currentUserScore > g.currentOppScore;
+      if (userWon) state.teamRecord.wins++; else state.teamRecord.losses++;
 
-      // Update player season stats
       const p = state.player;
       p.seasonStats.gamesPlayed++;
-      p.seasonStats.points += game.playerGameStats.points;
-      p.seasonStats.assists += game.playerGameStats.assists;
-      p.seasonStats.rebounds += game.playerGameStats.rebounds;
-      p.seasonStats.steals += game.playerGameStats.steals;
-      p.seasonStats.blocks += game.playerGameStats.blocks;
-      p.seasonStats.turnovers += game.playerGameStats.turnovers;
-      p.seasonStats.minutes += game.playerGameStats.minutes;
-
-      // Apply relationship changes (clamped 0-100)
-      p.relationships.coach = Math.max(0, Math.min(100, p.relationships.coach + game.relationshipsDelta.coach));
-      p.relationships.teammates = Math.max(0, Math.min(100, p.relationships.teammates + game.relationshipsDelta.teammates));
-      p.relationships.gm = Math.max(0, Math.min(100, p.relationships.gm + game.relationshipsDelta.gm));
+      p.seasonStats.points += g.playerGameStats.points;
+      p.seasonStats.assists += g.playerGameStats.assists;
+      p.seasonStats.rebounds += g.playerGameStats.rebounds;
+      p.seasonStats.steals += g.playerGameStats.steals;
+      p.seasonStats.blocks += g.playerGameStats.blocks;
+      p.seasonStats.turnovers += g.playerGameStats.turnovers;
+      p.seasonStats.minutes += g.playerGameStats.minutes;
+      // Apply relationship deltas
+      p.relationships.coach = Math.max(0, Math.min(100, p.relationships.coach + g.relationshipsDelta.coach));
+      p.relationships.teammates = Math.max(0, Math.min(100, p.relationships.teammates + g.relationshipsDelta.teammates));
+      p.relationships.gm = Math.max(0, Math.min(100, p.relationships.gm + g.relationshipsDelta.gm));
 
       // Display final stats
-      const stats = game.playerGameStats;
+      const stats = g.playerGameStats;
       let html = '';
       html += `<div class="final-stat"><span>Points</span><strong>${stats.points}</strong></div>`;
       html += `<div class="final-stat"><span>Assists</span><strong>${stats.assists}</strong></div>`;
@@ -1650,31 +1196,26 @@
       html += `<div class="final-stat"><span>Minutes</span><strong>${stats.minutes}</strong></div>`;
       finalPlayerStats.innerHTML = html;
 
-      let relHtml = `<p>Final Score: ${game.userTeamName} ${game.currentUserScore} - ${game.currentOppScore} ${game.oppTeamName}</p>`;
+      let relHtml = `<p>Final Score: ${g.userTeamName} ${g.currentUserScore} - ${g.currentOppScore} ${g.oppTeamName}</p>`;
       relHtml += `<p>Result: ${userWon ? 'Win' : 'Loss'}</p>`;
-      relHtml += `<p>Coach Relationship: ${p.relationships.coach} (${game.relationshipsDelta.coach >= 0 ? '+' : ''}${game.relationshipsDelta.coach})</p>`;
-      relHtml += `<p>Teammate Relationship: ${p.relationships.teammates} (${game.relationshipsDelta.teammates >= 0 ? '+' : ''}${game.relationshipsDelta.teammates})</p>`;
-      relHtml += `<p>GM Relationship: ${p.relationships.gm} (${game.relationshipsDelta.gm >= 0 ? '+' : ''}${game.relationshipsDelta.gm})</p>`;
+      relHtml += `<p>Coach Relationship: ${p.relationships.coach} (${g.relationshipsDelta.coach >= 0 ? '+' : ''}${g.relationshipsDelta.coach})</p>`;
+      relHtml += `<p>Teammate Relationship: ${p.relationships.teammates} (${g.relationshipsDelta.teammates >= 0 ? '+' : ''}${g.relationshipsDelta.teammates})</p>`;
+      relHtml += `<p>GM Relationship: ${p.relationships.gm} (${g.relationshipsDelta.gm >= 0 ? '+' : ''}${g.relationshipsDelta.gm})</p>`;
       finalRelationships.innerHTML = relHtml;
 
-      // Show final area
-      // Also update scoreboard one last time
       updateScoreboard();
-
-      // Disable play button? Not necessary, but maybe block if game already in progress? We'll just allow new game.
     }
 
     finishGameBtn.addEventListener('click', () => {
       showScreen('career-hub');
-      // Refresh career hub stats
       showCareerHub();
     });
 
-    // ---------- NAVIGATION ----------
+    // ---------- INITIAL NAVIGATION ----------
     backToMenuBtn.addEventListener('click', () => showScreen('main-menu'));
     backToCharacterBtn.addEventListener('click', () => showScreen('character-creation'));
 
-    console.log('Game initialized. Difficulty set to Realism.');
+    console.log('Game initialized. Difficulty: Realism. New play-by-play simulation ready.');
   </script>
 </body>
 </html>
