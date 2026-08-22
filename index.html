@@ -98,6 +98,13 @@
     .team-score h3 { margin-bottom: 5px; font-size: 1.2rem; }
     .score-number { font-size: 2.5rem; font-weight: bold; }
     .vs { font-size: 1.8rem; color: #ffd166; }
+    .quarter-display {
+      background: rgba(0,0,0,0.3); border-radius: 8px; padding: 8px; margin-bottom: 10px; text-align: center; font-weight: bold;
+    }
+    .speed-btn {
+      padding: 5px 10px; font-size: 0.9rem; background: #444; border: none; border-radius: 5px; cursor: pointer; color: #fff; margin-left: 10px;
+    }
+    .speed-btn:hover { background: #666; }
     .foul-box { background: rgba(0,0,0,0.5); border-radius: 8px; padding: 10px; margin-bottom: 10px; }
     .foul-box h4 { color: #ffd166; margin-bottom: 5px; }
     .foul-box p { margin: 5px 0; font-size: 0.9rem; }
@@ -209,6 +216,10 @@
   <!-- GAME SIMULATION -->
   <div id="game-screen" class="screen">
     <h2>Game Simulation</h2>
+    <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 10px;">
+      <div class="quarter-display" id="quarter-display">1st Quarter</div>
+      <button class="speed-btn" id="speed-btn">Speed: Normal</button>
+    </div>
     <div class="game-container">
       <div class="game-left">
         <div class="scoreboard">
@@ -418,7 +429,8 @@
       difficulty: 'Realism',
       teamRecord: { wins: 0, losses: 0 },
       currentGame: null,
-      autoPlayTimer: null
+      autoPlayTimer: null,
+      gameSpeed: 'normal'  // 'normal' or 'fast'
     };
 
     // ---------- DOM ELEMENTS ----------
@@ -469,6 +481,8 @@
     const finalPlayerStats = document.getElementById('final-player-stats');
     const finalRelationships = document.getElementById('final-relationships');
     const finishGameBtn = document.getElementById('finish-game');
+    const quarterDisplay = document.getElementById('quarter-display');
+    const speedBtn = document.getElementById('speed-btn');
 
     const foulPoints = document.getElementById('foul-points');
     const personalFouls = document.getElementById('personal-fouls');
@@ -486,7 +500,6 @@
 
     // ---------- SCREEN NAVIGATION ----------
     function showScreen(screenId) {
-      // Clear any auto-play timer if leaving game screen
       if (screenId !== 'game-screen' && state.autoPlayTimer) {
         clearTimeout(state.autoPlayTimer);
         state.autoPlayTimer = null;
@@ -815,9 +828,19 @@
       `;
     }
 
+    // ---------- SPEED TOGGLE ----------
+    speedBtn.addEventListener('click', () => {
+      if (state.gameSpeed === 'normal') {
+        state.gameSpeed = 'fast';
+        speedBtn.textContent = 'Speed: Fast';
+      } else {
+        state.gameSpeed = 'normal';
+        speedBtn.textContent = 'Speed: Normal';
+      }
+    });
+
     // ---------- GAME SIMULATION ----------
     function startNewGame() {
-      // Clear any existing timer
       if (state.autoPlayTimer) clearTimeout(state.autoPlayTimer);
 
       playLog.innerHTML = '';
@@ -830,6 +853,8 @@
       playerStatus.textContent = 'Active';
       teamFoulsEl.textContent = '0';
       oppTeamFoulsEl.textContent = '0';
+      quarterDisplay.textContent = '1st Quarter';
+      speedBtn.textContent = state.gameSpeed === 'normal' ? 'Speed: Normal' : 'Speed: Fast';
 
       const availableTeams = state.leagueTeams.filter(t => t.name !== state.player.currentTeam.name);
       if (!availableTeams.length) { alert('No opponents available.'); return; }
@@ -854,6 +879,7 @@
 
       // Build play list
       const totalPlays = Math.floor(Math.random()*20)+40; // 40-60
+      const playsPerQuarter = Math.ceil(totalPlays / 4);
       const interactivePlays = [];
       const numInteractive = Math.floor(Math.random()*6)+5; // 5-10
       const eventPool = [...eventTemplates];
@@ -884,6 +910,7 @@
         currentUserScore: baseUserScore,
         currentOppScore: baseOppScore,
         plays: plays,
+        playsPerQuarter: playsPerQuarter,
         currentPlayIndex: 0,
         playerGameStats: baselineStats,
         relationshipsDelta: { coach:0, teammates:0, gm:0 },
@@ -893,12 +920,12 @@
         oppTeamFouls: 0,
         playerEjected: false,
         playerFouledOut: false,
-        isGameOver: false
+        isGameOver: false,
+        quarter: 1
       };
 
       updateScoreboard();
       updateFoulPanel();
-      // Start auto-play
       processNextPlay();
     }
 
@@ -984,6 +1011,14 @@
       oppScoreEl.textContent = g.currentOppScore;
     }
 
+    function updateQuarterDisplay() {
+      const g = state.currentGame;
+      const quarterNum = g.quarter;
+      const suffixes = ['', 'st', 'nd', 'rd', 'th'];
+      const quarterText = quarterNum <= 4 ? `${quarterNum}${suffixes[quarterNum]} Quarter` : 'Overtime';
+      quarterDisplay.textContent = quarterText;
+    }
+
     function updateFoulPanel() {
       const g = state.currentGame;
       foulPoints.textContent = g.playerGameStats.points;
@@ -1008,17 +1043,37 @@
       }
     }
 
+    function scheduleNextPlay(delay) {
+      if (state.autoPlayTimer) clearTimeout(state.autoPlayTimer);
+      state.autoPlayTimer = setTimeout(() => processNextPlay(), delay);
+    }
+
+    function handleQuarterTransition() {
+      const g = state.currentGame;
+      if (g.currentPlayIndex > 0 && g.currentPlayIndex % g.playsPerQuarter === 0 && g.currentPlayIndex < g.plays.length) {
+        // End of a quarter
+        const finishedQuarter = g.quarter;
+        g.quarter++;
+        updateQuarterDisplay();
+        addToLog(`--- End of ${finishedQuarter}${finishedQuarter === 1 ? 'st' : finishedQuarter === 2 ? 'nd' : finishedQuarter === 3 ? 'rd' : 'th'} Quarter ---`);
+        return true;
+      }
+      return false;
+    }
+
     function showNormalPlay(play) {
       const g = state.currentGame;
       gameEventText.textContent = play.text;
       gameChoices.innerHTML = '';
       gameResultMessage.classList.add('hidden');
-      // Apply effects immediately
       applyEffects(play.effects);
       addToLog(play.text);
       g.currentPlayIndex++;
-      // Schedule next play
-      state.autoPlayTimer = setTimeout(() => processNextPlay(), 1200);
+
+      const isQuarterBreak = handleQuarterTransition();
+      const normalDelay = state.gameSpeed === 'normal' ? 1200 : 300;
+      const quarterDelay = state.gameSpeed === 'normal' ? 2500 : 800;
+      scheduleNextPlay(isQuarterBreak ? quarterDelay : normalDelay);
     }
 
     function showInteractiveEvent(event) {
@@ -1033,7 +1088,6 @@
         btn.addEventListener('click', () => makeChoice(idx, event));
         gameChoices.appendChild(btn);
       });
-      // No auto-advance; wait for choice
     }
 
     function makeChoice(idx, event) {
@@ -1043,7 +1097,6 @@
       gameResultMessage.textContent = choice.resultMsg;
       gameResultMessage.classList.remove('hidden');
 
-      // Merge effects and handle risks
       const effects = { ...choice.effects };
       if (effects.foulRisk && Math.random() < effects.foulRisk) {
         effects.playerStats = { ...effects.playerStats, fouls: (effects.playerStats.fouls || 0) + 1 };
@@ -1061,14 +1114,14 @@
         addToLog("You feel a slight tweak in your ankle.");
       }
 
-      // Apply effects
       applyEffects(effects);
-      // Log the interaction
       addToLog(`${event.text} → ${choice.text}: ${choice.resultMsg}`);
-      
       g.currentPlayIndex++;
-      // Resume auto-play after a short delay
-      state.autoPlayTimer = setTimeout(() => processNextPlay(), 1200);
+
+      const isQuarterBreak = handleQuarterTransition();
+      const normalDelay = state.gameSpeed === 'normal' ? 1200 : 300;
+      const quarterDelay = state.gameSpeed === 'normal' ? 2500 : 800;
+      scheduleNextPlay(isQuarterBreak ? quarterDelay : normalDelay);
     }
 
     function applyEffects(effects) {
@@ -1128,7 +1181,6 @@
     function endGame() {
       const g = state.currentGame;
       g.isGameOver = true;
-      // Clear timer
       if (state.autoPlayTimer) {
         clearTimeout(state.autoPlayTimer);
         state.autoPlayTimer = null;
@@ -1185,7 +1237,7 @@
     backToMenuBtn.addEventListener('click', () => showScreen('main-menu'));
     backToCharacterBtn.addEventListener('click', () => showScreen('character-creation'));
 
-    console.log('Game initialized. Auto play-by-play ready.');
+    console.log('Game initialized. Auto play-by-play with quarters and speed control ready.');
   </script>
 </body>
 </html>
