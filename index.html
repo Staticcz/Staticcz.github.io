@@ -34,6 +34,8 @@
       backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.1);
       transition: all 0.3s ease;
+      max-height: 90vh;
+      overflow-y: auto;
     }
 
     .screen.active {
@@ -56,6 +58,11 @@
       font-size: 1.8rem;
       margin-bottom: 20px;
       color: #ffd166;
+    }
+
+    h3 {
+      color: #ffd166;
+      margin-bottom: 10px;
     }
 
     p {
@@ -128,6 +135,10 @@
       font-size: 0.9rem;
       min-width: auto;
       background: #444;
+    }
+
+    .btn-danger {
+      background: #8b0000;
     }
 
     .hidden {
@@ -313,6 +324,77 @@
     .player-summary .stat strong {
       font-size: 1.4rem;
     }
+
+    /* Roster Table */
+    .roster-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    .roster-table th,
+    .roster-table td {
+      padding: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      text-align: left;
+    }
+
+    .roster-table th {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffd166;
+    }
+
+    .roster-table td {
+      color: #ddd;
+    }
+
+    .roster-table tr:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .interaction-btn {
+      padding: 5px 10px;
+      font-size: 0.8rem;
+      background: #444;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      color: #fff;
+    }
+
+    .interaction-btn:hover {
+      background: #666;
+    }
+
+    /* Team Screen Navigation */
+    .team-tabs {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .team-tab {
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      color: #fff;
+    }
+
+    .team-tab.active {
+      background: #ffd166;
+      color: #000;
+    }
+
+    .team-tab-content {
+      display: none;
+    }
+
+    .team-tab-content.active {
+      display: block;
+    }
   </style>
 </head>
 <body>
@@ -445,18 +527,68 @@
     <button class="btn btn-back" id="back-to-character">Back</button>
   </div>
 
-  <!-- CAREER HUB PLACEHOLDER -->
+  <!-- CAREER HUB SCREEN -->
   <div id="career-hub" class="screen">
     <h2>Career Hub</h2>
     <div class="player-summary" id="player-summary"></div>
 
     <div class="button-group">
-      <button class="btn" id="play-btn">Play</button>
+      <button class="btn" id="play-btn">Play Next Game</button>
       <button class="btn" id="team-btn">Team</button>
       <button class="btn" id="rosters-btn">Rosters</button>
-      <button class="btn btn-back" id="retire-btn" style="background:#8b0000;">Retire</button>
+      <button class="btn btn-danger" id="retire-btn" style="background:#8b0000;">Retire</button>
     </div>
-    <button class="btn btn-back" id="back-to-team-selection">Back</button>
+  </div>
+
+  <!-- GAME SIMULATION PLACEHOLDER -->
+  <div id="game-screen" class="screen">
+    <h2>Game Simulation</h2>
+    <p>This feature will be implemented in the next phase.</p>
+    <button class="btn btn-back" id="back-to-hub-from-game">Back to Career Hub</button>
+  </div>
+
+  <!-- TEAM SCREEN -->
+  <div id="team-screen" class="screen">
+    <h2>Your Team</h2>
+    <div class="team-tabs">
+      <button class="team-tab active" data-tab="roster">Roster</button>
+      <button class="team-tab" data-tab="coach">Coach</button>
+      <button class="team-tab" data-tab="gm">GM</button>
+      <button class="team-tab" data-tab="teammates">Teammates</button>
+    </div>
+
+    <div id="roster-tab" class="team-tab-content active">
+      <div id="team-roster-container"></div>
+    </div>
+    <div id="coach-tab" class="team-tab-content">
+      <p>Coach interactions coming soon.</p>
+    </div>
+    <div id="gm-tab" class="team-tab-content">
+      <p>GM interactions coming soon.</p>
+    </div>
+    <div id="teammates-tab" class="team-tab-content">
+      <p>Teammate interactions coming soon.</p>
+    </div>
+
+    <button class="btn btn-back" id="back-to-hub-from-team">Back to Career Hub</button>
+  </div>
+
+  <!-- ROSTERS SCREEN -->
+  <div id="rosters-screen" class="screen">
+    <h2>League Rosters</h2>
+    <div class="form-group">
+      <label for="team-select">Select Team</label>
+      <select id="team-select"></select>
+    </div>
+    <div id="other-roster-container"></div>
+    <button class="btn btn-back" id="back-to-hub-from-rosters">Back to Career Hub</button>
+  </div>
+
+  <!-- RETIREMENT SCREEN -->
+  <div id="retirement-screen" class="screen">
+    <h2>Retirement</h2>
+    <div id="retirement-summary"></div>
+    <button class="btn btn-back" id="back-to-hub-from-retirement">Back to Career Hub</button>
   </div>
 
   <script>
@@ -554,7 +686,10 @@
     const state = {
       currentSaveSlot: null,
       currentPath: null,
-      player: null
+      player: null,
+      teamRoster: [],   // players on user's team
+      leagueTeams: [],  // all teams in current path (for rosters screen)
+      otherRosters: {}  // cache generated rosters for other teams
     };
 
     // ---------- DOM ELEMENTS ----------
@@ -562,6 +697,11 @@
     const characterCreationScreen = document.getElementById('character-creation');
     const teamSelectionScreen = document.getElementById('team-selection');
     const careerHubScreen = document.getElementById('career-hub');
+    const gameScreen = document.getElementById('game-screen');
+    const teamScreen = document.getElementById('team-screen');
+    const rostersScreen = document.getElementById('rosters-screen');
+    const retirementScreen = document.getElementById('retirement-screen');
+
     const saveButtons = document.querySelectorAll('.btn-save');
     const selectedSaveInfo = document.getElementById('selected-save-info');
     const pathOptions = document.getElementById('path-options');
@@ -569,7 +709,6 @@
     const startCollegeBtn = document.getElementById('start-college');
     const backToMenuBtn = document.getElementById('back-to-menu');
     const backToCharacterBtn = document.getElementById('back-to-character');
-    const backToTeamSelectionBtn = document.getElementById('back-to-team-selection');
     const createPlayerBtn = document.getElementById('create-player');
     const randomizePlayerBtn = document.getElementById('randomize-player');
     const buildOptionsContainer = document.getElementById('build-options');
@@ -579,6 +718,28 @@
     const teamGrid = document.getElementById('team-grid');
     const teamSelectionSubtitle = document.getElementById('team-selection-subtitle');
     const playerSummaryDiv = document.getElementById('player-summary');
+
+    // Career Hub buttons
+    const playBtn = document.getElementById('play-btn');
+    const teamBtn = document.getElementById('team-btn');
+    const rostersBtn = document.getElementById('rosters-btn');
+    const retireBtn = document.getElementById('retire-btn');
+    const backToHubFromGame = document.getElementById('back-to-hub-from-game');
+    const backToHubFromTeam = document.getElementById('back-to-hub-from-team');
+    const backToHubFromRosters = document.getElementById('back-to-hub-from-rosters');
+    const backToHubFromRetirement = document.getElementById('back-to-hub-from-retirement');
+
+    // Team screen tabs
+    const teamTabs = document.querySelectorAll('.team-tab');
+    const teamTabContents = document.querySelectorAll('.team-tab-content');
+    const teamRosterContainer = document.getElementById('team-roster-container');
+
+    // Rosters screen
+    const teamSelect = document.getElementById('team-select');
+    const otherRosterContainer = document.getElementById('other-roster-container');
+
+    // Retirement screen
+    const retirementSummary = document.getElementById('retirement-summary');
 
     // ---------- SCREEN NAVIGATION ----------
     function showScreen(screenId) {
@@ -867,6 +1028,8 @@
         teamSelectionSubtitle.textContent = 'College Teams';
       }
 
+      state.leagueTeams = teams; // store for later use in rosters
+
       teamGrid.innerHTML = '';
       teams.forEach(team => {
         const card = document.createElement('div');
@@ -882,13 +1045,45 @@
 
     function selectTeam(team) {
       state.player.currentTeam = team;
+      // Generate team roster including user player
+      generateTeamRoster(team);
       console.log('Team selected:', team);
       showCareerHub();
     }
 
+    // ---------- ROSTER GENERATION ----------
+    function generateRandomPlayer(namePrefix) {
+      const firstNames = ['Jay', 'Mike', 'Chris', 'Tyler', 'Darius', 'Kobe', 'LeBron', 'Zion', 'Cam', 'Jalen', 'Devin', 'Malik', 'Isaiah', 'Tre', 'Jordan'];
+      const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Davis', 'Miller', 'Wilson', 'Moore', 'Taylor', 'Anderson', 'Thomas', 'Jackson', 'White', 'Harris'];
+      const positions = ['PG', 'SG', 'SF', 'PF', 'C'];
+      const pos = positions[Math.floor(Math.random() * positions.length)];
+      const overall = Math.floor(Math.random() * 20) + 55; // 55-74 range for teammates/opponents
+      return {
+        firstName: firstNames[Math.floor(Math.random() * firstNames.length)],
+        lastName: lastNames[Math.floor(Math.random() * lastNames.length)],
+        position: pos,
+        overall: overall,
+        isUser: false
+      };
+    }
+
+    function generateTeamRoster(team) {
+      // Generate 9 other players + user
+      const roster = [];
+      // Add user player
+      const userPlayer = { ...state.player, isUser: true };
+      roster.push(userPlayer);
+      // Add 9 random players
+      for (let i = 0; i < 9; i++) {
+        roster.push(generateRandomPlayer());
+      }
+      state.teamRoster = roster;
+      // Cache other team rosters? We'll generate on demand.
+      // For now, just store the user's roster.
+    }
+
     // ---------- CAREER HUB ----------
     function showCareerHub() {
-      // Update player summary
       const p = state.player;
       const stats = p.seasonStats;
       const avgPoints = stats.gamesPlayed ? (stats.points / stats.gamesPlayed).toFixed(1) : '0.0';
@@ -909,21 +1104,127 @@
       showScreen('career-hub');
     }
 
-    // ---------- CAREER HUB BUTTONS ----------
-    document.getElementById('play-btn').addEventListener('click', () => alert('Play feature coming soon!'));
-    document.getElementById('team-btn').addEventListener('click', () => alert('Team feature coming soon!'));
-    document.getElementById('rosters-btn').addEventListener('click', () => alert('Rosters feature coming soon!'));
-    document.getElementById('retire-btn').addEventListener('click', () => {
-      if (confirm('Are you sure you want to retire this player?')) {
-        alert('Retirement screen coming soon!');
-        // Future: show retirement summary
-      }
+    // ---------- CAREER HUB BUTTON HANDLERS ----------
+    playBtn.addEventListener('click', () => {
+      showScreen('game-screen');
     });
+
+    teamBtn.addEventListener('click', () => {
+      displayTeamRoster();
+      // Reset to roster tab
+      document.querySelectorAll('.team-tab').forEach(tab => tab.classList.remove('active'));
+      document.querySelector('.team-tab[data-tab="roster"]').classList.add('active');
+      document.querySelectorAll('.team-tab-content').forEach(c => c.classList.remove('active'));
+      document.getElementById('roster-tab').classList.add('active');
+      showScreen('team-screen');
+    });
+
+    rostersBtn.addEventListener('click', () => {
+      populateTeamSelect();
+      // Show first team's roster by default
+      if (state.leagueTeams.length > 0) {
+        displayOtherTeamRoster(state.leagueTeams[0]);
+      }
+      showScreen('rosters-screen');
+    });
+
+    retireBtn.addEventListener('click', () => {
+      displayRetirementSummary();
+      showScreen('retirement-screen');
+    });
+
+    // Navigation back to hub
+    backToHubFromGame.addEventListener('click', () => showScreen('career-hub'));
+    backToHubFromTeam.addEventListener('click', () => showScreen('career-hub'));
+    backToHubFromRosters.addEventListener('click', () => showScreen('career-hub'));
+    backToHubFromRetirement.addEventListener('click', () => showScreen('career-hub'));
+
+    // ---------- TEAM SCREEN ----------
+    function displayTeamRoster() {
+      let html = '<table class="roster-table"><tr><th>Name</th><th>Position</th><th>Overall</th></tr>';
+      state.teamRoster.forEach(player => {
+        html += `<tr><td>${player.firstName} ${player.lastName} ${player.isUser ? '(You)' : ''}</td><td>${player.position}</td><td>${player.overall}</td></tr>`;
+      });
+      html += '</table>';
+      teamRosterContainer.innerHTML = html;
+    }
+
+    // Team tabs
+    teamTabs.forEach(tab => {
+      tab.addEventListener('click', function() {
+        const tabName = this.dataset.tab;
+        teamTabs.forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        teamTabContents.forEach(c => c.classList.remove('active'));
+        document.getElementById(tabName + '-tab').classList.add('active');
+        // If roster tab, refresh
+        if (tabName === 'roster') {
+          displayTeamRoster();
+        }
+      });
+    });
+
+    // ---------- ROSTERS SCREEN ----------
+    function populateTeamSelect() {
+      teamSelect.innerHTML = '';
+      state.leagueTeams.forEach(team => {
+        const option = document.createElement('option');
+        option.value = team.name;
+        option.textContent = team.name;
+        teamSelect.appendChild(option);
+      });
+      teamSelect.addEventListener('change', function() {
+        const selectedTeam = state.leagueTeams.find(t => t.name === this.value);
+        if (selectedTeam) {
+          displayOtherTeamRoster(selectedTeam);
+        }
+      });
+    }
+
+    function displayOtherTeamRoster(team) {
+      // Generate roster if not cached
+      if (!state.otherRosters[team.name]) {
+        const roster = [];
+        for (let i = 0; i < 10; i++) {
+          roster.push(generateRandomPlayer());
+        }
+        state.otherRosters[team.name] = roster;
+      }
+      const roster = state.otherRosters[team.name];
+      let html = `<h3>${team.name} Roster</h3>`;
+      html += '<table class="roster-table"><tr><th>Name</th><th>Position</th><th>Overall</th></tr>';
+      roster.forEach(player => {
+        html += `<tr><td>${player.firstName} ${player.lastName}</td><td>${player.position}</td><td>${player.overall}</td></tr>`;
+      });
+      html += '</table>';
+      otherRosterContainer.innerHTML = html;
+    }
+
+    // ---------- RETIREMENT SCREEN ----------
+    function displayRetirementSummary() {
+      const p = state.player;
+      const stats = p.seasonStats;
+      const careerPts = stats.points; // season stats only for now
+      const avgPoints = stats.gamesPlayed ? (stats.points / stats.gamesPlayed).toFixed(1) : '0.0';
+      const avgAssists = stats.gamesPlayed ? (stats.assists / stats.gamesPlayed).toFixed(1) : '0.0';
+      const avgRebounds = stats.gamesPlayed ? (stats.rebounds / stats.gamesPlayed).toFixed(1) : '0.0';
+
+      retirementSummary.innerHTML = `
+        <h3>${p.firstName} ${p.lastName}</h3>
+        <p>Position: ${p.position} | Overall: ${p.overall}</p>
+        <p>Team: ${p.currentTeam.name}</p>
+        <p>Season: ${p.season} | Age: ${p.age}</p>
+        <hr style="border-color: rgba(255,255,255,0.2); margin: 20px 0;">
+        <h4>Career Summary</h4>
+        <p>Games Played: ${stats.gamesPlayed}</p>
+        <p>Season Averages: ${avgPoints} PPG, ${avgAssists} APG, ${avgRebounds} RPG</p>
+        <p>Career totals coming soon.</p>
+      `;
+    }
 
     // ---------- NAVIGATION ----------
     backToMenuBtn.addEventListener('click', () => showScreen('main-menu'));
     backToCharacterBtn.addEventListener('click', () => showScreen('character-creation'));
-    backToTeamSelectionBtn.addEventListener('click', () => showScreen('team-selection'));
 
     console.log('Game initialized.');
   </script>
