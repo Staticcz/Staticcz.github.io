@@ -395,6 +395,83 @@
     .team-tab-content.active {
       display: block;
     }
+
+    /* Game Simulation Styles */
+    .scoreboard {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+    }
+
+    .team-score {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 15px;
+      border-radius: 10px;
+      min-width: 150px;
+    }
+
+    .team-score h3 {
+      margin-bottom: 5px;
+      font-size: 1.2rem;
+    }
+
+    .score-number {
+      font-size: 2.5rem;
+      font-weight: bold;
+    }
+
+    .vs {
+      font-size: 1.8rem;
+      color: #ffd166;
+    }
+
+    .event-text {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      font-size: 1.2rem;
+    }
+
+    .choice-btn {
+      margin: 5px;
+    }
+
+    .result-message {
+      background: rgba(255, 209, 102, 0.2);
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      color: #ffd166;
+      font-weight: bold;
+    }
+
+    .final-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    .final-stat {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 10px;
+      border-radius: 8px;
+      min-width: 80px;
+    }
+
+    .final-stat span {
+      display: block;
+      font-size: 0.8rem;
+      color: #aaa;
+    }
+
+    .final-stat strong {
+      font-size: 1.3rem;
+    }
   </style>
 </head>
 <body>
@@ -540,11 +617,34 @@
     </div>
   </div>
 
-  <!-- GAME SIMULATION PLACEHOLDER -->
+  <!-- GAME SIMULATION SCREEN -->
   <div id="game-screen" class="screen">
     <h2>Game Simulation</h2>
-    <p>This feature will be implemented in the next phase.</p>
-    <button class="btn btn-back" id="back-to-hub-from-game">Back to Career Hub</button>
+    <div class="scoreboard" id="game-scoreboard">
+      <div class="team-score">
+        <h3 id="user-team-name">Your Team</h3>
+        <span class="score-number" id="user-score">0</span>
+      </div>
+      <span class="vs">vs</span>
+      <div class="team-score">
+        <h3 id="opp-team-name">Opponent</h3>
+        <span class="score-number" id="opp-score">0</span>
+      </div>
+    </div>
+
+    <div id="game-event-area">
+      <div class="event-text" id="game-event-text">Loading...</div>
+      <div id="game-choices" class="button-group"></div>
+      <div id="game-result-message" class="result-message hidden"></div>
+      <button id="continue-game" class="btn hidden">Continue</button>
+    </div>
+
+    <div id="game-final-area" class="hidden">
+      <h3>Final Result</h3>
+      <div class="final-stats" id="final-player-stats"></div>
+      <div id="final-relationships"></div>
+      <button id="finish-game" class="btn">Back to Career Hub</button>
+    </div>
   </div>
 
   <!-- TEAM SCREEN -->
@@ -682,14 +782,93 @@
       { name: "Texas Tech", conference: "Big 12" }
     ];
 
+    // ---------- EVENT TEMPLATES ----------
+    const eventTemplates = [
+      {
+        text: "You're wide open at the top of the key.",
+        choices: [
+          { text: "Shoot the three", effects: { playerStats: { points: 3, threeAttempts: 1 }, teamScoreDelta: 3, opponentScoreDelta: 0, relationships: { coach: 2, teammates: -1 } }, resultMsg: "You drain the three! Coach loves your confidence." },
+          { text: "Pass to the open teammate", effects: { playerStats: { assists: 1 }, teamScoreDelta: 2, opponentScoreDelta: 0, relationships: { coach: -1, teammates: 3 } }, resultMsg: "You pass up the shot; teammate scores. Coach wanted you to shoot." }
+        ]
+      },
+      {
+        text: "You're guarding the opponent's best scorer in the post.",
+        choices: [
+          { text: "Play aggressive defense", effects: { playerStats: { steals: 1, fouls: 1 }, teamScoreDelta: 0, opponentScoreDelta: -2, relationships: { coach: 1, teammates: 0 } }, resultMsg: "You force a turnover but pick up a foul. Coach likes the intensity." },
+          { text: "Play conservative", effects: { playerStats: { }, teamScoreDelta: 0, opponentScoreDelta: 2, relationships: { coach: -1, teammates: 0 } }, resultMsg: "You stay out of foul trouble but allow an easy basket." }
+        ]
+      },
+      {
+        text: "Your team is on a fast break, you have the ball.",
+        choices: [
+          { text: "Drive for the layup", effects: { playerStats: { points: 2 }, teamScoreDelta: 2, opponentScoreDelta: 0, relationships: { coach: 1, teammates: 0 } }, resultMsg: "You finish strong at the rim!" },
+          { text: "Pull up for a mid-range jumper", effects: { playerStats: { points: 2 }, teamScoreDelta: 2, opponentScoreDelta: 0, relationships: { coach: 0, teammates: 1 } }, resultMsg: "You knock down the jumper." },
+          { text: "Pass to the trailing big man", effects: { playerStats: { assists: 1 }, teamScoreDelta: 2, opponentScoreDelta: 0, relationships: { coach: 0, teammates: 2 } }, resultMsg: "Great unselfish play, the big man slams it home." }
+        ]
+      },
+      {
+        text: "You're double-teamed near the baseline.",
+        choices: [
+          { text: "Force a shot", effects: { playerStats: { points: 0, turnovers: 1 }, teamScoreDelta: 0, opponentScoreDelta: 0, relationships: { coach: -2, teammates: -1 } }, resultMsg: "You force it and turn it over. Bad decision." },
+          { text: "Pass out to the open shooter", effects: { playerStats: { assists: 1 }, teamScoreDelta: 3, opponentScoreDelta: 0, relationships: { coach: 1, teammates: 2 } }, resultMsg: "Great vision! The shooter knocks down the three." }
+        ]
+      },
+      {
+        text: "Rebound opportunity on the defensive end.",
+        choices: [
+          { text: "Box out and grab the board", effects: { playerStats: { rebounds: 1 }, teamScoreDelta: 0, opponentScoreDelta: 0, relationships: { coach: 1, teammates: 1 } }, resultMsg: "You secure the rebound." },
+          { text: "Leak out for a fast break", effects: { playerStats: { }, teamScoreDelta: 2, opponentScoreDelta: 0, relationships: { coach: -1, teammates: 0 } }, resultMsg: "Your team gets the board and you get an easy basket, but coach wanted you to rebound." }
+        ]
+      },
+      {
+        text: "You have the ball at the top of the key with 10 seconds left in the half.",
+        choices: [
+          { text: "Take the last shot", effects: { playerStats: { points: 2 }, teamScoreDelta: 2, opponentScoreDelta: 0, relationships: { coach: 1, teammates: 0 } }, resultMsg: "You hit the buzzer-beater!" },
+          { text: "Pass to the open shooter", effects: { playerStats: { assists: 1 }, teamScoreDelta: 2, opponentScoreDelta: 0, relationships: { coach: 0, teammates: 2 } }, resultMsg: "The shooter makes it; teammate chemistry up." }
+        ]
+      },
+      {
+        text: "You're at the free throw line for two shots.",
+        choices: [
+          { text: "Focus and make both", effects: { playerStats: { points: 2 }, teamScoreDelta: 2, opponentScoreDelta: 0, relationships: { coach: 1, teammates: 0 } }, resultMsg: "You calmly sink both free throws." },
+          { text: "Take a quick first shot", effects: { playerStats: { points: 1 }, teamScoreDelta: 1, opponentScoreDelta: 0, relationships: { coach: -1, teammates: 0 } }, resultMsg: "You make one of two. Coach wanted a better routine." }
+        ]
+      },
+      {
+        text: "Your matchup is playing physical and trash-talking.",
+        choices: [
+          { text: "Respond with a big play", effects: { playerStats: { points: 2 }, teamScoreDelta: 2, opponentScoreDelta: 0, relationships: { coach: 1, teammates: 1 } }, resultMsg: "You silence him with a bucket." },
+          { text: "Stay calm and defend harder", effects: { playerStats: { steals: 1 }, teamScoreDelta: 0, opponentScoreDelta: -2, relationships: { coach: 1, teammates: 0 } }, resultMsg: "Your defense forces a turnover." },
+          { text: "Trash-talk back", effects: { playerStats: { }, teamScoreDelta: 0, opponentScoreDelta: 0, relationships: { coach: -1, teammates: 0 } }, resultMsg: "You get caught up and lose focus. Coach is not happy." }
+        ]
+      },
+      {
+        text: "Your team is down by 1 with 20 seconds left.",
+        choices: [
+          { text: "Take the game-winning shot", effects: { playerStats: { points: 2 }, teamScoreDelta: 2, opponentScoreDelta: 0, relationships: { coach: 2, teammates: 2 } }, resultMsg: "You hit the game winner! Hero!" },
+          { text: "Pass to the open teammate", effects: { playerStats: { assists: 1 }, teamScoreDelta: 2, opponentScoreDelta: 0, relationships: { coach: 0, teammates: 3 } }, resultMsg: "Your teammate hits the winner. Great team play." }
+        ]
+      },
+      {
+        text: "You're assigned to guard the opponent's best three-point shooter.",
+        choices: [
+          { text: "Tight defense", effects: { playerStats: { }, teamScoreDelta: 0, opponentScoreDelta: -3, relationships: { coach: 1, teammates: 0 } }, resultMsg: "You lock him down. Great defense!" },
+          { text: "Sag off and help on drives", effects: { playerStats: { }, teamScoreDelta: 0, opponentScoreDelta: 0, relationships: { coach: -1, teammates: 0 } }, resultMsg: "He gets a couple open looks." }
+        ]
+      }
+    ];
+
     // ---------- GAME STATE ----------
     const state = {
       currentSaveSlot: null,
       currentPath: null,
       player: null,
-      teamRoster: [],   // players on user's team
-      leagueTeams: [],  // all teams in current path (for rosters screen)
-      otherRosters: {}  // cache generated rosters for other teams
+      teamRoster: [],
+      leagueTeams: [],
+      otherRosters: {},
+      difficulty: 'Realism', // Default difficulty; will implement selection later
+      teamRecord: { wins: 0, losses: 0 }, // Simple record
+      currentGame: null
     };
 
     // ---------- DOM ELEMENTS ----------
@@ -728,6 +907,20 @@
     const backToHubFromTeam = document.getElementById('back-to-hub-from-team');
     const backToHubFromRosters = document.getElementById('back-to-hub-from-rosters');
     const backToHubFromRetirement = document.getElementById('back-to-hub-from-retirement');
+
+    // Game screen elements
+    const userTeamName = document.getElementById('user-team-name');
+    const oppTeamName = document.getElementById('opp-team-name');
+    const userScoreEl = document.getElementById('user-score');
+    const oppScoreEl = document.getElementById('opp-score');
+    const gameEventText = document.getElementById('game-event-text');
+    const gameChoices = document.getElementById('game-choices');
+    const gameResultMessage = document.getElementById('game-result-message');
+    const continueGameBtn = document.getElementById('continue-game');
+    const gameFinalArea = document.getElementById('game-final-area');
+    const finalPlayerStats = document.getElementById('final-player-stats');
+    const finalRelationships = document.getElementById('final-relationships');
+    const finishGameBtn = document.getElementById('finish-game');
 
     // Team screen tabs
     const teamTabs = document.querySelectorAll('.team-tab');
@@ -1045,7 +1238,6 @@
 
     function selectTeam(team) {
       state.player.currentTeam = team;
-      // Generate team roster including user player
       generateTeamRoster(team);
       console.log('Team selected:', team);
       showCareerHub();
@@ -1068,18 +1260,13 @@
     }
 
     function generateTeamRoster(team) {
-      // Generate 9 other players + user
       const roster = [];
-      // Add user player
       const userPlayer = { ...state.player, isUser: true };
       roster.push(userPlayer);
-      // Add 9 random players
       for (let i = 0; i < 9; i++) {
         roster.push(generateRandomPlayer());
       }
       state.teamRoster = roster;
-      // Cache other team rosters? We'll generate on demand.
-      // For now, just store the user's roster.
     }
 
     // ---------- CAREER HUB ----------
@@ -1106,6 +1293,7 @@
 
     // ---------- CAREER HUB BUTTON HANDLERS ----------
     playBtn.addEventListener('click', () => {
+      startNewGame();
       showScreen('game-screen');
     });
 
@@ -1121,7 +1309,6 @@
 
     rostersBtn.addEventListener('click', () => {
       populateTeamSelect();
-      // Show first team's roster by default
       if (state.leagueTeams.length > 0) {
         displayOtherTeamRoster(state.leagueTeams[0]);
       }
@@ -1157,7 +1344,6 @@
         this.classList.add('active');
         teamTabContents.forEach(c => c.classList.remove('active'));
         document.getElementById(tabName + '-tab').classList.add('active');
-        // If roster tab, refresh
         if (tabName === 'roster') {
           displayTeamRoster();
         }
@@ -1173,16 +1359,15 @@
         option.textContent = team.name;
         teamSelect.appendChild(option);
       });
-      teamSelect.addEventListener('change', function() {
+      teamSelect.onchange = function() {
         const selectedTeam = state.leagueTeams.find(t => t.name === this.value);
         if (selectedTeam) {
           displayOtherTeamRoster(selectedTeam);
         }
-      });
+      };
     }
 
     function displayOtherTeamRoster(team) {
-      // Generate roster if not cached
       if (!state.otherRosters[team.name]) {
         const roster = [];
         for (let i = 0; i < 10; i++) {
@@ -1204,7 +1389,6 @@
     function displayRetirementSummary() {
       const p = state.player;
       const stats = p.seasonStats;
-      const careerPts = stats.points; // season stats only for now
       const avgPoints = stats.gamesPlayed ? (stats.points / stats.gamesPlayed).toFixed(1) : '0.0';
       const avgAssists = stats.gamesPlayed ? (stats.assists / stats.gamesPlayed).toFixed(1) : '0.0';
       const avgRebounds = stats.gamesPlayed ? (stats.rebounds / stats.gamesPlayed).toFixed(1) : '0.0';
@@ -1222,11 +1406,275 @@
       `;
     }
 
+    // ---------- GAME SIMULATION ----------
+    function startNewGame() {
+      // Choose opponent: random team from league excluding user's team
+      const availableTeams = state.leagueTeams.filter(t => t.name !== state.player.currentTeam.name);
+      if (availableTeams.length === 0) {
+        alert('No opponents available.');
+        return;
+      }
+      const opponent = availableTeams[Math.floor(Math.random() * availableTeams.length)];
+
+      // Generate opponent roster if not cached
+      if (!state.otherRosters[opponent.name]) {
+        const roster = [];
+        for (let i = 0; i < 10; i++) {
+          roster.push(generateRandomPlayer());
+        }
+        state.otherRosters[opponent.name] = roster;
+      }
+      const oppRoster = state.otherRosters[opponent.name];
+
+      // Compute team averages
+      const userAvgOverall = state.teamRoster.reduce((sum, p) => sum + p.overall, 0) / state.teamRoster.length;
+      const oppAvgOverall = oppRoster.reduce((sum, p) => sum + p.overall, 0) / oppRoster.length;
+
+      // Generate base scores (without events)
+      // High school/AAU games lower scoring, college higher
+      let scoreRange = [55, 85]; // default
+      if (state.currentPath === 'college') {
+        scoreRange = [60, 95];
+      }
+      const baseUserScore = Math.round(scoreRange[0] + (userAvgOverall - 55) * 0.5 + (Math.random() * 10 - 5));
+      const baseOppScore = Math.round(scoreRange[0] + (oppAvgOverall - 55) * 0.5 + (Math.random() * 10 - 5));
+
+      // Generate player baseline stats
+      const player = state.player;
+      const baselineStats = generateBaselineStats(player);
+
+      // Select random events (5-10)
+      const numEvents = Math.floor(Math.random() * 6) + 5; // 5-10
+      const selectedEvents = [];
+      const eventPool = [...eventTemplates];
+      for (let i = 0; i < numEvents; i++) {
+        if (eventPool.length === 0) break;
+        const idx = Math.floor(Math.random() * eventPool.length);
+        selectedEvents.push(eventPool.splice(idx, 1)[0]);
+      }
+
+      // Initialize game state object
+      state.currentGame = {
+        opponent: opponent,
+        userTeamName: state.player.currentTeam.name,
+        oppTeamName: opponent.name,
+        baseUserScore: baseUserScore,
+        baseOppScore: baseOppScore,
+        currentUserScore: baseUserScore,
+        currentOppScore: baseOppScore,
+        events: selectedEvents,
+        currentEventIndex: 0,
+        playerGameStats: baselineStats,
+        relationshipsDelta: { coach: 0, teammates: 0, gm: 0 },
+        isGameOver: false,
+        log: []
+      };
+
+      // Render initial scoreboard
+      updateScoreboard();
+      renderCurrentEvent();
+    }
+
+    function generateBaselineStats(player) {
+      // Generate realistic baseline based on overall and position
+      const overall = player.overall;
+      const pos = player.position;
+      // Base points per game roughly 10-30 depending on overall
+      let points = Math.round(8 + (overall - 40) * 0.35 + (Math.random() * 6 - 3));
+      let assists = Math.round(2 + (overall - 40) * 0.15 + (Math.random() * 3 - 1.5));
+      let rebounds = Math.round(2 + (overall - 40) * 0.2 + (Math.random() * 3 - 1.5));
+      let steals = Math.round(0.5 + (overall - 40) * 0.05 + (Math.random() * 1.5 - 0.75));
+      let blocks = Math.round(0.3 + (overall - 40) * 0.05 + (Math.random() * 1 - 0.5));
+      let turnovers = Math.round(1 + (Math.random() * 2));
+
+      // Adjust for position
+      if (pos.includes('PG') || pos.includes('SG')) {
+        assists += 2;
+        rebounds -= 1;
+        steals += 1;
+      } else if (pos.includes('SF')) {
+        rebounds += 1;
+      } else if (pos.includes('PF') || pos.includes('C')) {
+        rebounds += 4;
+        assists -= 1;
+        blocks += 1;
+        points -= 2;
+      }
+
+      // Clamp to reasonable values
+      points = Math.max(0, Math.min(50, points));
+      assists = Math.max(0, Math.min(20, assists));
+      rebounds = Math.max(0, Math.min(20, rebounds));
+      steals = Math.max(0, Math.min(10, steals));
+      blocks = Math.max(0, Math.min(10, blocks));
+      turnovers = Math.max(0, Math.min(10, turnovers));
+
+      return {
+        points,
+        assists,
+        rebounds,
+        steals,
+        blocks,
+        turnovers,
+        minutes: Math.round(20 + Math.random() * 15)
+      };
+    }
+
+    function updateScoreboard() {
+      const game = state.currentGame;
+      userTeamName.textContent = game.userTeamName;
+      oppTeamName.textContent = game.oppTeamName;
+      userScoreEl.textContent = game.currentUserScore;
+      oppScoreEl.textContent = game.currentOppScore;
+    }
+
+    function renderCurrentEvent() {
+      const game = state.currentGame;
+      gameEventText.classList.remove('hidden');
+      gameChoices.innerHTML = '';
+      gameResultMessage.classList.add('hidden');
+      continueGameBtn.classList.add('hidden');
+      gameFinalArea.classList.add('hidden');
+
+      if (game.currentEventIndex >= game.events.length) {
+        endGame();
+        return;
+      }
+
+      const event = game.events[game.currentEventIndex];
+      gameEventText.textContent = event.text;
+      event.choices.forEach((choice, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'btn choice-btn';
+        btn.textContent = choice.text;
+        btn.addEventListener('click', () => makeChoice(idx));
+        gameChoices.appendChild(btn);
+      });
+    }
+
+    function makeChoice(choiceIndex) {
+      const game = state.currentGame;
+      const event = game.events[game.currentEventIndex];
+      const choice = event.choices[choiceIndex];
+
+      // Apply effects
+      if (choice.effects) {
+        if (choice.effects.teamScoreDelta) {
+          game.currentUserScore += choice.effects.teamScoreDelta;
+        }
+        if (choice.effects.opponentScoreDelta) {
+          game.currentOppScore += choice.effects.opponentScoreDelta;
+        }
+        if (choice.effects.playerStats) {
+          const stats = game.playerGameStats;
+          const delta = choice.effects.playerStats;
+          if (delta.points) stats.points += delta.points;
+          if (delta.assists) stats.assists += delta.assists;
+          if (delta.rebounds) stats.rebounds += delta.rebounds;
+          if (delta.steals) stats.steals += delta.steals;
+          if (delta.blocks) stats.blocks += delta.blocks;
+          if (delta.turnovers) stats.turnovers += delta.turnovers;
+          if (delta.fouls) stats.fouls = (stats.fouls || 0) + delta.fouls;
+        }
+        if (choice.effects.relationships) {
+          const rel = choice.effects.relationships;
+          game.relationshipsDelta.coach += rel.coach || 0;
+          game.relationshipsDelta.teammates += rel.teammates || 0;
+          game.relationshipsDelta.gm += rel.gm || 0;
+        }
+      }
+
+      // Reveal result
+      gameResultMessage.textContent = choice.resultMsg;
+      gameResultMessage.classList.remove('hidden');
+      gameChoices.innerHTML = '';
+      gameEventText.classList.add('hidden'); // hide event text to emphasize result
+      continueGameBtn.classList.remove('hidden');
+
+      updateScoreboard();
+    }
+
+    continueGameBtn.addEventListener('click', () => {
+      const game = state.currentGame;
+      game.currentEventIndex++;
+      if (game.currentEventIndex >= game.events.length) {
+        endGame();
+      } else {
+        renderCurrentEvent();
+      }
+    });
+
+    function endGame() {
+      const game = state.currentGame;
+      game.isGameOver = true;
+      gameEventText.classList.add('hidden');
+      gameChoices.innerHTML = '';
+      gameResultMessage.classList.add('hidden');
+      continueGameBtn.classList.add('hidden');
+      gameFinalArea.classList.remove('hidden');
+
+      // Determine win/loss
+      const userWon = game.currentUserScore > game.currentOppScore;
+      // Update team record
+      if (userWon) {
+        state.teamRecord.wins++;
+      } else {
+        state.teamRecord.losses++;
+      }
+
+      // Update player season stats
+      const p = state.player;
+      p.seasonStats.gamesPlayed++;
+      p.seasonStats.points += game.playerGameStats.points;
+      p.seasonStats.assists += game.playerGameStats.assists;
+      p.seasonStats.rebounds += game.playerGameStats.rebounds;
+      p.seasonStats.steals += game.playerGameStats.steals;
+      p.seasonStats.blocks += game.playerGameStats.blocks;
+      p.seasonStats.turnovers += game.playerGameStats.turnovers;
+      p.seasonStats.minutes += game.playerGameStats.minutes;
+
+      // Apply relationship changes (clamped 0-100)
+      p.relationships.coach = Math.max(0, Math.min(100, p.relationships.coach + game.relationshipsDelta.coach));
+      p.relationships.teammates = Math.max(0, Math.min(100, p.relationships.teammates + game.relationshipsDelta.teammates));
+      p.relationships.gm = Math.max(0, Math.min(100, p.relationships.gm + game.relationshipsDelta.gm));
+
+      // Display final stats
+      const stats = game.playerGameStats;
+      let html = '';
+      html += `<div class="final-stat"><span>Points</span><strong>${stats.points}</strong></div>`;
+      html += `<div class="final-stat"><span>Assists</span><strong>${stats.assists}</strong></div>`;
+      html += `<div class="final-stat"><span>Rebounds</span><strong>${stats.rebounds}</strong></div>`;
+      html += `<div class="final-stat"><span>Steals</span><strong>${stats.steals}</strong></div>`;
+      html += `<div class="final-stat"><span>Blocks</span><strong>${stats.blocks}</strong></div>`;
+      html += `<div class="final-stat"><span>Turnovers</span><strong>${stats.turnovers}</strong></div>`;
+      html += `<div class="final-stat"><span>Minutes</span><strong>${stats.minutes}</strong></div>`;
+      finalPlayerStats.innerHTML = html;
+
+      let relHtml = `<p>Final Score: ${game.userTeamName} ${game.currentUserScore} - ${game.currentOppScore} ${game.oppTeamName}</p>`;
+      relHtml += `<p>Result: ${userWon ? 'Win' : 'Loss'}</p>`;
+      relHtml += `<p>Coach Relationship: ${p.relationships.coach} (${game.relationshipsDelta.coach >= 0 ? '+' : ''}${game.relationshipsDelta.coach})</p>`;
+      relHtml += `<p>Teammate Relationship: ${p.relationships.teammates} (${game.relationshipsDelta.teammates >= 0 ? '+' : ''}${game.relationshipsDelta.teammates})</p>`;
+      relHtml += `<p>GM Relationship: ${p.relationships.gm} (${game.relationshipsDelta.gm >= 0 ? '+' : ''}${game.relationshipsDelta.gm})</p>`;
+      finalRelationships.innerHTML = relHtml;
+
+      // Show final area
+      // Also update scoreboard one last time
+      updateScoreboard();
+
+      // Disable play button? Not necessary, but maybe block if game already in progress? We'll just allow new game.
+    }
+
+    finishGameBtn.addEventListener('click', () => {
+      showScreen('career-hub');
+      // Refresh career hub stats
+      showCareerHub();
+    });
+
     // ---------- NAVIGATION ----------
     backToMenuBtn.addEventListener('click', () => showScreen('main-menu'));
     backToCharacterBtn.addEventListener('click', () => showScreen('character-creation'));
 
-    console.log('Game initialized.');
+    console.log('Game initialized. Difficulty set to Realism.');
   </script>
 </body>
 </html>
