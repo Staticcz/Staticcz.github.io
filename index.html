@@ -25,7 +25,7 @@
     .screen {
       display: none;
       width: 100%;
-      max-width: 800px;
+      max-width: 900px;
       background: rgba(0, 0, 0, 0.6);
       border-radius: 20px;
       padding: 40px 30px;
@@ -222,6 +222,97 @@
       font-size: 0.9rem;
       margin-top: 5px;
     }
+
+    /* Team Selection */
+    .team-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 20px;
+      max-height: 400px;
+      overflow-y: auto;
+      padding: 10px;
+    }
+
+    .team-card {
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid transparent;
+      border-radius: 10px;
+      padding: 15px 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+      min-width: 150px;
+      text-align: center;
+    }
+
+    .team-card:hover {
+      background: rgba(255, 209, 102, 0.2);
+      border-color: #ffd166;
+      transform: translateY(-2px);
+    }
+
+    .team-card h3 {
+      margin-bottom: 5px;
+      font-size: 1.1rem;
+    }
+
+    .team-card p {
+      font-size: 0.8rem;
+      color: #ccc;
+      margin-bottom: 0;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 10px;
+      font-size: 1rem;
+    }
+
+    .checkbox-label input {
+      width: auto;
+      margin: 0;
+    }
+
+    /* Career Hub */
+    .player-summary {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 25px;
+    }
+
+    .player-summary h3 {
+      color: #ffd166;
+      margin-bottom: 10px;
+    }
+
+    .player-summary .stat-line {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .player-summary .stat {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 10px;
+      border-radius: 8px;
+      min-width: 80px;
+    }
+
+    .player-summary .stat span {
+      display: block;
+      font-size: 0.8rem;
+      color: #aaa;
+    }
+
+    .player-summary .stat strong {
+      font-size: 1.4rem;
+    }
   </style>
 </head>
 <body>
@@ -337,25 +428,140 @@
     <button class="btn btn-back" id="back-to-menu">Back to Main Menu</button>
   </div>
 
-  <!-- TEAM SELECTION PLACEHOLDER -->
+  <!-- TEAM SELECTION SCREEN -->
   <div id="team-selection" class="screen">
-    <h2>Team Selection</h2>
-    <p>This screen is under construction.</p>
+    <h2>Select Your Team</h2>
+    <p id="team-selection-subtitle"></p>
+
+    <div id="aau-checkbox-container" class="hidden">
+      <label class="checkbox-label">
+        <input type="checkbox" id="aau-only-checkbox">
+        AAU Only
+      </label>
+    </div>
+
+    <div id="team-grid" class="team-grid"></div>
+
     <button class="btn btn-back" id="back-to-character">Back</button>
   </div>
 
+  <!-- CAREER HUB PLACEHOLDER -->
+  <div id="career-hub" class="screen">
+    <h2>Career Hub</h2>
+    <div class="player-summary" id="player-summary"></div>
+
+    <div class="button-group">
+      <button class="btn" id="play-btn">Play</button>
+      <button class="btn" id="team-btn">Team</button>
+      <button class="btn" id="rosters-btn">Rosters</button>
+      <button class="btn btn-back" id="retire-btn" style="background:#8b0000;">Retire</button>
+    </div>
+    <button class="btn btn-back" id="back-to-team-selection">Back</button>
+  </div>
+
   <script>
+    // ---------- TEAM DATA ----------
+    const highSchoolTeams = [
+      { name: "Montverde Academy", state: "FL" },
+      { name: "IMG Academy", state: "FL" },
+      { name: "Oak Hill Academy", state: "VA" },
+      { name: "Sierra Canyon", state: "CA" },
+      { name: "Prolific Prep", state: "CA" },
+      { name: "Sunrise Christian Academy", state: "KS" },
+      { name: "Link Academy", state: "MO" },
+      { name: "AZ Compass Prep", state: "AZ" },
+      { name: "La Lumiere School", state: "IN" },
+      { name: "Wasatch Academy", state: "UT" },
+      { name: "Brewster Academy", state: "NH" },
+      { name: "Paul VI Catholic", state: "VA" },
+      { name: "Camden High School", state: "NJ" },
+      { name: "Duncanville High School", state: "TX" },
+      { name: "Centennial High School", state: "CA" },
+      { name: "Columbus High School", state: "FL" },
+      { name: "Cardinal Hayes", state: "NY" },
+      { name: "Roselle Catholic", state: "NJ" },
+      { name: "St. Frances Academy", state: "MD" },
+      { name: "Bishop Gorman", state: "NV" },
+      { name: "Long Island Lutheran", state: "NY" },
+      { name: "Harvard-Westlake", state: "CA" },
+      { name: "Notre Dame High School", state: "CA" },
+      { name: "DeMatha Catholic", state: "MD" },
+      { name: "Gonzaga College High School", state: "DC" },
+      { name: "St. Vincent-St. Mary", state: "OH" },
+      { name: "Simeon Career Academy", state: "IL" },
+      { name: "Whitney Young", state: "IL" },
+      { name: "Westtown School", state: "PA" },
+      { name: "Oak Cliff Faith Family Academy", state: "TX" }
+    ];
+
+    const aauTeams = [
+      { name: "Team Takeover", region: "DC" },
+      { name: "Expressions Elite", region: "MA" },
+      { name: "MoKan Elite", region: "MO" },
+      { name: "Mac Irvin Fire", region: "IL" },
+      { name: "Houston Hoops", region: "TX" },
+      { name: "Drive Nation", region: "TX" },
+      { name: "Oakland Soldiers", region: "CA" },
+      { name: "Compton Magic", region: "CA" },
+      { name: "Team WhyNot", region: "CA" },
+      { name: "NY Renaissance", region: "NY" },
+      { name: "PSA Cardinals", region: "NY" },
+      { name: "Team Final", region: "PA" },
+      { name: "Boo Williams", region: "VA" },
+      { name: "E1T1", region: "FL" },
+      { name: "Nightrydas Elite", region: "FL" },
+      { name: "Vegas Elite", region: "NV" },
+      { name: "Indy Heat", region: "IN" },
+      { name: "All Ohio Red", region: "OH" },
+      { name: "MeanStreets", region: "IL" },
+      { name: "Bradley Beal Elite", region: "MO" }
+    ];
+
+    const collegeTeams = [
+      { name: "Duke", conference: "ACC" },
+      { name: "Kentucky", conference: "SEC" },
+      { name: "North Carolina", conference: "ACC" },
+      { name: "Kansas", conference: "Big 12" },
+      { name: "UCLA", conference: "Pac-12" },
+      { name: "Gonzaga", conference: "WCC" },
+      { name: "Michigan State", conference: "Big Ten" },
+      { name: "Villanova", conference: "Big East" },
+      { name: "Arizona", conference: "Pac-12" },
+      { name: "Baylor", conference: "Big 12" },
+      { name: "Houston", conference: "Big 12" },
+      { name: "Illinois", conference: "Big Ten" },
+      { name: "Indiana", conference: "Big Ten" },
+      { name: "Ohio State", conference: "Big Ten" },
+      { name: "Texas", conference: "Big 12" },
+      { name: "Alabama", conference: "SEC" },
+      { name: "Tennessee", conference: "SEC" },
+      { name: "Florida", conference: "SEC" },
+      { name: "Auburn", conference: "SEC" },
+      { name: "Arkansas", conference: "SEC" },
+      { name: "Creighton", conference: "Big East" },
+      { name: "Xavier", conference: "Big East" },
+      { name: "San Diego State", conference: "Mountain West" },
+      { name: "Miami", conference: "ACC" },
+      { name: "Virginia", conference: "ACC" },
+      { name: "Wisconsin", conference: "Big Ten" },
+      { name: "Purdue", conference: "Big Ten" },
+      { name: "Marquette", conference: "Big East" },
+      { name: "Iowa State", conference: "Big 12" },
+      { name: "Texas Tech", conference: "Big 12" }
+    ];
+
     // ---------- GAME STATE ----------
     const state = {
-      currentSaveSlot: null,   // 1, 2, or 3
-      currentPath: null,       // 'highschool' or 'college'
-      player: null             // will hold character data
+      currentSaveSlot: null,
+      currentPath: null,
+      player: null
     };
 
     // ---------- DOM ELEMENTS ----------
     const mainMenuScreen = document.getElementById('main-menu');
     const characterCreationScreen = document.getElementById('character-creation');
     const teamSelectionScreen = document.getElementById('team-selection');
+    const careerHubScreen = document.getElementById('career-hub');
     const saveButtons = document.querySelectorAll('.btn-save');
     const selectedSaveInfo = document.getElementById('selected-save-info');
     const pathOptions = document.getElementById('path-options');
@@ -363,10 +569,16 @@
     const startCollegeBtn = document.getElementById('start-college');
     const backToMenuBtn = document.getElementById('back-to-menu');
     const backToCharacterBtn = document.getElementById('back-to-character');
+    const backToTeamSelectionBtn = document.getElementById('back-to-team-selection');
     const createPlayerBtn = document.getElementById('create-player');
     const randomizePlayerBtn = document.getElementById('randomize-player');
     const buildOptionsContainer = document.getElementById('build-options');
     const buildError = document.getElementById('build-error');
+    const aauCheckboxContainer = document.getElementById('aau-checkbox-container');
+    const aauOnlyCheckbox = document.getElementById('aau-only-checkbox');
+    const teamGrid = document.getElementById('team-grid');
+    const teamSelectionSubtitle = document.getElementById('team-selection-subtitle');
+    const playerSummaryDiv = document.getElementById('player-summary');
 
     // ---------- SCREEN NAVIGATION ----------
     function showScreen(screenId) {
@@ -428,30 +640,24 @@
       document.getElementById('first-name').value = firstNames[Math.floor(Math.random() * firstNames.length)];
       document.getElementById('last-name').value = lastNames[Math.floor(Math.random() * lastNames.length)];
       
-      // Random height
       const feet = [5,6,7][Math.floor(Math.random()*3)];
       const inches = Math.floor(Math.random()*12);
       document.getElementById('height-feet').value = feet;
       document.getElementById('height-inches').value = inches;
       
-      // Random weight based on height
       const totalInches = feet*12 + inches;
       const baseWeight = Math.max(140, Math.min(300, Math.round(totalInches * 2.3 + 20)));
       document.getElementById('weight').value = baseWeight;
       
-      // Random wingspan
       document.getElementById('wingspan').value = Math.floor(Math.random()*31) + 60;
       
-      // Random position
       const positions = ['PG','SG','SF','PF','C','PG/SG','SG/SF','PF/C'];
       document.getElementById('position').value = positions[Math.floor(Math.random()*positions.length)];
       
-      // Reset builds
       selectedBuilds.clear();
       document.querySelectorAll('.build-option').forEach(opt => opt.classList.remove('selected'));
       buildError.textContent = '';
       
-      // Randomly select 1 or 2 builds
       const buildNames = ['Slasher','Sharpshooter','Playmaker','Defender','Rebounder','Athletic','Post Scorer','Shot Creator'];
       const numBuilds = Math.random() < 0.5 ? 1 : 2;
       const randomBuilds = [];
@@ -469,18 +675,14 @@
 
     // ---------- PLAYER ATTRIBUTE GENERATION ----------
     function generatePlayer(data) {
-      // Hidden potential 1-99
       const potential = Math.floor(Math.random() * 99) + 1;
-
-      // Starting overall based on potential
       let overall;
-      if (potential <= 20) overall = 58 + Math.floor(Math.random() * 6);      // 58-63
-      else if (potential <= 40) overall = 62 + Math.floor(Math.random() * 7); // 62-68
-      else if (potential <= 60) overall = 66 + Math.floor(Math.random() * 7); // 66-72
-      else if (potential <= 80) overall = 70 + Math.floor(Math.random() * 7); // 70-76
-      else overall = 74 + Math.floor(Math.random() * 7);                     // 74-80
+      if (potential <= 20) overall = 58 + Math.floor(Math.random() * 6);
+      else if (potential <= 40) overall = 62 + Math.floor(Math.random() * 7);
+      else if (potential <= 60) overall = 66 + Math.floor(Math.random() * 7);
+      else if (potential <= 80) overall = 70 + Math.floor(Math.random() * 7);
+      else overall = 74 + Math.floor(Math.random() * 7);
 
-      // Base skill templates for each position (at overall 70)
       const templates = {
         'PG':  { inside: 55, mid: 70, three: 75, play: 80, rebound: 40, per_def: 70, int_def: 40, ath: 70, iq: 75 },
         'SG':  { inside: 60, mid: 75, three: 80, play: 70, rebound: 40, per_def: 70, int_def: 40, ath: 75, iq: 70 },
@@ -492,7 +694,6 @@
         'PF/C': { inside: 72, mid: 55, three: 47, play: 47, rebound: 77, per_def: 45, int_def: 70, ath: 62, iq: 60 }
       };
 
-      // If position is hybrid, average the two base templates
       let baseSkills = {};
       const pos = data.position;
       if (pos.includes('/')) {
@@ -506,7 +707,6 @@
         baseSkills = { ...templates[pos] };
       }
 
-      // Apply build modifiers
       const buildModifiers = {
         'Slasher':       { inside: 8, mid: -2, three: -4, play: 0, rebound: 0, per_def: 0, int_def: 0, ath: 6, iq: -2 },
         'Sharpshooter':  { inside: -4, mid: 8, three: 10, play: -2, rebound: -2, per_def: 0, int_def: -2, ath: 0, iq: 2 },
@@ -527,20 +727,18 @@
         }
       }
 
-      // Adjust for height/wingspan (simple modifiers)
       const totalInches = data.heightFeet * 12 + data.heightInches;
-      if (totalInches >= 78) { // 6'6" and up
+      if (totalInches >= 78) {
         baseSkills.rebound += 5;
         baseSkills.int_def += 5;
         baseSkills.ath -= 3;
         baseSkills.per_def -= 2;
-      } else if (totalInches <= 73) { // 6'1" and below
+      } else if (totalInches <= 73) {
         baseSkills.per_def += 3;
         baseSkills.ath += 3;
         baseSkills.rebound -= 3;
         baseSkills.int_def -= 3;
       }
-      // Wingspan adjustment
       if (data.wingspan > totalInches + 4) {
         baseSkills.rebound += 3;
         baseSkills.int_def += 3;
@@ -550,25 +748,21 @@
         baseSkills.per_def += 1;
       }
 
-      // Clamp values
       for (const key in baseSkills) {
         baseSkills[key] = Math.max(40, Math.min(99, baseSkills[key]));
       }
 
-      // Scale to target overall
       const targetOverall = overall;
-      const baseOverall = 70; // templates were at 70
+      const baseOverall = 70;
       const scaleFactor = (targetOverall - 40) / (baseOverall - 40);
       const finalSkills = {};
       for (const key in baseSkills) {
         let val = 40 + (baseSkills[key] - 40) * scaleFactor;
-        // Add small random variation
         val += Math.floor(Math.random() * 5) - 2;
         val = Math.max(40, Math.min(99, Math.round(val)));
         finalSkills[key] = val;
       }
 
-      // Compute actual overall from skills (average)
       const skillValues = Object.values(finalSkills);
       const avg = skillValues.reduce((a,b) => a+b, 0) / skillValues.length;
       const finalOverall = Math.round(avg);
@@ -582,10 +776,9 @@
         wingspan: data.wingspan,
         position: data.position,
         builds: [...data.builds],
-        potential: potential, // hidden
+        potential: potential,
         overall: finalOverall,
         skills: finalSkills,
-        // Additional stats for career tracking
         seasonStats: {
           gamesPlayed: 0,
           points: 0,
@@ -596,9 +789,7 @@
           turnovers: 0,
           minutes: 0
         },
-        careerStats: {
-          // will be filled later
-        },
+        careerStats: {},
         relationships: {
           coach: 50,
           teammates: 50,
@@ -606,7 +797,7 @@
         },
         currentTeam: null,
         season: 1,
-        age: 14, // or based on path
+        age: state.currentPath === 'highschool' ? 14 : 18,
       };
     }
 
@@ -648,35 +839,93 @@
         builds: [...selectedBuilds]
       };
 
-      // Generate player
       state.player = generatePlayer(playerData);
-
-      // Set starting age based on path
-      if (state.currentPath === 'highschool') {
-        state.player.age = 14; // freshman
-      } else {
-        state.player.age = 18; // freshman
-      }
-
-      // Autosave (we'll simulate by storing in memory; later we can add localStorage)
-      console.log('Autosaving to Save Slot', state.currentSaveSlot, '...');
       console.log('Player created:', state.player);
 
-      // Move to team selection screen
+      // Prepare team selection screen
+      prepareTeamSelection();
       showScreen('team-selection');
     });
 
+    // ---------- TEAM SELECTION ----------
+    function prepareTeamSelection() {
+      const isHighSchool = state.currentPath === 'highschool';
+      aauCheckboxContainer.classList.toggle('hidden', !isHighSchool);
+      aauOnlyCheckbox.checked = false;
+      updateTeamGrid();
+    }
+
+    function updateTeamGrid() {
+      const isHighSchool = state.currentPath === 'highschool';
+      const showAAU = isHighSchool && aauOnlyCheckbox.checked;
+      let teams = [];
+      if (isHighSchool) {
+        teams = showAAU ? aauTeams : highSchoolTeams;
+        teamSelectionSubtitle.textContent = showAAU ? 'AAU Teams' : 'High School Teams';
+      } else {
+        teams = collegeTeams;
+        teamSelectionSubtitle.textContent = 'College Teams';
+      }
+
+      teamGrid.innerHTML = '';
+      teams.forEach(team => {
+        const card = document.createElement('div');
+        card.className = 'team-card';
+        const detail = team.state ? team.state : team.region ? team.region : team.conference;
+        card.innerHTML = `<h3>${team.name}</h3><p>${detail}</p>`;
+        card.addEventListener('click', () => selectTeam(team));
+        teamGrid.appendChild(card);
+      });
+    }
+
+    aauOnlyCheckbox.addEventListener('change', updateTeamGrid);
+
+    function selectTeam(team) {
+      state.player.currentTeam = team;
+      console.log('Team selected:', team);
+      showCareerHub();
+    }
+
+    // ---------- CAREER HUB ----------
+    function showCareerHub() {
+      // Update player summary
+      const p = state.player;
+      const stats = p.seasonStats;
+      const avgPoints = stats.gamesPlayed ? (stats.points / stats.gamesPlayed).toFixed(1) : '0.0';
+      const avgAssists = stats.gamesPlayed ? (stats.assists / stats.gamesPlayed).toFixed(1) : '0.0';
+      const avgRebounds = stats.gamesPlayed ? (stats.rebounds / stats.gamesPlayed).toFixed(1) : '0.0';
+
+      playerSummaryDiv.innerHTML = `
+        <h3>${p.firstName} ${p.lastName}</h3>
+        <p>${p.position} | ${p.heightFeet}'${p.heightInches}" | ${p.weight} lbs | Overall: ${p.overall}</p>
+        <p>Team: ${p.currentTeam.name}</p>
+        <div class="stat-line">
+          <div class="stat"><span>PPG</span><strong>${avgPoints}</strong></div>
+          <div class="stat"><span>APG</span><strong>${avgAssists}</strong></div>
+          <div class="stat"><span>RPG</span><strong>${avgRebounds}</strong></div>
+        </div>
+      `;
+
+      showScreen('career-hub');
+    }
+
+    // ---------- CAREER HUB BUTTONS ----------
+    document.getElementById('play-btn').addEventListener('click', () => alert('Play feature coming soon!'));
+    document.getElementById('team-btn').addEventListener('click', () => alert('Team feature coming soon!'));
+    document.getElementById('rosters-btn').addEventListener('click', () => alert('Rosters feature coming soon!'));
+    document.getElementById('retire-btn').addEventListener('click', () => {
+      if (confirm('Are you sure you want to retire this player?')) {
+        alert('Retirement screen coming soon!');
+        // Future: show retirement summary
+      }
+    });
+
     // ---------- NAVIGATION ----------
-    backToMenuBtn.addEventListener('click', function() {
-      showScreen('main-menu');
-    });
+    backToMenuBtn.addEventListener('click', () => showScreen('main-menu'));
+    backToCharacterBtn.addEventListener('click', () => showScreen('character-creation'));
+    backToTeamSelectionBtn.addEventListener('click', () => showScreen('team-selection'));
 
-    backToCharacterBtn.addEventListener('click', function() {
-      showScreen('character-creation');
-    });
-
-    // Initialize: no save selected
-    console.log('Game initialized. Waiting for save file selection...');
+    console.log('Game initialized.');
   </script>
 </body>
 </html>
