@@ -1,2130 +1,251 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hoops Career — Full Experience</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Teko:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --ink:#0A0E14;
-    --panel:#131B29;
-    --panel-2:#0F1621;
-    --panel-3:#1B2536;
-    --line:rgba(244,242,236,.09);
-    --chalk:#F2F0EA;
-    --chalk-dim:rgba(242,240,234,.58);
-    --wood:#C17F3E;
-    --wood-dim:rgba(193,127,62,.16);
-    --teal:#33C2AC;
-    --teal-dim:rgba(51,194,172,.14);
-    --red:#E5473A;
-    --red-dim:rgba(229,71,58,.16);
-    --gold:#D8B34A;
-    --purple:#9B59B6;
-    --blue:#3498DB;
-    --green:#2ECC71;
-  }
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;background:var(--ink);color:var(--chalk);font-family:'IBM Plex Sans',sans-serif;}
-  body{min-height:100vh;}
-  .mono{font-family:'IBM Plex Mono',monospace;}
-  .display{font-family:'Teko',sans-serif;font-weight:600;letter-spacing:.01em;}
-  h1,h2,h3{margin:0;}
-  button{font-family:inherit;cursor:pointer;}
-  input,select,textarea{font-family:inherit;}
-  ::selection{background:var(--wood);color:var(--ink);}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Static's Hooper Generator</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-  .screen{display:none;min-height:100vh;padding:28px 24px 60px;}
-  .screen.active{display:block;}
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      padding: 20px;
+    }
 
-  .brand{display:flex;align-items:baseline;gap:10px;margin-bottom:22px;max-width:1180px;margin-left:auto;margin-right:auto;}
-  .brand .mark{width:10px;height:10px;background:var(--wood);border-radius:2px;transform:rotate(45deg);}
-  .brand .name{font-family:'Teko',sans-serif;font-size:28px;letter-spacing:.04em;text-transform:uppercase;}
-  .brand .tag{color:var(--chalk-dim);font-size:12px;letter-spacing:.08em;text-transform:uppercase;}
+    .screen {
+      display: none;
+      width: 100%;
+      max-width: 800px;
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 20px;
+      padding: 40px 30px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
 
-  .create-wrap{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1.3fr 1fr;gap:22px;}
-  @media (max-width:940px){.create-wrap{grid-template-columns:1fr;}}
-  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px 22px;}
-  .panel + .panel{margin-top:18px;}
-  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
-  .field{display:flex;flex-direction:column;gap:6px;}
-  .field label{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--chalk-dim);}
-  .field input[type=text],.field input[type=number],.field select{
-    background:var(--panel-2);border:1px solid var(--line);color:var(--chalk);border-radius:6px;padding:9px 10px;font-size:14px;
-  }
-  .field input:focus,.field select:focus,button:focus-visible,.choice-btn:focus-visible{outline:2px solid var(--teal);outline-offset:1px;}
-  .field-trio{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
-  .section-title{font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:var(--wood);font-weight:600;margin:2px 0 12px;display:flex;align-items:center;gap:8px;}
-  .section-title::after{content:"";flex:1;height:1px;background:var(--line);}
+    .screen.active {
+      display: block;
+    }
 
-  .slider-row{display:grid;grid-template-columns:120px 1fr 34px;align-items:center;gap:10px;margin-bottom:9px;}
-  .slider-row label{font-size:12.5px;color:var(--chalk-dim);}
-  .slider-row input[type=range]{width:100%;accent-color:var(--wood);}
-  .slider-row .val{font-family:'IBM Plex Mono',monospace;font-size:12.5px;text-align:right;color:var(--chalk);}
-  .attr-cols{display:grid;grid-template-columns:1fr 1fr;gap:0 22px;}
-  @media (max-width:600px){.attr-cols{grid-template-columns:1fr;}}
-  .attr-group{margin-bottom:6px;}
-  .attr-group h4{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--teal);margin:0 0 8px;}
+    h1 {
+      font-size: 3rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+      background: linear-gradient(45deg, #ff6b35, #ffd166);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-transform: uppercase;
+    }
 
-  .derived-note{font-size:12px;color:var(--chalk-dim);margin-top:8px;line-height:1.5;}
-  .derived-note b{color:var(--wood);font-weight:600;}
+    h2 {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      color: #ffd166;
+    }
 
-  .scout-card{position:relative;background:linear-gradient(160deg,var(--panel-3),var(--panel-2));border:1px solid var(--line);border-radius:14px;padding:22px;overflow:hidden;}
-  .scout-card .ribbon{position:absolute;top:14px;right:-34px;background:var(--wood);color:var(--ink);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 40px;transform:rotate(35deg);}
-  .scout-card .jersey{font-family:'Teko',sans-serif;font-size:64px;line-height:1;color:var(--wood);font-weight:700;}
-  .scout-card .name{font-family:'Teko',sans-serif;font-size:34px;text-transform:uppercase;letter-spacing:.01em;line-height:1.02;margin-top:2px;}
-  .scout-card .meta{font-size:12.5px;color:var(--chalk-dim);margin-top:4px;}
-  .scout-card .overall-seal{position:absolute;bottom:18px;right:18px;width:64px;height:64px;border-radius:50%;border:2px solid var(--gold);display:flex;flex-direction:column;align-items:center;justify-content:center;transform:rotate(-8deg);background:rgba(216,179,74,.08);}
-  .scout-card .overall-seal .num{font-family:'Teko',sans-serif;font-size:26px;color:var(--gold);line-height:1;}
-  .scout-card .overall-seal .lbl{font-size:8px;letter-spacing:.08em;color:var(--gold);text-transform:uppercase;}
-  .mini-bars{margin-top:16px;display:flex;flex-direction:column;gap:7px;}
-  .mini-bar-row{display:grid;grid-template-columns:88px 1fr 28px;align-items:center;gap:8px;}
-  .mini-bar-row .lbl{font-size:11px;color:var(--chalk-dim);text-transform:uppercase;letter-spacing:.04em;}
-  .mini-bar-track{height:6px;background:rgba(244,242,236,.08);border-radius:4px;overflow:hidden;}
-  .mini-bar-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--wood));}
-  .mini-bar-row .num{font-family:'IBM Plex Mono',monospace;font-size:11px;text-align:right;}
-  .badge-chip{display:inline-flex;align-items:center;gap:6px;background:var(--wood-dim);border:1px solid rgba(193,127,62,.35);color:var(--wood);font-size:11.5px;padding:5px 10px;border-radius:20px;margin-top:14px;}
-  .badge-chip .dot{width:6px;height:6px;border-radius:50%;background:var(--wood);}
+    p {
+      font-size: 1.1rem;
+      margin-bottom: 25px;
+      color: #ddd;
+    }
 
-  .btn{background:var(--panel-2);border:1px solid var(--line);color:var(--chalk);padding:11px 18px;border-radius:7px;font-size:13.5px;font-weight:500;transition:border-color .15s;}
-  .btn:hover{border-color:var(--teal);}
-  .btn-primary{background:var(--wood);border-color:var(--wood);color:var(--ink);font-weight:700;}
-  .btn-primary:hover{background:#d38d4c;border-color:#d38d4c;}
-  .btn-block{width:100%;}
-  .btn-row{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;}
-  .helper-line{font-size:12px;color:var(--chalk-dim);margin-top:10px;}
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 20px;
+    }
 
-  .season-bar{max-width:1180px;margin:0 auto 16px;display:flex;justify-content:space-between;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 16px;font-size:14px;font-weight:600;color:var(--chalk);}
+    .btn {
+      padding: 15px 30px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #fff;
+      background: #1e3a8a;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      min-width: 180px;
+    }
 
-  .game-wrap{max-width:1180px;margin:0 auto;}
-  .jumbotron{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 22px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:14px;margin-bottom:16px;}
-  .jb-team{display:flex;flex-direction:column;gap:2px;}
-  .jb-team .team-name{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--chalk-dim);}
-  .jb-team .team-score{font-family:'Teko',sans-serif;font-size:56px;line-height:1;}
-  .jb-team.opp{text-align:right;align-items:flex-end;}
-  .jb-mid{text-align:center;}
-  .jb-mid .qtr{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--wood);}
-  .jb-mid .clock{font-family:'IBM Plex Mono',monospace;font-size:26px;margin-top:2px;}
-  .jb-mid .status{font-size:10.5px;color:var(--chalk-dim);margin-top:2px;text-transform:uppercase;letter-spacing:.05em;}
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+      filter: brightness(1.1);
+    }
 
-  .controls-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:16px;}
-  .speed-group{display:inline-flex;background:var(--panel-2);border:1px solid var(--line);border-radius:7px;overflow:hidden;}
-  .speed-group button{background:transparent;border:none;color:var(--chalk-dim);padding:9px 14px;font-size:12.5px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;}
-  .speed-group button.active{background:var(--teal-dim);color:var(--teal);}
-  .spacer{flex:1;}
+    .btn:active {
+      transform: translateY(0);
+    }
 
-  .game-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:18px;}
-  @media (max-width:940px){.game-grid{grid-template-columns:1fr;}}
+    .btn-save {
+      background: #6d28d9;
+    }
 
-  .feed-panel{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:0;overflow:hidden;display:flex;flex-direction:column;height:520px;}
-  .feed-head{padding:12px 16px;border-bottom:1px solid var(--line);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--chalk-dim);display:flex;justify-content:space-between;}
-  .feed-body{flex:1;overflow-y:auto;padding:10px 16px;display:flex;flex-direction:column-reverse;}
-  .feed-line{font-family:'IBM Plex Mono',monospace;font-size:12.5px;line-height:1.6;padding:5px 0;border-bottom:1px dashed var(--line);color:var(--chalk-dim);}
-  .feed-line .t{color:var(--wood);margin-right:8px;}
-  .feed-line.hi{color:var(--chalk);}
-  .feed-line.score{color:var(--teal);}
-  .feed-line.foul{color:var(--red);}
-  .feed-line.choice{color:var(--gold);font-style:italic;}
+    .btn-save.selected {
+      background: #10b981;
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
+    }
 
-  .side-col{display:flex;flex-direction:column;gap:16px;}
-  .player-strip{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:12px;}
-  .player-strip .jnum{font-family:'Teko',sans-serif;font-size:34px;color:var(--wood);}
-  .player-strip .pname{font-size:14px;font-weight:600;}
-  .player-strip .pmeta{font-size:11.5px;color:var(--chalk-dim);}
-  .stamina-wrap{margin-left:auto;text-align:right;}
-  .stamina-wrap .lbl{font-size:10px;color:var(--chalk-dim);text-transform:uppercase;letter-spacing:.06em;}
-  .stamina-track{width:90px;height:7px;background:rgba(244,242,236,.08);border-radius:5px;overflow:hidden;margin-top:4px;}
-  .stamina-fill{height:100%;background:var(--teal);}
+    .btn-highschool {
+      background: #e67e22;
+    }
 
-  .stat-panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;}
-  .stat-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px;}
-  .stat-cell{background:var(--panel-2);border-radius:7px;padding:9px 10px;}
-  .stat-cell .n{font-family:'IBM Plex Mono',monospace;font-size:19px;}
-  .stat-cell .l{font-size:10px;color:var(--chalk-dim);text-transform:uppercase;letter-spacing:.05em;}
-  .foul-row{display:flex;gap:6px;margin-top:12px;}
-  .foul-dot{width:14px;height:14px;border-radius:50%;border:1px solid var(--line);}
-  .foul-dot.on{background:var(--red);border-color:var(--red);}
-  .tech-tag{display:inline-block;margin-top:10px;font-size:11px;color:var(--red);background:var(--red-dim);padding:4px 9px;border-radius:5px;}
+    .btn-college {
+      background: #2980b9;
+    }
 
-  .modal-overlay{position:fixed;inset:0;background:rgba(6,9,14,.72);backdrop-filter:blur(2px);display:none;align-items:flex-end;justify-content:center;z-index:50;}
-  .modal-overlay.show{display:flex;}
-  .modal-card{width:100%;max-width:640px;background:var(--panel);border:1px solid var(--red);border-top-width:3px;border-radius:14px 14px 0 0;padding:22px 24px 26px;box-shadow:0 -10px 40px rgba(0,0,0,.5);animation:slideup .25s ease;}
-  @keyframes slideup{from{transform:translateY(30px);opacity:0;}to{transform:translateY(0);opacity:1;}}
-  .modal-eyebrow{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--red);font-weight:700;display:flex;align-items:center;gap:8px;}
-  .modal-eyebrow .pulse{width:7px;height:7px;border-radius:50%;background:var(--red);animation:pulse 1.1s infinite;}
-  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
-  .modal-desc{font-size:16px;line-height:1.5;margin-top:10px;}
-  .choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px;}
-  @media (max-width:560px){.choice-grid{grid-template-columns:1fr;}}
-  .choice-btn{text-align:left;background:var(--panel-2);border:1px solid var(--line);color:var(--chalk);padding:12px 14px;border-radius:8px;font-size:13px;line-height:1.4;}
-  .choice-btn:hover{border-color:var(--teal);background:var(--teal-dim);}
-  .choice-btn .cnum{color:var(--wood);font-weight:700;margin-right:6px;}
-  .modal-result{margin-top:16px;font-size:13.5px;color:var(--teal);display:none;}
-  .modal-result.show{display:block;}
+    .btn-back {
+      background: #555;
+      margin-top: 20px;
+      min-width: auto;
+      padding: 10px 20px;
+      font-size: 0.9rem;
+    }
 
-  .box-overlay{position:fixed;inset:0;background:rgba(6,9,14,.86);display:none;align-items:center;justify-content:center;z-index:60;padding:20px;}
-  .box-overlay.show{display:flex;}
-  .box-card{max-width:560px;width:100%;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:26px 28px;max-height:88vh;overflow-y:auto;}
-  .box-card h2{font-family:'Teko',sans-serif;font-size:34px;text-transform:uppercase;}
-  .final-line{font-size:14px;color:var(--chalk-dim);margin-top:2px;}
-  .box-table{width:100%;border-collapse:collapse;margin-top:18px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;}
-  .box-table td{padding:7px 4px;border-bottom:1px solid var(--line);}
-  .box-table td.l{color:var(--chalk-dim);}
-  .box-table td.v{text-align:right;font-weight:600;}
+    .hidden {
+      display: none;
+    }
 
-  .save-slot-row{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
-  .save-slot-btn{flex:1;min-width:120px;}
+    .path-options {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
 
-  .timing-bar-container{width:100%;height:30px;background:var(--panel-2);border:1px solid var(--line);border-radius:15px;position:relative;overflow:hidden;margin:20px 0;}
-  .timing-marker{width:20px;height:20px;background:var(--gold);border-radius:50%;position:absolute;top:5px;left:0;}
-  .timing-zone{position:absolute;top:0;height:100%;background:rgba(51,194,172,.3);border-left:2px solid var(--teal);border-right:2px solid var(--teal);}
-  .timing-score{text-align:center;font-size:18px;font-weight:600;}
-
-  .hidden{display:none !important;}
-  ::-webkit-scrollbar{width:8px;}
-  ::-webkit-scrollbar-thumb{background:var(--panel-3);border-radius:4px;}
-</style>
+    .selected-save-info {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 10px;
+      border-radius: 10px;
+      margin-top: 20px;
+      font-weight: bold;
+      color: #ffd166;
+    }
+  </style>
 </head>
 <body>
 
-<!-- ============ CREATE SCREEN ============ -->
-<section id="screen-create" class="screen active">
-  <div class="brand"><span class="mark"></span><span class="name">Hoops Career</span><span class="tag">Player Creation</span></div>
-  
-  <div class="panel" style="max-width:1180px;margin:0 auto 18px;">
-    <div class="section-title">Save Slots</div>
-    <div class="save-slot-row" id="save-slots"></div>
-  </div>
+  <!-- MAIN MENU SCREEN -->
+  <div id="main-menu" class="screen active">
+    <h1>Static's Hooper Generator</h1>
+    <p>Choose a save file to begin your basketball journey</p>
 
-  <div class="panel" id="saved-banner" style="display:none;max-width:1180px;margin:0 auto 18px;">
-    <div class="section-title">Saved Career Found</div>
-    <p style="font-size:13px;color:var(--chalk-dim);margin:0 0 12px;" id="saved-banner-text"></p>
-    <div class="btn-row" style="margin-top:0;">
-      <button class="btn btn-primary" id="btn-continue-career">Continue Career</button>
-      <button class="btn" id="btn-delete-save">Delete Save</button>
-    </div>
-  </div>
-
-  <div class="create-wrap">
-    <div>
-      <div class="panel">
-        <div class="section-title">Identity</div>
-        <div class="field-row">
-          <div class="field"><label for="f-first">First Name</label><input id="f-first" type="text" value="Marcus"></div>
-          <div class="field"><label for="f-last">Last Name</label><input id="f-last" type="text" value="Johnson"></div>
-        </div>
-        <div class="field-row">
-          <div class="field"><label for="f-position">Position</label>
-            <select id="f-position">
-              <option value="PG">Point Guard</option>
-              <option value="SG">Shooting Guard</option>
-              <option value="SF" selected>Small Forward</option>
-              <option value="PF">Power Forward</option>
-              <option value="C">Center</option>
-            </select>
-          </div>
-          <div class="field"><label for="f-archetype">Play Style / Archetype</label>
-            <select id="f-archetype">
-              <option>Sharpshooter</option>
-              <option selected>Slasher</option>
-              <option>Playmaker</option>
-              <option>Lockdown Defender</option>
-              <option>Post Scorer</option>
-            </select>
-          </div>
-        </div>
-        <div class="field-row">
-          <div class="field"><label for="f-college">College Team</label>
-            <select id="f-college"></select>
-          </div>
-          <div class="field"><label for="f-hand">Preferred Hand</label>
-            <select id="f-hand"><option>Right</option><option>Left</option></select>
-          </div>
-        </div>
-        <div class="field-row">
-          <div class="field"><label>Height</label>
-            <div class="field-trio">
-              <select id="f-heightft"><option>5</option><option selected>6</option><option>7</option></select>
-              <select id="f-heightin"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option selected>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option></select>
-              <div class="mono" style="align-self:center;color:var(--chalk-dim);font-size:12px;" id="height-readout">6'6"</div>
-            </div>
-          </div>
-          <div class="field"><label for="f-weight">Weight (lbs)</label><input id="f-weight" type="number" value="215" min="150" max="320"></div>
-        </div>
-        <div class="field-row">
-          <div class="field"><label for="f-wingspan">Wingspan (inches)</label><input id="f-wingspan" type="number" value="81" min="60" max="96"></div>
-          <div class="field"><label for="f-age">Starting Age</label><input id="f-age" type="number" value="18" min="17" max="22"></div>
-        </div>
-        <div class="field-row">
-          <div class="field"><label for="f-jersey">Jersey Number</label><input id="f-jersey" type="number" value="23" min="0" max="99"></div>
-        </div>
-        <div class="derived-note" id="physical-note"></div>
-      </div>
-
-      <div class="panel">
-        <div class="section-title">Basketball Brain</div>
-        <div class="attr-cols">
-          <div>
-            <div class="slider-row"><label>Court Vision</label><input type="range" id="b-courtVision" min="1" max="99"><span class="val" id="vb-courtVision"></span></div>
-            <div class="slider-row"><label>Risk Tolerance</label><input type="range" id="b-riskTolerance" min="1" max="99"><span class="val" id="vb-riskTolerance"></span></div>
-            <div class="slider-row"><label>Shot Selection</label><input type="range" id="b-shotSelection" min="1" max="99"><span class="val" id="vb-shotSelection"></span></div>
-            <div class="slider-row"><label>Help Defense</label><input type="range" id="b-helpDefense" min="1" max="99"><span class="val" id="vb-helpDefense"></span></div>
-            <div class="slider-row"><label>Passing Creativity</label><input type="range" id="b-passingCreativity" min="1" max="99"><span class="val" id="vb-passingCreativity"></span></div>
-          </div>
-          <div>
-            <div class="slider-row"><label>Defensive Discipline</label><input type="range" id="b-defensiveDiscipline" min="1" max="99"><span class="val" id="vb-defensiveDiscipline"></span></div>
-            <div class="slider-row"><label>Clutch Mentality</label><input type="range" id="b-clutchMentality" min="1" max="99"><span class="val" id="vb-clutchMentality"></span></div>
-            <div class="slider-row"><label>Adaptability</label><input type="range" id="b-adaptability" min="1" max="99"><span class="val" id="vb-adaptability"></span></div>
-            <div class="slider-row"><label>Basketball IQ</label><input type="range" id="b-basketballIQ" min="1" max="99"><span class="val" id="vb-basketballIQ"></span></div>
-            <div class="slider-row"><label>Coachability</label><input type="range" id="b-coachability" min="1" max="99"><span class="val" id="vb-coachability"></span></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="panel">
-        <div class="section-title">Tendencies</div>
-        <div class="attr-cols">
-          <div>
-            <div class="slider-row"><label>Shoot</label><input type="range" id="t-shoot" min="0" max="100"><span class="val" id="vt-shoot"></span></div>
-            <div class="slider-row"><label>Three-Pt</label><input type="range" id="t-three" min="0" max="100"><span class="val" id="vt-three"></span></div>
-            <div class="slider-row"><label>Dunk</label><input type="range" id="t-dunk" min="0" max="100"><span class="val" id="vt-dunk"></span></div>
-            <div class="slider-row"><label>Drive</label><input type="range" id="t-drive" min="0" max="100"><span class="val" id="vt-drive"></span></div>
-            <div class="slider-row"><label>Pass</label><input type="range" id="t-pass" min="0" max="100"><span class="val" id="vt-pass"></span></div>
-            <div class="slider-row"><label>Isolation</label><input type="range" id="t-isolation" min="0" max="100"><span class="val" id="vt-isolation"></span></div>
-          </div>
-          <div>
-            <div class="slider-row"><label>Post-Up</label><input type="range" id="t-postUp" min="0" max="100"><span class="val" id="vt-postUp"></span></div>
-            <div class="slider-row"><label>Steal</label><input type="range" id="t-steal" min="0" max="100"><span class="val" id="vt-steal"></span></div>
-            <div class="slider-row"><label>Block Attempt</label><input type="range" id="t-blockAttempt" min="0" max="100"><span class="val" id="vt-blockAttempt"></span></div>
-            <div class="slider-row"><label>Aggression</label><input type="range" id="t-aggression" min="0" max="100"><span class="val" id="vt-aggression"></span></div>
-            <div class="slider-row"><label>Foul Prone</label><input type="range" id="t-foul" min="0" max="100"><span class="val" id="vt-foul"></span></div>
-            <div class="slider-row"><label>Trash Talk</label><input type="range" id="t-trashTalk" min="0" max="100"><span class="val" id="vt-trashTalk"></span></div>
-          </div>
-        </div>
-      </div>
+    <div class="button-group">
+      <button class="btn btn-save" data-save="1">Save 1</button>
+      <button class="btn btn-save" data-save="2">Save 2</button>
+      <button class="btn btn-save" data-save="3">Save 3</button>
     </div>
 
-    <div>
-      <div class="scout-card" id="scout-card">
-        <div class="ribbon" id="scout-archetype">SLASHER</div>
-        <div class="jersey" id="scout-jersey">#23</div>
-        <div class="name" id="scout-name">MARCUS JOHNSON</div>
-        <div class="meta" id="scout-meta">Small Forward · 6'6" · 215 lbs · Age 18</div>
-        <div class="mini-bars" id="scout-bars"></div>
-        <div class="badge-chip"><span class="dot"></span><span id="scout-badge">Posterizer (Bronze)</span></div>
-        <div class="overall-seal"><div class="num" id="scout-overall">60</div><div class="lbl">OVR</div></div>
-      </div>
-      <div class="panel" style="margin-top:16px;">
-        <div class="section-title">Ready</div>
-        <p style="font-size:13px;color:var(--chalk-dim);line-height:1.6;margin:0 0 4px;">You'll start your college career at your chosen school, then enter the draft after the season. Your attributes are preset to a 60 overall; earn skill points to upgrade later.</p>
-        <button class="btn btn-primary btn-block" id="btn-enter-league" style="margin-top:14px;">Start College Career →</button>
+    <div id="selected-save-info" class="selected-save-info hidden"></div>
+
+    <div id="path-options" class="path-options hidden">
+      <h2>Choose Your Starting Path</h2>
+      <div class="button-group">
+        <button class="btn btn-highschool" id="start-highschool">High School</button>
+        <button class="btn btn-college" id="start-college">College</button>
       </div>
     </div>
   </div>
-</section>
 
-<!-- ============ GAME SCREEN ============ -->
-<section id="screen-game" class="screen">
-  <div class="game-wrap">
-    <div class="brand"><span class="mark"></span><span class="name">Hoops Career</span><span class="tag">Season</span></div>
-
-    <div class="season-bar">
-      <span id="season-game-label">Game 1 of 20</span>
-      <span id="season-record">Record: 0-0</span>
-    </div>
-
-    <div class="jumbotron">
-      <div class="jb-team"><span class="team-name" id="jb-user-name">COLLEGE TEAM</span><span class="team-score display" id="jb-user-score">0</span></div>
-      <div class="jb-mid"><div class="qtr" id="jb-qtr">Q1</div><div class="clock" id="jb-clock">12:00</div><div class="status" id="jb-status">Tip-off pending</div></div>
-      <div class="jb-team opp"><span class="team-name" id="jb-opp-name">OPPONENT</span><span class="team-score display" id="jb-opp-score">0</span></div>
-    </div>
-
-    <div class="controls-row">
-      <button class="btn btn-primary" id="btn-start-game">Tip It Off</button>
-      <button class="btn" id="btn-quick-sim">Quick Sim</button>
-      <button class="btn" id="btn-sim5">Sim 5 Games</button>
-      <button class="btn" id="btn-sim10">Sim 10 Games</button>
-      <div class="speed-group" id="speed-group">
-        <button data-speed="1200" class="active">Normal</button>
-        <button data-speed="500">Fast</button>
-        <button data-speed="120">Very Fast</button>
-      </div>
-      <div class="spacer"></div>
-      <button class="btn" id="btn-save-career">Save Career</button>
-      <button class="btn" id="btn-retire">Retire</button>
-      <button class="btn" id="btn-new-career">New Career</button>
-    </div>
-    <div class="helper-line" id="save-status-line" style="text-align:right;margin-top:-8px;margin-bottom:8px;"></div>
-
-    <div class="game-grid">
-      <div class="feed-panel">
-        <div class="feed-head"><span>Play-by-Play</span><span id="feed-poss-count">0 possessions</span></div>
-        <div class="feed-body" id="feed-body">
-          <div class="feed-line">Waiting for tip-off — hit "Tip It Off" to start the game.</div>
-        </div>
-      </div>
-
-      <div class="side-col">
-        <div class="player-strip">
-          <div class="jnum display" id="strip-jersey">#23</div>
-          <div>
-            <div class="pname" id="strip-name">Marcus Johnson</div>
-            <div class="pmeta" id="strip-pos">SF · Slasher</div>
-          </div>
-          <div class="stamina-wrap">
-            <div class="lbl">Stamina</div>
-            <div class="stamina-track"><div class="stamina-fill" id="stamina-fill" style="width:100%"></div></div>
-          </div>
-        </div>
-
-        <div class="stat-panel">
-          <div class="section-title" style="margin-bottom:2px;">Live Stat Line</div>
-          <div class="stat-grid">
-            <div class="stat-cell"><div class="n" id="s-pts">0</div><div class="l">PTS</div></div>
-            <div class="stat-cell"><div class="n" id="s-reb">0</div><div class="l">REB</div></div>
-            <div class="stat-cell"><div class="n" id="s-ast">0</div><div class="l">AST</div></div>
-            <div class="stat-cell"><div class="n" id="s-stl">0</div><div class="l">STL</div></div>
-            <div class="stat-cell"><div class="n" id="s-blk">0</div><div class="l">BLK</div></div>
-            <div class="stat-cell"><div class="n" id="s-tov">0</div><div class="l">TOV</div></div>
-          </div>
-          <div class="mono" style="font-size:11px;color:var(--chalk-dim);margin-top:10px;" id="s-shooting">FG 0/0 · 3PT 0/0 · FT 0/0</div>
-          <div class="foul-row" id="foul-row"></div>
-          <div id="tech-wrap"></div>
-        </div>
-      </div>
-    </div>
+  <!-- CHARACTER CREATION PLACEHOLDER -->
+  <div id="character-creation" class="screen">
+    <h2>Character Creation</h2>
+    <p>This screen is under construction.</p>
+    <button class="btn btn-back" id="back-to-menu">Back to Main Menu</button>
   </div>
-</section>
 
-<!-- ============ DECISION MODAL ============ -->
-<div class="modal-overlay" id="modal-overlay">
-  <div class="modal-card">
-    <div class="modal-eyebrow"><span class="pulse"></span>Decision Point — Sim Paused</div>
-    <div class="modal-desc" id="modal-desc"></div>
-    <div class="choice-grid" id="modal-choices"></div>
-    <div class="modal-result" id="modal-result"></div>
-  </div>
-</div>
-
-<!-- ============ BOX SCORE OVERLAY ============ -->
-<div class="box-overlay" id="box-overlay">
-  <div class="box-card">
-    <h2 id="box-result">FINAL</h2>
-    <div class="final-line" id="box-final-line"></div>
-    <table class="box-table" id="box-table"></table>
-    <button class="btn btn-primary btn-block" id="btn-box-close" style="margin-top:18px;">Next Game</button>
-  </div>
-</div>
-
-<!-- ============ SEASON SUMMARY OVERLAY ============ -->
-<div class="box-overlay" id="season-overlay">
-  <div class="box-card">
-    <h2 id="season-title">Season Complete</h2>
-    <div class="final-line" id="season-record-summary"></div>
-    <table class="box-table" id="season-table"></table>
-    <button class="btn btn-primary btn-block" id="btn-season-close" style="margin-top:18px;">Continue</button>
-  </div>
-</div>
-
-<!-- ============ ALL-STAR WEEKEND OVERLAY ============ -->
-<div class="box-overlay" id="allstar-overlay">
-  <div class="box-card">
-    <h2>All-Star Weekend</h2>
-    <p style="margin-top:10px;">You've reached the mid-season classic! You can participate in the All-Star Game and your contest.</p>
-    <div class="btn-row">
-      <button class="btn btn-primary" id="btn-allstar-game">All-Star Game</button>
-      <button class="btn" id="btn-my-contest">My Contest</button>
-      <button class="btn" id="btn-skip-allstar">Skip to Season</button>
-    </div>
-  </div>
-</div>
-
-<!-- ============ 3PT CONTEST OVERLAY ============ -->
-<div class="box-overlay" id="threept-overlay">
-  <div class="box-card">
-    <h2>3-Point Contest</h2>
-    <div id="threept-info"></div>
-    <div class="timing-bar-container" id="threept-bar">
-      <div class="timing-zone" id="threept-zone" style="left:40%;width:20%;"></div>
-      <div class="timing-marker" id="threept-marker"></div>
-    </div>
-    <div class="timing-score" id="threept-score">Score: 0</div>
-    <button class="btn btn-primary" id="btn-threept-shoot">Shoot</button>
-    <div class="helper-line" id="threept-msg"></div>
-  </div>
-</div>
-
-<!-- ============ DUNK CONTEST OVERLAY ============ -->
-<div class="box-overlay" id="dunk-overlay">
-  <div class="box-card">
-    <h2>Dunk Contest</h2>
-    <div id="dunk-info"></div>
-    <div class="timing-bar-container" id="dunk-bar">
-      <div class="timing-zone" id="dunk-zone" style="left:40%;width:20%;"></div>
-      <div class="timing-marker" id="dunk-marker"></div>
-    </div>
-    <div class="timing-score" id="dunk-score">Score: 0</div>
-    <button class="btn btn-primary" id="btn-dunk-jump">Jump</button>
-    <div class="helper-line" id="dunk-msg"></div>
-  </div>
-</div>
-
-<!-- ============ TROPHY SPEECH OVERLAY ============ -->
-<div class="box-overlay" id="trophy-overlay">
-  <div class="box-card">
-    <h2>🏆 Trophy Speech</h2>
-    <p style="margin-top:10px;">You won! Say a few words:</p>
-    <textarea id="speech-input" rows="4" style="width:100%;background:var(--panel-2);border:1px solid var(--line);color:var(--chalk);border-radius:6px;padding:10px;font-size:14px;" placeholder="Type your speech..."></textarea>
-    <button class="btn btn-primary btn-block" id="btn-speech-done" style="margin-top:12px;">Deliver Speech</button>
-  </div>
-</div>
-
-<!-- ============ CHAMPIONSHIP OVERLAY ============ -->
-<div class="box-overlay" id="championship-overlay">
-  <div class="box-card">
-    <h2>🏆 NBA Champions!</h2>
-    <p style="margin-top:10px;">You've led your team to the title! Enjoy the celebration.</p>
-    <button class="btn btn-primary btn-block" id="btn-championship-done" style="margin-top:12px;">Back to Locker Room</button>
-  </div>
-</div>
-
-<!-- ============ OFFSEASON OVERLAY ============ -->
-<div class="box-overlay" id="offseason-overlay">
-  <div class="box-card">
-    <h2>Offseason Mode</h2>
-    <p style="margin-top:10px;">Continue your career or start a new one.</p>
-    <div class="btn-row">
-      <button class="btn btn-primary" id="btn-next-season">Next Season</button>
-      <button class="btn" id="btn-retire-offseason">Retire</button>
-      <button class="btn" id="btn-new-career-offseason">New Career</button>
-    </div>
-    <div id="offseason-result" class="helper-line"></div>
-  </div>
-</div>
-
-<!-- ============ COMBINE OVERLAY ============ -->
-<div class="box-overlay" id="combine-overlay">
-  <div class="box-card">
-    <h2>Draft Combine</h2>
-    <p>You've completed the combine drills. Here are your results:</p>
-    <div id="combine-results"></div>
-    <button class="btn btn-primary btn-block" id="btn-combine-done" style="margin-top:18px;">Proceed to Draft</button>
-  </div>
-</div>
-
-<!-- ============ DRAFT OVERLAY ============ -->
-<div class="box-overlay" id="draft-overlay">
-  <div class="box-card">
-    <h2>NBA Draft</h2>
-    <div id="draft-results"></div>
-    <button class="btn btn-primary btn-block" id="btn-draft-done" style="margin-top:18px;">Start NBA Career</button>
-  </div>
-</div>
-
-<script>
-/* =========================================================
-   1. CONFIG / DATA
-   ========================================================= */
-const POSITION_LABELS = {PG:'Point Guard',SG:'Shooting Guard',SF:'Small Forward',PF:'Power Forward',C:'Center'};
-
-const ALL_TEAMS = [
-  'Bay City Volts','Northgate Comets','Redline Hawks','Granite Kings','Ironside Grizzlies',
-  'Steel City Wolves','Cascade Blazers','Suncoast Sharks','Mesa Rattlers','Harbor Storm',
-  'Pinewood Pioneers','Lakefront Lakers','Valley Vipers','Summit Mountaineers','Riverside Raiders',
-  'Capital Capitals','Golden Gate Guardians','Desert Dukes','Appalachian Aces','Evergreen Eagles'
-];
-
-const COLLEGE_TEAMS = [
-  'State University','Tech Institute','Central College','Eastern University','Western State',
-  'Northern Lights','Southern Knights','City College','Metro University','Rural Academy',
-  'Lakeside College','Mountain View U','Riverside State','Summit University','Valley College',
-  'Coastal Carolina','Desert State','Pinewood College','Harbor U','Capital City U'
-];
-
-const POSITION_PRESETS = {
-  PG:{closeShot:50,drivingLayup:70,drivingDunk:40,standingDunk:30,postControl:30,midRange:65,threePoint:70,freeThrow:75,passAccuracy:80,ballHandle:85,speedWithBall:80,interiorDefense:35,perimeterDefense:65,steal:70,block:30,speed:82,acceleration:84,strength:50,vertical:60,stamina:78},
-  SG:{closeShot:55,drivingLayup:70,drivingDunk:55,standingDunk:40,postControl:35,midRange:72,threePoint:75,freeThrow:78,passAccuracy:65,ballHandle:75,speedWithBall:72,interiorDefense:40,perimeterDefense:60,steal:65,block:35,speed:80,acceleration:80,strength:55,vertical:68,stamina:76},
-  SF:{closeShot:60,drivingLayup:65,drivingDunk:65,standingDunk:50,postControl:45,midRange:68,threePoint:65,freeThrow:70,passAccuracy:55,ballHandle:65,speedWithBall:65,interiorDefense:50,perimeterDefense:60,steal:55,block:45,speed:74,acceleration:74,strength:60,vertical:70,stamina:75},
-  PF:{closeShot:65,drivingLayup:60,drivingDunk:65,standingDunk:65,postControl:60,midRange:55,threePoint:45,freeThrow:65,passAccuracy:45,ballHandle:50,speedWithBall:48,interiorDefense:65,perimeterDefense:50,steal:45,block:60,speed:62,acceleration:62,strength:75,vertical:70,stamina:72},
-  C:{closeShot:70,drivingLayup:50,drivingDunk:60,standingDunk:75,postControl:70,midRange:40,threePoint:30,freeThrow:60,passAccuracy:40,ballHandle:35,speedWithBall:32,interiorDefense:75,perimeterDefense:35,steal:30,block:75,speed:50,acceleration:50,strength:80,vertical:65,stamina:70}
-};
-
-const ARCHETYPE_PRESETS = {
-  Sharpshooter:{shoot:80,three:90,dunk:25,drive:40,pass:45,isolation:35,postUp:10,steal:40,blockAttempt:20,aggression:35,foul:30,trashTalk:30,badge:'Limitless Range'},
-  Slasher:{shoot:70,three:35,dunk:85,drive:90,pass:40,isolation:55,postUp:20,steal:45,blockAttempt:30,aggression:60,foul:45,trashTalk:55,badge:'Posterizer'},
-  Playmaker:{shoot:50,three:55,dunk:30,drive:60,pass:90,isolation:40,postUp:15,steal:50,blockAttempt:20,aggression:40,foul:30,trashTalk:40,badge:'Dimer'},
-  'Lockdown Defender':{shoot:40,three:30,dunk:35,drive:35,pass:45,isolation:25,postUp:15,steal:80,blockAttempt:75,aggression:55,foul:55,trashTalk:45,badge:'Clamps'},
-  'Post Scorer':{shoot:65,three:15,dunk:55,drive:30,pass:35,isolation:30,postUp:90,steal:30,blockAttempt:50,aggression:50,foul:50,trashTalk:40,badge:'Fearless Finisher'}
-};
-
-const ARCHETYPE_LIMIT_OVERRIDES = {
-  Sharpshooter:{threePoint:99,midRange:99,freeThrow:99},
-  Slasher:{drivingLayup:99,drivingDunk:99,closeShot:99,vertical:99,speed:90,acceleration:90},
-  Playmaker:{passAccuracy:99,ballHandle:99,speedWithBall:99},
-  'Lockdown Defender':{steal:99,block:99,perimeterDefense:99,interiorDefense:90},
-  'Post Scorer':{postControl:99,closeShot:99,strength:99,standingDunk:99}
-};
-
-const ATTR_KEYS = ['closeShot','drivingLayup','drivingDunk','standingDunk','postControl','midRange','threePoint','freeThrow','passAccuracy','ballHandle','speedWithBall','interiorDefense','perimeterDefense','steal','block','speed','acceleration','strength','vertical','stamina'];
-const BRAIN_KEYS = ['courtVision','riskTolerance','shotSelection','helpDefense','passingCreativity','defensiveDiscipline','clutchMentality','adaptability','basketballIQ','coachability'];
-const TEND_KEYS = ['shoot','three','dunk','drive','pass','isolation','postUp','steal','blockAttempt','aggression','foul','trashTalk'];
-
-const TEAMMATE_NAMES = ['Jordan Blake','Tariq Simmons','Devon Cole','Elijah Price','Sam Okafor'];
-const OPP_NAMES = ['Malik Reyes','Trevor Voss','Isaiah Cross','Bryce Halden','Nate Ferro'];
-
-/* =========================================================
-   2. STATE
-   ========================================================= */
-let player = null;
-let collegeSeason = null;
-let nbaSeason = null;
-let game = null;
-let tickTimer = null;
-let currentSpeed = 1200;
-let activeSaveSlot = 1;
-let teamChemistry = 80;
-let skillPoints = 0;
-
-/* =========================================================
-   3. HELPERS
-   ========================================================= */
-function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v));}
-function rand(){return Math.random();}
-function pick(arr){return arr[Math.floor(rand()*arr.length)];}
-function $(id){return document.getElementById(id);}
-
-/* =========================================================
-   4. SAVE SLOT MANAGEMENT
-   ========================================================= */
-function getSaveKey(slot){ return `hoopsCareerSave_${slot}`; }
-
-function initSaveSlotButtons(){
-  const container = $('save-slots');
-  container.innerHTML = '';
-  for(let i=1;i<=3;i++){
-    const btn = document.createElement('button');
-    btn.className = `btn save-slot-btn ${i===activeSaveSlot?'btn-primary':''}`;
-    btn.textContent = `Slot ${i}`;
-    btn.dataset.slot = i;
-    btn.addEventListener('click', ()=>{
-      activeSaveSlot = i;
-      initSaveSlotButtons();
-      initSavedBanner();
-    });
-    container.appendChild(btn);
-  }
-}
-
-function persistCareer(){
-  if(!player) return;
-  try{
-    const data = {
-      player,
-      collegeSeason: collegeSeason ? JSON.parse(JSON.stringify(collegeSeason)) : null,
-      nbaSeason: nbaSeason ? JSON.parse(JSON.stringify(nbaSeason)) : null,
-      game: game ? Object.assign({}, game, {eventTicks: Array.from(game.eventTicks||[])}) : null,
-      screen: $('screen-game').classList.contains('active') ? 'game' : 'create',
-      savedAt: Date.now(),
-      teamChemistry,
-      skillPoints
+  <script>
+    // ---------- GAME STATE ----------
+    const state = {
+      currentSaveSlot: null,   // 1, 2, or 3
+      currentPath: null,       // 'highschool' or 'college'
+      player: null             // will hold character data later
     };
-    localStorage.setItem(getSaveKey(activeSaveSlot), JSON.stringify(data));
-    flashSaveStatus('Saved to slot '+activeSaveSlot);
-  }catch(e){
-    console.error('Save failed', e);
-    flashSaveStatus('Save failed — storage may be full.');
-  }
-}
-function readSavedCareer(slot){
-  try{
-    const raw = localStorage.getItem(getSaveKey(slot));
-    return raw ? JSON.parse(raw) : null;
-  }catch(e){ return null; }
-}
-function clearSavedCareer(slot){
-  localStorage.removeItem(getSaveKey(slot));
-}
-function flashSaveStatus(msg){
-  const el = $('save-status-line');
-  if(!el) return;
-  el.textContent = msg;
-  clearTimeout(flashSaveStatus._t);
-  flashSaveStatus._t = setTimeout(()=>{ el.textContent=''; }, 2600);
-}
 
-/* =========================================================
-   5. PLAYER CREATION LOGIC
-   ========================================================= */
-function applyArchetypeLimits(arch){
-  const overrides = ARCHETYPE_LIMIT_OVERRIDES[arch] || {};
-  ATTR_KEYS.forEach(k=>{
-    const slider = $('a-'+k);
-    const max = overrides[k] || 85;
-    slider.min = 25;
-    slider.max = max;
-    let val = parseInt(slider.value);
-    if(val < 25) val = 25;
-    if(val > max) val = max;
-    slider.value = val;
-  });
-  refreshAllReadouts();
-}
-function applyPositionPreset(pos){
-  const preset = POSITION_PRESETS[pos];
-  ATTR_KEYS.forEach(k=>{ $('a-'+k).value = preset[k]; });
-  applyArchetypeLimits($('f-archetype').value);
-  refreshAllReadouts();
-  renderScoutCard();
-}
-function applyArchetypePreset(name){
-  const preset = ARCHETYPE_PRESETS[name];
-  TEND_KEYS.forEach(k=>{ $('t-'+k).value = preset[k]; });
-  applyArchetypeLimits(name);
-  refreshAllReadouts();
-  renderScoutCard();
-}
-function refreshAllReadouts(){
-  ATTR_KEYS.forEach(k=>{ $('v-'+k).textContent = $('a-'+k).value; });
-  BRAIN_KEYS.forEach(k=>{ $('vb-'+k).textContent = $('b-'+k).value; });
-  TEND_KEYS.forEach(k=>{ $('vt-'+k).textContent = $('t-'+k).value; });
-}
-function heightInches(){ return parseInt($('f-heightft').value)*12 + parseInt($('f-heightin').value); }
-function computePhysicalBonuses(){
-  const hIn = heightInches();
-  const wing = parseInt($('f-wingspan').value)||hIn+2;
-  const weight = parseInt($('f-weight').value)||210;
-  const heightFactor = clamp((hIn-72)/14,-1,1.3);
-  const wingFactor = clamp((wing-hIn)/8,-1,1.3);
-  const weightFactor = clamp((weight-190)/60,-1,1.2);
-  return {heightFactor,wingFactor,weightFactor,
-    interiorDBonus: Math.round(heightFactor*10+wingFactor*6),
-    blockBonus: Math.round(wingFactor*10+heightFactor*4),
-    perimDBonus: Math.round(wingFactor*6),
-    stealBonus: Math.round(wingFactor*4),
-    reboundRating: clamp(Math.round(heightFactor*38 + weightFactor*10 + 55),1,99),
-    strengthBonus: Math.round(weightFactor*8)
-  };
-}
-function updatePhysicalNote(){
-  const b = computePhysicalBonuses();
-  $('height-readout').textContent = `${$('f-heightft').value}'${$('f-heightin').value}"`;
-  $('physical-note').innerHTML = `Derived from build: <b>Interior D ${b.interiorDBonus>=0?'+':''}${b.interiorDBonus}</b>, <b>Block ${b.blockBonus>=0?'+':''}${b.blockBonus}</b>, <b>Perimeter D ${b.perimDBonus>=0?'+':''}${b.perimDBonus}</b>, <b>Rebound Rating ${b.reboundRating}</b>. Taller/longer builds shift these up; smaller/quicker builds trade them for speed and ball handling.`;
-}
-function readFormAttributes(){
-  const attrs = {}; ATTR_KEYS.forEach(k=> attrs[k]=parseInt($('a-'+k).value));
-  const brains = {}; BRAIN_KEYS.forEach(k=> brains[k]=parseInt($('b-'+k).value));
-  const tends = {}; TEND_KEYS.forEach(k=> tends[k]=parseInt($('t-'+k).value));
-  return {attrs,brains,tends};
-}
-function overallOf(attrs){
-  const sum = ATTR_KEYS.reduce((s,k)=>s+attrs[k],0);
-  return Math.round(sum/ATTR_KEYS.length);
-}
-function renderScoutCard(){
-  const {attrs,brains,tends} = readFormAttributes();
-  const overall = overallOf(attrs);
-  const pos = $('f-position').value;
-  const arch = $('f-archetype').value;
-  $('scout-archetype').textContent = arch.toUpperCase();
-  $('scout-jersey').textContent = '#'+($('f-jersey').value||'0');
-  $('scout-name').textContent = (($('f-first').value||'')+' '+($('f-last').value||'')).toUpperCase();
-  $('scout-meta').textContent = `${POSITION_LABELS[pos]} · ${$('f-heightft').value}'${$('f-heightin').value}" · ${$('f-weight').value} lbs · Age ${$('f-age').value}`;
-  $('scout-overall').textContent = overall;
-  $('scout-badge').textContent = `${ARCHETYPE_PRESETS[arch].badge} (Bronze)`;
+    // ---------- DOM ELEMENTS ----------
+    const mainMenuScreen = document.getElementById('main-menu');
+    const characterCreationScreen = document.getElementById('character-creation');
+    const saveButtons = document.querySelectorAll('.btn-save');
+    const selectedSaveInfo = document.getElementById('selected-save-info');
+    const pathOptions = document.getElementById('path-options');
+    const startHighschoolBtn = document.getElementById('start-highschool');
+    const startCollegeBtn = document.getElementById('start-college');
+    const backToMenuBtn = document.getElementById('back-to-menu');
 
-  const topSix = [...ATTR_KEYS].sort((a,b)=>attrs[b]-attrs[a]).slice(0,6);
-  const nice = {closeShot:'Close Shot',drivingLayup:'Driving Layup',drivingDunk:'Driving Dunk',standingDunk:'Standing Dunk',postControl:'Post Control',midRange:'Mid-Range',threePoint:'Three-Point',freeThrow:'Free Throw',passAccuracy:'Pass Acc.',ballHandle:'Ball Handle',speedWithBall:'Speed w/ Ball',interiorDefense:'Interior D',perimeterDefense:'Perimeter D',steal:'Steal',block:'Block',speed:'Speed',acceleration:'Accel.',strength:'Strength',vertical:'Vertical',stamina:'Stamina'};
-  $('scout-bars').innerHTML = topSix.map(k=>`
-    <div class="mini-bar-row">
-      <div class="lbl">${nice[k]}</div>
-      <div class="mini-bar-track"><div class="mini-bar-fill" style="width:${attrs[k]}%"></div></div>
-      <div class="num">${attrs[k]}</div>
-    </div>`).join('');
-  updatePhysicalNote();
-}
-function buildPlayerFromForm(){
-  const {attrs,brains,tends} = readFormAttributes();
-  const arch = $('f-archetype').value;
-  const bonuses = computePhysicalBonuses();
-  const collegeTeam = $('f-college').value;
-  return {
-    firstName: $('f-first').value||'Player',
-    lastName: $('f-last').value||'One',
-    position: $('f-position').value,
-    archetype: arch,
-    college: collegeTeam,
-    team: null, // NBA team assigned later
-    heightIn: heightInches(),
-    weight: parseInt($('f-weight').value)||210,
-    wingspan: parseInt($('f-wingspan').value)||heightInches()+2,
-    age: parseInt($('f-age').value)||18,
-    hand: $('f-hand').value,
-    jersey: $('f-jersey').value||'0',
-    attributes: attrs,
-    brains: brains,
-    tendencies: tends,
-    overall: overallOf(attrs),
-    badge: ARCHETYPE_PRESETS[arch].badge,
-    physicalBonuses: bonuses
-  };
-}
-
-/* Wire up creation screen listeners */
-['a-','t-','b-'].forEach(prefix=>{
-  const keyArr = prefix==='a-'?ATTR_KEYS:(prefix==='t-'?TEND_KEYS:BRAIN_KEYS);
-  keyArr.forEach(k=>{
-    $(prefix+k).addEventListener('input', ()=>{ refreshAllReadouts(); renderScoutCard(); });
-  });
-});
-['f-first','f-last','f-jersey','f-weight','f-age','f-hand','f-heightft','f-heightin','f-wingspan'].forEach(id=>{
-  $(id).addEventListener('input', renderScoutCard);
-});
-$('f-position').addEventListener('change', e=> applyPositionPreset(e.target.value));
-$('f-archetype').addEventListener('change', e=> applyArchetypePreset(e.target.value));
-
-// Populate college dropdown
-const collegeSelectEl = $('f-college');
-COLLEGE_TEAMS.forEach(t=>{
-  const opt = document.createElement('option');
-  opt.value = t;
-  opt.textContent = t;
-  collegeSelectEl.appendChild(opt);
-});
-
-$('btn-enter-league').addEventListener('click', ()=>{
-  player = buildPlayerFromForm();
-  startCollegeSeason();
-  $('screen-create').classList.remove('active');
-  $('screen-game').classList.add('active');
-  primeCollegeGame();
-  persistCareer();
-});
-
-/* =========================================================
-   6. COLLEGE SEASON MANAGEMENT
-   ========================================================= */
-function startCollegeSeason(){
-  const schedule = generateCollegeSchedule(player.college);
-  collegeSeason = {
-    collegeTeam: player.college,
-    schedule,
-    currentGameIndex: 0,
-    record: {wins:0, losses:0},
-    games: [],
-    complete: false
-  };
-}
-function generateCollegeSchedule(collegeTeam){
-  const opponents = COLLEGE_TEAMS.filter(t=>t!==collegeTeam);
-  let schedule = [];
-  for(let i=0;i<5;i++){
-    schedule.push(opponents[Math.floor(rand()*opponents.length)]);
-  }
-  return schedule;
-}
-function primeCollegeGame(){
-  $('jb-user-name').textContent = player.college.toUpperCase();
-  if(collegeSeason.currentGameIndex < collegeSeason.schedule.length){
-    $('jb-opp-name').textContent = collegeSeason.schedule[collegeSeason.currentGameIndex].toUpperCase();
-  } else {
-    $('jb-opp-name').textContent = '';
-  }
-  $('season-game-label').textContent = `College Game ${collegeSeason.currentGameIndex+1} of 5`;
-  $('season-record').textContent = `Record: ${collegeSeason.record.wins}-${collegeSeason.record.losses}`;
-  resetGameState();
-  renderStatPanel();
-}
-
-/* =========================================================
-   7. NBA SEASON MANAGEMENT
-   ========================================================= */
-function startNbaSeason(){
-  const schedule = generateNbaSchedule(player.team);
-  nbaSeason = {
-    playerTeam: player.team,
-    schedule,
-    currentGameIndex: 0,
-    record: {wins:0, losses:0},
-    games: [],
-    complete: false,
-    playoffTeams: null,
-    playoffWinner: null,
-    champion: false,
-    seasonsPlayed: (nbaSeason?.seasonsPlayed || 0) + 1
-  };
-  updateNbaUI();
-}
-function generateNbaSchedule(playerTeam){
-  const opponents = ALL_TEAMS.filter(t=>t!==playerTeam);
-  let schedule = [];
-  for(let i=0;i<20;i++){
-    schedule.push(opponents[Math.floor(rand()*opponents.length)]);
-  }
-  return schedule;
-}
-function updateNbaUI(){
-  if(!nbaSeason) return;
-  const gameNum = Math.min(nbaSeason.currentGameIndex + 1, 20);
-  $('season-game-label').textContent = `Game ${gameNum} of 20 · Season ${nbaSeason.seasonsPlayed || 1}`;
-  $('season-record').textContent = `Record: ${nbaSeason.record.wins}-${nbaSeason.record.losses}`;
-}
-function primeNbaGame(){
-  $('jb-user-name').textContent = player.team.toUpperCase();
-  if(nbaSeason.currentGameIndex < 20){
-    $('jb-opp-name').textContent = nbaSeason.schedule[nbaSeason.currentGameIndex].toUpperCase();
-  } else {
-    $('jb-opp-name').textContent = '';
-  }
-  resetGameState();
-  renderStatPanel();
-  updateNbaUI();
-}
-
-/* =========================================================
-   8. GAME SETUP (common)
-   ========================================================= */
-function resetGameState(){
-  const oppOverall = 62 + Math.floor(rand()*22);
-  game = {
-    quarter:1, clock:720, otCount:0,
-    score:{user:0, opp:0},
-    stats:{pts:0,reb:0,ast:0,stl:0,blk:0,tov:0,pf:0,fgm:0,fga:0,tpm:0,tpa:0,ftm:0,fta:0,min:0},
-    technicals:0, ejected:false, fouledOut:false,
-    stamina:100, momentum:0,
-    possessionCount:0, totalPossessions: 96,
-    eventTicks: pickEventTicks(96),
-    running:false, finished:false,
-    logHistory:[],
-    oppOverall,
-    userTeamName: $('jb-user-name').textContent,
-    oppTeamName: $('jb-opp-name').textContent
-  };
-  $('jb-user-score').textContent='0'; $('jb-opp-score').textContent='0';
-  $('jb-qtr').textContent='Q1'; $('jb-clock').textContent='12:00';
-  $('jb-status').textContent='Tip-off pending';
-  $('feed-body').innerHTML = '<div class="feed-line">Waiting for tip-off — hit "Tip It Off" to start the game.</div>';
-  $('feed-poss-count').textContent='0 possessions';
-  $('btn-start-game').disabled=false; $('btn-start-game').textContent='Tip It Off';
-  $('box-overlay').classList.remove('show');
-  $('season-overlay').classList.remove('show');
-  $('allstar-overlay').classList.remove('show');
-  $('threept-overlay').classList.remove('show');
-  $('dunk-overlay').classList.remove('show');
-  $('trophy-overlay').classList.remove('show');
-  $('championship-overlay').classList.remove('show');
-  $('offseason-overlay').classList.remove('show');
-  $('combine-overlay').classList.remove('show');
-  $('draft-overlay').classList.remove('show');
-}
-function pickEventTicks(total){
-  const count = 7;
-  const ticks = new Set();
-  while(ticks.size<count){
-    const t = 4 + Math.floor(rand()*(total-8));
-    ticks.add(t);
-  }
-  return ticks;
-}
-
-$('btn-new-career').addEventListener('click', ()=>{
-  if(player && !confirm('Start a new career? This erases your saved game.')) return;
-  clearInterval(tickTimer);
-  clearSavedCareer(activeSaveSlot);
-  player = null; game = null; collegeSeason = null; nbaSeason = null;
-  $('screen-game').classList.remove('active');
-  $('screen-create').classList.add('active');
-  initSavedBanner();
-});
-$('btn-retire').addEventListener('click', ()=>{
-  if(confirm('Retire from your career? You can start a new one later.')){
-    clearInterval(tickTimer);
-    clearSavedCareer(activeSaveSlot);
-    player = null; game = null; collegeSeason = null; nbaSeason = null;
-    $('screen-game').classList.remove('active');
-    $('screen-create').classList.add('active');
-    initSavedBanner();
-  }
-});
-
-/* Speed controls */
-document.querySelectorAll('#speed-group button').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('#speed-group button').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    currentSpeed = parseInt(btn.dataset.speed);
-    if(game && game.running){ clearInterval(tickTimer); tickTimer=setInterval(gameTick, currentSpeed); }
-  });
-});
-
-$('btn-start-game').addEventListener('click', ()=>{
-  if(game.finished) return;
-  const isFreshStart = game.possessionCount===0;
-  game.running = true;
-  $('btn-start-game').disabled = true;
-  $('btn-start-game').textContent = 'Game In Progress';
-  $('jb-status').textContent='Live';
-  if(isFreshStart){
-    appendLog(`Tip-off! ${player.firstName} ${player.lastName} and the ${$('jb-user-name').textContent} take the floor against the ${$('jb-opp-name').textContent}.`, 'hi');
-  } else {
-    appendLog(`Play resumes.`, 'hi');
-  }
-  tickTimer = setInterval(gameTick, currentSpeed);
-  persistCareer();
-});
-
-/* =========================================================
-   9. SIM MULTIPLE GAMES (college or NBA)
-   ========================================================= */
-function simMultipleGames(count){
-  let targetSeason = collegeSeason && !collegeSeason.complete ? collegeSeason : nbaSeason;
-  if(!targetSeason || targetSeason.complete) return;
-
-  let gamesSimmed = 0;
-  while(gamesSimmed < count && targetSeason.currentGameIndex < targetSeason.schedule.length && !targetSeason.complete){
-    // Setup new game
-    if(!game || game.finished){
-      if(targetSeason === collegeSeason) primeCollegeGame();
-      else primeNbaGame();
-      game.running = false;
+    // ---------- SCREEN NAVIGATION ----------
+    function showScreen(screenId) {
+      document.querySelectorAll('.screen').forEach(screen => {
+        screen.classList.remove('active');
+      });
+      document.getElementById(screenId).classList.add('active');
     }
-    // Quick sim
-    clearInterval(tickTimer);
-    game.running = false;
-    while(game.possessionCount < game.totalPossessions && game.quarter <= 4){
-      game.possessionCount++;
-      const secs = 18+Math.floor(rand()*14);
-      game.clock -= secs;
-      if(game.clock<=0){
-        game.quarter++;
-        game.clock=720;
-      }
-      const userTurn = game.possessionCount % 2 === 1;
-      if(userTurn) simulateUserPossession();
-      else simulateOppPossession();
-    }
-    game.finished = true;
-    game.running = false;
-    updateJumbotron();
-    const won = game.score.user > game.score.opp;
-    if(targetSeason && !targetSeason.games[targetSeason.currentGameIndex]){
-      targetSeason.games[targetSeason.currentGameIndex] = {
-        opponent: game.oppTeamName,
-        userScore: game.score.user,
-        oppScore: game.score.opp,
-        won
-      };
-      if(won) targetSeason.record.wins++; else targetSeason.record.losses++;
-      if(targetSeason.currentGameIndex >= targetSeason.schedule.length - 1){
-        targetSeason.complete = true;
-      }
-    }
-    targetSeason.currentGameIndex++;
-    gamesSimmed++;
 
-    // Check for All-Star in NBA after 10 games
-    if(targetSeason === nbaSeason && targetSeason.currentGameIndex === 10 && !targetSeason.complete){
-      showAllStarWeekend();
-      break;
-    }
-  }
-
-  if(targetSeason.complete){
-    if(targetSeason === collegeSeason){
-      showCombine();
-    } else {
-      showSeasonSummary();
-    }
-  } else {
-    if(targetSeason === collegeSeason) primeCollegeGame();
-    else primeNbaGame();
-    game.running = false;
-    $('btn-start-game').disabled = false;
-    $('btn-start-game').textContent = 'Tip It Off';
-    $('jb-status').textContent = 'Next game ready';
-    $('feed-body').innerHTML = '<div class="feed-line">Next game ready — hit "Tip It Off" to start.</div>';
-  }
-  persistCareer();
-}
-
-$('btn-quick-sim').addEventListener('click', ()=> simMultipleGames(1));
-$('btn-sim5').addEventListener('click', ()=> simMultipleGames(5));
-$('btn-sim10').addEventListener('click', ()=> simMultipleGames(10));
-
-/* =========================================================
-   10. DERIVED / EFFECTIVE ATTRIBUTES
-   ========================================================= */
-function eff(key){
-  const base = player.attributes[key];
-  const b = player.physicalBonuses;
-  switch(key){
-    case 'interiorDefense': return clamp(base+b.interiorDBonus,1,99);
-    case 'block': return clamp(base+b.blockBonus,1,99);
-    case 'perimeterDefense': return clamp(base+b.perimDBonus,1,99);
-    case 'steal': return clamp(base+b.stealBonus,1,99);
-    case 'strength': return clamp(base+b.strengthBonus,1,99);
-    default: return base;
-  }
-}
-function staminaMult(){ return 0.82 + 0.28*(game.stamina/100); }
-function badgeBonusFor(kind){
-  const b = player.badge;
-  if(kind==='three' && b==='Limitless Range') return 0.06;
-  if(kind==='dunk' && b==='Posterizer') return 0.07;
-  if((kind==='layup'||kind==='close') && b==='Fearless Finisher') return 0.06;
-  if(kind==='pass' && b==='Dimer') return 0.05;
-  if((kind==='steal'||kind==='block') && b==='Clamps') return 0.06;
-  return 0;
-}
-const ATTR_FOR_KIND = {three:'threePoint',mid:'midRange',layup:'drivingLayup',dunk:'drivingDunk',close:'closeShot',post:'postControl',ft:'freeThrow'};
-function shotProb(kind, difficultyMod=0){
-  const attr = eff(ATTR_FOR_KIND[kind]!==undefined?ATTR_FOR_KIND[kind]:kind);
-  let p = 0.08 + (attr/100)*0.55;
-  p *= staminaMult();
-  p += difficultyMod;
-  p += badgeBonusFor(kind);
-  p += game.momentum/900;
-  p -= (game.oppOverall-70)/500;
-  if(kind==='three' && player.brains.shotSelection > 70) p += 0.05;
-  else if(kind==='three' && player.brains.shotSelection < 30) p -= 0.05;
-  if(player.brains.riskTolerance > 70 && (kind==='three'||kind==='dunk')) p += 0.03;
-  if(player.brains.basketballIQ > 70) p += 0.02;
-  return clamp(p,0.03,0.85);
-}
-function turnoverChance(){
-  const bh = eff('ballHandle');
-  const brainFactor = (player.brains.courtVision + player.brains.basketballIQ) / 200;
-  return clamp(0.20 - (bh/100)*0.15 + (game.oppOverall-70)/600 - brainFactor*0.05, 0.03, 0.34);
-}
-function defendChance(kind){
-  const attr = eff(kind==='steal'?'steal':'block');
-  const tend = player.tendencies[kind==='steal'?'steal':'blockAttempt'];
-  const brainFactor = (player.brains.defensiveDiscipline + player.brains.helpDefense) / 200;
-  return clamp(0.06 + (attr/100)*0.16 + (tend/100)*0.08 - (game.oppOverall-70)/700 + brainFactor*0.05, 0.02, 0.4);
-}
-function foulDrawChance(){ 
-  const brainFactor = player.brains.riskTolerance / 500;
-  return clamp(0.16 + (player.tendencies.aggression/100)*0.10 + brainFactor, 0.05, 0.4); 
-}
-
-/* =========================================================
-   11. EVENTS POOL (expanded)
-   ========================================================= */
-function scoreDiff(){ return game.score.user - game.score.opp; }
-function isLastPeriod(){ return game.quarter>=4; }
-
-const EVENT_POOL = [
-  { id:'closeout_three', category:'offensive', cond:()=> player.tendencies.three>=35 && !game.fouledOut && !game.ejected,
-    desc:"Your defender closes out hard as you catch it above the break — three-point line right under your feet.",
-    choices:[
-      {label:"Pump-fake and drive past him", resolve:()=> resolveShot('layup',-0.03)},
-      {label:"Rise into the contested three", resolve:()=> resolveShot('three',-0.14)},
-      {label:"Kick it to the corner for the extra pass", resolve:()=> resolvePassPlay()},
-      {label:"Shoulder into him and try to draw the foul", resolve:()=> resolveAggressiveDrive()}
-    ]},
-  { id:'help_defense', category:'defensive', cond:()=> !game.fouledOut && !game.ejected,
-    desc:"The opposing point guard splits the defense and barrels toward the rim — you're the last line.",
-    choices:[
-      {label:"Contest straight up, no foul", resolve:()=> resolveDefend('block',-0.02)},
-      {label:"Go for the strip from behind", resolve:()=> resolveDefend('steal',0.02)},
-      {label:"Take the charge", resolve:()=> resolveChargeAttempt()},
-      {label:"Let him go, protect against the and-one", resolve:()=>({text:"You back off and concede the layup — no harm, no whistle.", oppPts:2})}
-    ]},
-  { id:'teammate_argument', category:'teammate', cond:()=>true,
-    desc:"A teammate is jawing with an opposing player after a hard foul, and things are heating up near midcourt.",
-    choices:[
-      {label:"Walk away, stay focused", resolve:()=>({text:"You stay locked in. Nothing changes on the floor.", momentum:0})},
-      {label:"Back your teammate up verbally", resolve:()=> resolveTeammateBackup()},
-      {label:"Step between the players to cool it down", resolve:()=>({text:"You step in and the temperature drops. The bench nods approvingly.", momentum:6})},
-      {label:"Get in the opponent's face too", resolve:()=> resolveEscalate()}
-    ]},
-  { id:'clutch_iso', category:'clutch', cond:()=> isLastPeriod() && Math.abs(scoreDiff())<=6 && game.clock<=100 && !game.fouledOut && !game.ejected,
-    desc:"Under two minutes left, game within six. Your team needs a bucket and everyone knows who's getting the ball.",
-    choices:[
-      {label:"Call for isolation and go one-on-one", resolve:()=> resolveShot(player.tendencies.three>player.tendencies.drive?'three':'layup',-0.06)},
-      {label:"Attack downhill looking for the and-one", resolve:()=> resolveAggressiveDrive()},
-      {label:"Set up the pick-and-roll and read it", resolve:()=> resolvePassPlay()},
-      {label:"Take the safe mid-range pull-up", resolve:()=> resolveShot('mid',0.02)}
-    ]},
-  { id:'referee_call', category:'referee', cond:()=>true,
-    desc:"You strongly disagree with a foul call that just went against you.",
-    choices:[
-      {label:"Accept it and get back on defense", resolve:()=>({text:"You jog back. No harm done.", momentum:0})},
-      {label:"Ask the ref to explain, respectfully", resolve:()=>({text:"The ref gives you a quick word. Calm heads prevail.", momentum:2})},
-      {label:"Throw your hands up in frustration", resolve:()=> resolveTechRisk(0.18,"You throw your hands up — the referee gives you a hard look.")},
-      {label:"Get right in the referee's face", resolve:()=> resolveTechRisk(0.5,"You get right in the referee's face.")}
-    ]},
-  { id:'trash_talk_dunk', category:'trash-talk', cond:()=> player.tendencies.dunk>=45,
-    desc:"You just threw down a highlight dunk over your defender and the crowd is roaring.",
-    choices:[
-      {label:"Run back on defense, business as usual", resolve:()=>({text:"You sprint back, all business.", momentum:4})},
-      {label:"Point at the logo and hype the crowd", resolve:()=> resolveTechRisk(0.10,"You hype the crowd up — they're loving it.",8)},
-      {label:"Stare down your defender", resolve:()=> resolveTechRisk(0.22,"You stare him down a beat too long.",10)},
-      {label:"Say something to get in his head", resolve:()=> resolveTechRisk(0.35,"You chirp at him on the way back.",12)}
-    ]},
-  { id:'post_deny', category:'offensive', cond:()=> player.tendencies.postUp>=35 && !game.fouledOut && !game.ejected,
-    desc:"You've got deep post position on a smaller defender.",
-    choices:[
-      {label:"Drop-step to the baseline", resolve:()=> resolveShot('post',0.01)},
-      {label:"Turnaround jumper", resolve:()=> resolveShot('mid',-0.02)},
-      {label:"Kick it back out and reset", resolve:()=> resolvePassPlay()},
-      {label:"Bully through for the and-one", resolve:()=> resolveAggressiveDrive()}
-    ]},
-  { id:'fast_break', category:'offensive', cond:()=> !game.fouledOut && !game.ejected,
-    desc:"Odd-man fast break — just you and one defender racing back.",
-    choices:[
-      {label:"Go coast-to-coast for the slam", resolve:()=> resolveShot('dunk',-0.05)},
-      {label:"Pull up for the transition three", resolve:()=> resolveShot('three',0.03)},
-      {label:"Slow it down, find the trailer", resolve:()=> resolvePassPlay()},
-      {label:"Try to draw contact through the lane", resolve:()=> resolveAggressiveDrive()}
-    ]},
-  { id:'stamina_check', category:'coach', cond:()=> game.stamina<48 && !game.fouledOut && !game.ejected,
-    desc:"You're gassed. The coach glances down the bench and catches your eye.",
-    choices:[
-      {label:"Wave him off, stay in the game", resolve:()=>{ game.stamina=clamp(game.stamina-6,0,100); return {text:"You wave him off and stay out there, running on fumes."}; }},
-      {label:"Ask for a quick blow", resolve:()=>{ game.stamina=clamp(game.stamina+18,0,100); return {text:"You catch your breath on the bench for a possession.", skipNext:true}; }},
-      {label:"Push through, call for the ball anyway", resolve:()=>{ game.stamina=clamp(game.stamina-10,0,100); return resolveShot('layup',0.0); }},
-      {label:"Signal you're fine, play within yourself", resolve:()=>{ game.stamina=clamp(game.stamina+6,0,100); return {text:"You settle in and play a simpler possession."}; }}
-    ]},
-  { id:'rookie_nerves', category:'rookie', cond:()=> player.age<=20,
-    desc:"First real hostile road crowd of your young career — every eye in the building feels like it's on you.",
-    choices:[
-      {label:"Block it out, stick to the game plan", resolve:()=>({text:"You tune out the noise and stay disciplined.", momentum:2})},
-      {label:"Feed off the energy", resolve:()=> resolveShot(player.tendencies.dunk>50?'dunk':'mid',-0.02)},
-      {label:"Look to the bench for reassurance", resolve:()=>({text:"Your coach gives you a nod. You settle down.", momentum:1})},
-      {label:"Try to silence the crowd with a big play", resolve:()=> resolveAggressiveDrive()}
-    ]},
-  { id:'and1', category:'offensive', cond:()=> !game.fouledOut && !game.ejected,
-    desc:"You're fouled hard on a drive but the ball's still live near the rim.",
-    choices:[
-      {label:"Finish tough through the contact", resolve:()=> resolveAggressiveDrive()},
-      {label:"Kick it out rather than force it", resolve:()=> resolvePassPlay()},
-      {label:"Try to sell the contact for the whistle", resolve:()=> resolveFlopAttempt()},
-      {label:"Go up strong looking to dunk on him", resolve:()=> resolveShot('dunk',-0.06)}
-    ]},
-  { id:'perimeter_lockdown', category:'defensive', cond:()=> (player.tendencies.steal>=40||player.tendencies.blockAttempt>=40) && !game.fouledOut && !game.ejected,
-    desc:"Their best scorer is isolated on you at the top of the key.",
-    choices:[
-      {label:"Play tight, force a tough shot", resolve:()=> resolveDefend('perimeter',0)},
-      {label:"Gamble for the steal", resolve:()=> resolveDefend('steal',0.03)},
-      {label:"Sag off, protect the drive", resolve:()=>({text:"You give ground to take away the drive.", oppPts: rand()<0.42?2:0})},
-      {label:"Talk trash to get in his head", resolve:()=> resolveTechRisk(0.14,"You chirp at your matchup before the whistle.",4)}
-    ]},
-  { id:'coach_play', category:'coach', cond:()=> !game.fouledOut && !game.ejected,
-    desc:"Coach draws up a play in the huddle and looks right at you to finish it.",
-    choices:[
-      {label:"Run it exactly as drawn", resolve:()=> resolveShot('mid',0.0)},
-      {label:"Read the defense and improvise", resolve:()=> resolveShot('layup',-0.02)},
-      {label:"Get a teammate more involved instead", resolve:()=> resolvePassPlay()},
-      {label:"Call your own number instead", resolve:()=>{ game.momentum-=2; return resolveShot('three',-0.05); }}
-    ]},
-  { id:'flagrant_situation', category:'referee', cond:()=> player.tendencies.aggression>=50,
-    desc:"An opponent shoves you hard well away from the ball, right in front of the bench.",
-    choices:[
-      {label:"Walk away and let the refs handle it", resolve:()=>({text:"You keep your composure and walk it off.", momentum:2})},
-      {label:"Push back immediately", resolve:()=> resolveTechRisk(0.55,"You shove back on instinct.",0)},
-      {label:"Get in his face but keep your hands down", resolve:()=> resolveTechRisk(0.28,"You get chest to chest but keep your hands down.",0)},
-      {label:"Report it calmly to the nearest official", resolve:()=>({text:"You flag it for the ref calmly. They note it.", momentum:3})}
-    ]},
-  { id:'buzzer_beater', category:'clutch', cond:()=> isLastPeriod() && game.clock<=10 && Math.abs(scoreDiff())<=3 && !game.fouledOut && !game.ejected,
-    desc:"The clock is under ten seconds. The ball is in your hands with the game hanging in the balance.",
-    choices:[
-      {label:"Pull up for the game-winning three", resolve:()=> resolveShot('three',-0.10)},
-      {label:"Drive hard for the game-winning layup", resolve:()=> resolveShot('layup',-0.06)},
-      {label:"Draw the defense and dish for the open look", resolve:()=> resolvePassPlay()},
-      {label:"Call timeout to reset the play", resolve:()=>({text:"You call timeout — the coach draws up one more look.", freeShotBonus:0.08})}
-    ]},
-  { id:'social_media_backlash', category:'reputation', cond:()=> player.brains.coachability < 50,
-    desc:"Your recent comments about the coach's rotations have gone viral, and now the media is asking about it in the post-game presser.",
-    choices:[
-      {label:"Apologize and say it was taken out of context", resolve:()=>({text:"You smooth things over. Team chemistry +3.", teamChem:3})},
-      {label:"Double down on your criticism", resolve:()=>{ teamChemistry = Math.max(0, teamChemistry - 5); return {text:"The locker room is tense. Chemistry drops.", teamChem:-5}; }},
-      {label:"Deflect and talk about the next game", resolve:()=>({text:"You avoid the drama. No change.", teamChem:0})},
-      {label:"Blame the media for twisting your words", resolve:()=>{ teamChemistry = Math.min(100, teamChemistry + 2); return {text:"The team rallies around you. Chemistry +2.", teamChem:2}; }}
-    ]},
-  { id:'gm_meeting', category:'gm', cond:()=> true,
-    desc:"The GM wants to meet about your role in the offense.",
-    choices:[
-      {label:"Accept whatever role is needed", resolve:()=>({text:"The GM appreciates your team-first attitude. Chemistry +4.", teamChem:4, momentum:2})},
-      {label:"Demand more touches", resolve:()=>{ const risk = rand(); if(risk<0.5){ teamChemistry = Math.max(0, teamChemistry-2); return {text:"The GM is unhappy. Chemistry -2.", teamChem:-2}; } else { return {text:"The GM agrees to give you more opportunities.", momentum:4}; } }},
-      {label:"Suggest trade if not valued", resolve:()=>{ teamChemistry = Math.max(0, teamChemistry - 8); return {text:"The GM is furious. Chemistry -8.", teamChem:-8}; }},
-      {label:"Praise teammates and coach", resolve:()=>({text:"The locker room loves it. Chemistry +3.", teamChem:3})}
-    ]},
-  { id:'cheap_shot', category:'altercation', cond:()=> teamChemistry < 50,
-    desc:"An opposing player just gave you a cheap shot on a box out. The ref didn't see it.",
-    choices:[
-      {label:"Shove him back", resolve:()=> resolveTechRisk(0.6,"You shove him hard.",0)},
-      {label:"Tell the ref calmly", resolve:()=>({text:"The ref notes it and will watch for it.", momentum:1})},
-      {label:"Get revenge later with a hard foul", resolve:()=>{ game.stats.pf++; if(game.stats.pf>=6) handleFoulOut(); return {text:"You commit a hard foul and get called for it.", oppPts:1}; }},
-      {label:"Ignore and keep playing", resolve:()=>({text:"You stay composed.", momentum:2})}
-    ]},
-  { id:'mentor_advice', category:'veteran', cond:()=> player.brains.coachability > 60,
-    desc:"A veteran teammate pulls you aside and offers advice on reading defenses.",
-    choices:[
-      {label:"Listen and apply it", resolve:()=>({text:"Your IQ improves for the game.", iqBoost:5})},
-      {label:"Thank him but keep your own style", resolve:()=>({text:"No change.", iqBoost:0})},
-      {label:"Dismiss it as old school", resolve:()=>{ teamChemistry = Math.max(0, teamChemistry - 3); return {text:"Chemistry -3.", teamChem:-3}; }},
-      {label:"Ask for more detailed breakdown", resolve:()=>({text:"You get a boost to your next few possessions.", iqBoost:8})}
-    ]}
-];
-
-function pickEligibleEvent(){
-  const eligible = EVENT_POOL.filter(e=> e.cond());
-  if(eligible.length===0) return EVENT_POOL.find(e=>e.id==='help_defense');
-  return pick(eligible);
-}
-
-/* ---- resolve helpers (updated for brain & chemistry) ---- */
-function resolveShot(kind, difficultyMod){
-  const p = shotProb(kind, difficultyMod);
-  const made = rand()<p;
-  const pts = kind==='three'?3:2;
-  game.stats.fga++; if(kind==='three') game.stats.tpa++;
-  let text;
-  if(made){
-    game.stats.pts += pts; game.stats.fgm++; if(kind==='three') game.stats.tpm++;
-    game.score.user += pts; game.momentum += 6;
-    text = kindMakeLine(kind, pts);
-  } else {
-    game.momentum -= 3;
-    text = kindMissLine(kind);
-  }
-  game.stamina = clamp(game.stamina - (kind==='dunk'||kind==='layup'?3.5:2), 0, 100);
-  return {text};
-}
-function kindMakeLine(kind,pts){
-  const n = `${player.firstName} ${player.lastName}`;
-  const lines = {three:`${n} rises up and buries the three! +${pts}.`,mid:`${n} pulls up for the mid-range jumper — bottom! +${pts}.`,layup:`${n} finishes through traffic at the rim. +${pts}.`,dunk:`${n} throws it down with authority! +${pts}.`,close:`${n} finishes the close-range look. +${pts}.`,post:`${n} scores on the post move. +${pts}.`};
-  return lines[kind]||`${n} scores. +${pts}.`;
-}
-function kindMissLine(kind){
-  const n = `${player.firstName} ${player.lastName}`;
-  const lines = {three:`${n}'s three rims out.`,mid:`${n} misses the pull-up jumper.`,layup:`${n}'s layup attempt is off the mark.`,dunk:`${n} can't finish the dunk attempt — off the front rim.`,close:`${n} misses the close-range attempt.`,post:`${n}'s post move doesn't fall.`};
-  return lines[kind]||`${n} misses.`;
-}
-function resolvePassPlay(){
-  const p = clamp(0.45 + eff('passAccuracy')/220 + player.brains.passingCreativity/500, 0.3, 0.85);
-  const scored = rand()<p;
-  const mate = pick(TEAMMATE_NAMES);
-  if(scored){
-    game.stats.ast++; game.score.user += rand()<0.35?3:2; game.momentum+=4;
-    return {text:`${player.firstName} ${player.lastName} finds ${mate} wide open — bucket! Assist logged.`};
-  }
-  game.momentum-=1;
-  return {text:`${player.firstName} ${player.lastName} swings it to ${mate}, who can't connect on the look.`};
-}
-function resolveAggressiveDrive(){
-  const madeChance = shotProb('layup',-0.02);
-  const made = rand()<madeChance;
-  const drawFoul = rand()<foulDrawChance();
-  game.stats.fga++;
-  let text;
-  if(made){
-    game.stats.pts+=2; game.stats.fgm++; game.score.user+=2; game.momentum+=6;
-    if(drawFoul){
-      const ftMade = rand()<shotProb('ft',0.05);
-      game.stats.fta++;
-      if(ftMade){ game.stats.ftm++; game.stats.pts++; game.score.user++; text=`${player.firstName} ${player.lastName} bulls through for the and-one — and drains the free throw!`; }
-      else text=`${player.firstName} ${player.lastName} scores through contact but misses the and-one free throw.`;
-    } else text = `${player.firstName} ${player.lastName} powers through the defense and finishes!`;
-  } else {
-    game.momentum-=3;
-    if(drawFoul){
-      game.stats.fta+=2; const m1=rand()<shotProb('ft',0.0), m2=rand()<shotProb('ft',0.0);
-      let made2=0; if(m1){game.stats.ftm++;game.stats.pts++;game.score.user++;made2++;} if(m2){game.stats.ftm++;game.stats.pts++;game.score.user++;made2++;}
-      text = `${player.firstName} ${player.lastName} is fouled hard on the drive — hits ${made2} of 2 from the line.`;
-    } else {
-      if(rand()<0.35){ game.stats.tov++; text=`${player.firstName} ${player.lastName} gets stripped attacking the rim. Turnover.`; }
-      else text = `${player.firstName} ${player.lastName} can't finish through the traffic.`;
-    }
-  }
-  game.stamina = clamp(game.stamina-4,0,100);
-  return {text};
-}
-function resolveDefend(kind, mod){
-  const kindKey = kind==='perimeter'?'perimeterDefense':kind;
-  let successChance;
-  if(kind==='steal') successChance = defendChance('steal')+mod;
-  else if(kind==='block') successChance = defendChance('block')+mod;
-  else successChance = 0.5 + eff('perimeterDefense')/300 + mod;
-  const success = rand()<clamp(successChance,0.03,0.7);
-  if(kind==='steal'){
-    if(success){ game.stats.stl++; game.momentum+=5; return {text:`${player.firstName} ${player.lastName} pokes it away — steal! Ball back to ${player.team?player.team:player.college}.`}; }
-    game.momentum-=2; return {text:`${player.firstName} ${player.lastName} reaches in but the ball handler gets by. Bucket allowed.`, oppPts:2};
-  }
-  if(kind==='block'){
-    if(success){ game.stats.blk++; game.momentum+=6; return {text:`${player.firstName} ${player.lastName} sends it into the fifth row! Rejected!`}; }
-    game.momentum-=2; return {text:`${player.firstName} ${player.lastName} contests but the shot falls anyway.`, oppPts:2};
-  }
-  if(success){ game.momentum+=3; return {text:`${player.firstName} ${player.lastName} stays in front and forces the tough miss.`}; }
-  game.momentum-=1; return {text:`${player.firstName} ${player.lastName} can't quite stay in front — bucket.`, oppPts:2};
-}
-function resolveChargeAttempt(){
-  const chance = 0.30 + player.tendencies.aggression/500;
-  if(rand()<chance){ game.momentum+=6; return {text:`${player.firstName} ${player.lastName} slides over and takes the charge! Offensive foul on the drive.`}; }
-  game.stats.pf++; renderFoulRow();
-  if(game.stats.pf>=6){ handleFoulOut(); }
-  return {text:`${player.firstName} ${player.lastName} steps in late — blocking foul called, and the bucket counts.`, oppPts:2};
-}
-function resolveTeammateBackup(){
-  const escalate = rand()<0.15;
-  if(escalate){ game.technicals++; renderTechRow(); if(game.technicals>=2) handleEjection(); return {text:`${player.firstName} ${player.lastName} gets a little too heated backing up the teammate — technical foul!`}; }
-  game.momentum+=5; return {text:`${player.firstName} ${player.lastName} backs the teammate up. The bench feels the energy.`};
-}
-function resolveEscalate(){
-  const chance = 0.25 + player.tendencies.aggression/300;
-  if(rand()<chance){ game.technicals++; renderTechRow(); if(game.technicals>=2){ handleEjection(); return {text:`${player.firstName} ${player.lastName} escalates and draws a second technical — EJECTED from the game.`}; } return {text:`${player.firstName} ${player.lastName} jumps in and picks up a technical foul.`}; }
-  game.momentum+= rand()<0.5?8:-6;
-  return {text:`${player.firstName} ${player.lastName} gets in the mix — no whistle, but the arena is buzzing.`};
-}
-function resolveTechRisk(chance, baseText, momentumGain){
-  if(rand()<chance){
-    game.technicals++; renderTechRow();
-    if(game.technicals>=2){ handleEjection(); return {text:`${baseText} Technical foul — and that's a second technical. EJECTED.`}; }
-    return {text:`${baseText} Technical foul called.`};
-  }
-  game.momentum += momentumGain||2;
-  return {text:`${baseText} No call.`};
-}
-function resolveFlopAttempt(){
-  const chance = 0.30;
-  if(rand()<chance){ game.stats.fta+=2; const m1=rand()<shotProb('ft',0), m2=rand()<shotProb('ft',0); let made=0; if(m1){game.stats.ftm++;game.stats.pts++;game.score.user++;made++;} if(m2){game.stats.ftm++;game.stats.pts++;game.score.user++;made++;} return {text:`The referee buys the sell — foul called! ${player.firstName} hits ${made} of 2.`}; }
-  game.momentum-=3;
-  return {text:`The referee isn't buying it — no call, and the crowd lets you hear about it.`};
-}
-
-/* =========================================================
-   12. GAME TICK / SIM LOOP
-   ========================================================= */
-function gameTick(){
-  if(!game.running) return;
-  game.possessionCount++;
-  const idx = game.possessionCount;
-
-  const secs = 18+Math.floor(rand()*14);
-  game.clock -= secs;
-  if(game.clock<=0){
-    game.quarter++;
-    if(game.quarter>4){
-      if(game.score.user===game.score.opp){
-        game.clock=300; appendLog(`End of regulation — tied! Heading to overtime.`,'hi');
-      } else { endGame(); return; }
-    } else { game.clock=720; appendLog(`End of quarter ${game.quarter-1}.`,'hi'); }
-  }
-  updateJumbotron();
-
-  const userTurn = idx%2===1;
-  const eventDue = game.eventTicks.has(idx) && !game.fouledOut && !game.ejected;
-
-  if(eventDue){
-    clearInterval(tickTimer);
-    fireDecisionEvent();
-    return;
-  }
-
-  if(userTurn) simulateUserPossession();
-  else simulateOppPossession();
-
-  game.stamina = clamp(game.stamina + (userTurn?0.1:0.4), 0, 100);
-  renderStatPanel();
-  updateJumbotron();
-  $('feed-poss-count').textContent = `${idx} possessions`;
-  if(idx%4===0) persistCareer();
-
-  if(game.possessionCount>=game.totalPossessions){ endGame(); }
-}
-
-function simulateUserPossession(){
-  if(game.fouledOut||game.ejected){ simulateGenericTeamPossession(true); return; }
-  const involveChance = clamp(0.35 + (player.tendencies.isolation+player.tendencies.shoot)/500, 0.25, 0.6);
-  if(rand()>involveChance){ simulateGenericTeamPossession(true); return; }
-
-  const t = player.tendencies;
-  const weights = [
-    {kind:'three', w:t.three},
-    {kind:'mid', w:(100-t.three)*0.5},
-    {kind:'drive', w:t.drive},
-    {kind:'post', w:t.postUp},
-    {kind:'pass', w:t.pass}
-  ];
-  const total = weights.reduce((s,w)=>s+w.w,1);
-  let r = rand()*total, chosen='mid';
-  for(const w of weights){ if(r<w.w){chosen=w.kind;break;} r-=w.w; }
-
-  let result;
-  if(chosen==='three') result = resolveShot('three',0);
-  else if(chosen==='drive') result = rand()<0.4?resolveShot('layup',0):resolveShot('dunk',0.02);
-  else if(chosen==='post') result = resolveShot('post',0);
-  else if(chosen==='pass') result = resolvePassPlay();
-  else result = resolveShot('mid',0);
-
-  if(rand()<turnoverChance()*0.4){ game.stats.tov++; appendLog(`${player.firstName} ${player.lastName} loses the handle — turnover.`,'foul'); return; }
-  appendLog(result.text, result.text.includes('+')?'score':'hi');
-}
-function simulateGenericTeamPossession(isUserTeam){
-  const teamRating = isUserTeam? 68+ (player.overall-70)/4 : game.oppOverall;
-  const p = clamp(0.38 + (teamRating-70)/200, 0.28, 0.55);
-  const scored = rand()<p;
-  const names = isUserTeam?TEAMMATE_NAMES:OPP_NAMES;
-  const mate = pick(names);
-  const pts = rand()<0.32?3:2;
-  if(scored){
-    if(isUserTeam) game.score.user+=pts; else game.score.opp+=pts;
-    appendLog(`${mate} ${rand()<0.5?'knocks down a jumper':'finishes at the rim'}. +${pts}.`, isUserTeam?'score':'foul');
-  } else {
-    appendLog(`${mate} ${rand()<0.5?'misses the look':'can\'t connect'}.`,'hi');
-  }
-}
-function simulateOppPossession(){
-  if(!game.fouledOut && !game.ejected && rand()<0.28){
-    const kind = player.tendencies.blockAttempt>player.tendencies.steal?'block':'steal';
-    const result = resolveDefend(kind,0);
-    appendLog(result.text, result.text.includes('teal')?'score':'hi');
-    if(result.oppPts) game.score.opp+=result.oppPts;
-    return;
-  }
-  if(!game.fouledOut && !game.ejected && rand()<0.10){
-    game.stats.pf++; renderFoulRow();
-    appendLog(`${player.firstName} ${player.lastName} picks up a personal foul defending the paint.`,'foul');
-    if(rand()<0.6){ game.score.opp += rand()<0.7?1:2; }
-    if(game.stats.pf>=6) handleFoulOut();
-    return;
-  }
-  simulateGenericTeamPossession(false);
-}
-
-/* =========================================================
-   13. EVENT MODAL FLOW
-   ========================================================= */
-function fireDecisionEvent(){
-  const ev = pickEligibleEvent();
-  $('modal-desc').textContent = ev.desc;
-  $('modal-result').classList.remove('show');
-  $('modal-result').textContent='';
-  const grid = $('modal-choices');
-  grid.innerHTML='';
-  ev.choices.forEach((c,i)=>{
-    const b = document.createElement('button');
-    b.className='choice-btn';
-    b.innerHTML = `<span class="cnum">${i+1}.</span>${c.label}`;
-    b.addEventListener('click', ()=>{
-      Array.from(grid.children).forEach(ch=>ch.disabled=true);
-      const outcome = c.resolve() || {};
-      if(outcome.oppPts) game.score.opp += outcome.oppPts;
-      if(outcome.teamChem){ teamChemistry = clamp(teamChemistry + outcome.teamChem, 0, 100); }
-      if(outcome.iqBoost){
-        // Temporary IQ boost not persisted, just log
-      }
-      $('modal-result').textContent = outcome.text || 'The play unfolds.';
-      $('modal-result').classList.add('show');
-      appendLog(`[Decision] ${outcome.text||''}`, 'choice');
-      renderStatPanel(); updateJumbotron();
-      persistCareer();
-      setTimeout(()=>{
-        $('modal-overlay').classList.remove('show');
-        if(!game.finished){ tickTimer=setInterval(gameTick, currentSpeed); }
-      }, 1100);
+    // ---------- SAVE FILE SELECTION ----------
+    saveButtons.forEach(btn => {
+      btn.addEventListener('click', function() {
+        // Update selected save slot
+        state.currentSaveSlot = parseInt(this.dataset.save);
+        
+        // Highlight selected save button
+        saveButtons.forEach(b => b.classList.remove('selected'));
+        this.classList.add('selected');
+        
+        // Show selected info and path options
+        selectedSaveInfo.textContent = `Selected Save File: ${state.currentSaveSlot}`;
+        selectedSaveInfo.classList.remove('hidden');
+        pathOptions.classList.remove('hidden');
+      });
     });
-    grid.appendChild(b);
-  });
-  $('modal-overlay').classList.add('show');
-}
 
-/* =========================================================
-   14. FOULS / EJECTIONS
-   ========================================================= */
-function handleFoulOut(){ game.fouledOut = true; appendLog(`${player.firstName} ${player.lastName} has fouled out of the game!`,'foul'); }
-function handleEjection(){ game.ejected = true; appendLog(`${player.firstName} ${player.lastName} has been EJECTED!`,'foul'); }
-function renderFoulRow(){
-  const row = $('foul-row'); row.innerHTML='';
-  for(let i=0;i<6;i++){
-    const d = document.createElement('div');
-    d.className = 'foul-dot'+(i<game.stats.pf?' on':'');
-    row.appendChild(d);
-  }
-}
-function renderTechRow(){
-  const wrap = $('tech-wrap');
-  wrap.innerHTML = game.technicals>0 ? `<span class="tech-tag">${game.technicals} Technical${game.technicals>1?'s':''}${game.ejected?' · EJECTED':''}</span>` : '';
-}
+    // ---------- START PATH SELECTION ----------
+    startHighschoolBtn.addEventListener('click', function() {
+      state.currentPath = 'highschool';
+      proceedToCharacterCreation();
+    });
 
-/* =========================================================
-   15. RENDER
-   ========================================================= */
-function updateJumbotron(){
-  $('jb-user-score').textContent = game.score.user;
-  $('jb-opp-score').textContent = game.score.opp;
-  $('jb-qtr').textContent = game.quarter>4?'OT':'Q'+game.quarter;
-  const mm = Math.max(0,Math.floor(game.clock/60));
-  const ss = Math.max(0,game.clock%60);
-  $('jb-clock').textContent = `${mm}:${ss.toString().padStart(2,'0')}`;
-  $('jb-status').textContent = game.finished?'Final':(game.fouledOut?'Fouled Out':(game.ejected?'Ejected':'Live'));
-  $('stamina-fill').style.width = game.stamina+'%';
-}
-function renderStatPanel(){
-  const s = game.stats;
-  $('s-pts').textContent=s.pts; $('s-reb').textContent=s.reb; $('s-ast').textContent=s.ast;
-  $('s-stl').textContent=s.stl; $('s-blk').textContent=s.blk; $('s-tov').textContent=s.tov;
-  $('s-shooting').textContent = `FG ${s.fgm}/${s.fga} · 3PT ${s.tpm}/${s.tpa} · FT ${s.ftm}/${s.fta}`;
-  renderFoulRow(); renderTechRow();
-}
-function appendLog(text, cls){
-  const wrap = document.createElement('div');
-  wrap.className = 'feed-line'+(cls?' '+cls:'');
-  const tag = `[${$('jb-qtr').textContent} ${$('jb-clock').textContent}]`;
-  const t = document.createElement('span'); t.className='t'; t.textContent = tag;
-  wrap.appendChild(t);
-  wrap.appendChild(document.createTextNode(text));
-  $('feed-body').prepend(wrap);
-  if(game){
-    game.logHistory = game.logHistory||[];
-    game.logHistory.unshift({text,cls,tag});
-    if(game.logHistory.length>80) game.logHistory.length = 80;
-  }
-}
-function escapeHtml(str){
-  return String(str).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-function renderFeedFromHistory(){
-  const items = (game.logHistory||[]);
-  $('feed-body').innerHTML = items.map(it=>
-    `<div class="feed-line${it.cls?' '+it.cls:''}"><span class="t">${escapeHtml(it.tag)}</span>${escapeHtml(it.text)}</div>`
-  ).join('') || '<div class="feed-line">No plays recorded yet.</div>';
-}
+    startCollegeBtn.addEventListener('click', function() {
+      state.currentPath = 'college';
+      proceedToCharacterCreation();
+    });
 
-/* passive rebound flavor */
-setInterval(()=>{
-  if(game && game.running && !game.fouledOut && !game.ejected && rand()<0.18){
-    const chance = clamp(0.15+player.physicalBonuses.reboundRating/300,0.1,0.5);
-    if(rand()<chance){ game.stats.reb++; renderStatPanel(); }
-  }
-}, 2600);
-
-/* =========================================================
-   16. END OF GAME / BOX SCORE / SEASON SUMMARY
-   ========================================================= */
-function buildBoxScore(){
-  const won = game.score.user>game.score.opp;
-  $('box-result').textContent = won?'VICTORY':'DEFEAT';
-  $('box-final-line').textContent = `${$('jb-user-name').textContent} ${game.score.user} — ${game.score.opp} ${game.oppTeamName}`;
-  const s = game.stats;
-  const rows = [
-    [`${player.firstName} ${player.lastName} PTS`, s.pts],
-    [`${player.firstName} ${player.lastName} REB`, s.reb],
-    [`${player.firstName} ${player.lastName} AST`, s.ast],
-    [`${player.firstName} ${player.lastName} STL`, s.stl],
-    [`${player.firstName} ${player.lastName} BLK`, s.blk],
-    ['Turnovers', s.tov],
-    ['Personal Fouls', s.pf],
-    ['Technicals', game.technicals],
-    ['FG', `${s.fgm}/${s.fga}`],
-    ['3PT', `${s.tpm}/${s.tpa}`],
-    ['FT', `${s.ftm}/${s.fta}`],
-    ['Status', game.ejected?'Ejected':(game.fouledOut?'Fouled Out':'Played full game')]
-  ];
-  $('box-table').innerHTML = rows.map(r=>`<tr><td class="l">${r[0]}</td><td class="v">${r[1]}</td></tr>`).join('');
-}
-function endGame(){
-  clearInterval(tickTimer);
-  game.running=false; game.finished=true;
-  updateJumbotron();
-  const won = game.score.user>game.score.opp;
-  appendLog(`FINAL: ${$('jb-user-name').textContent} ${game.score.user} — ${game.oppTeamName} ${game.score.opp}. ${won?'Win!':'Loss.'}`,'hi');
-
-  const targetSeason = (collegeSeason && !collegeSeason.complete) ? collegeSeason : nbaSeason;
-  if(targetSeason && !targetSeason.games[targetSeason.currentGameIndex]){
-    targetSeason.games[targetSeason.currentGameIndex] = {
-      opponent: game.oppTeamName,
-      userScore: game.score.user,
-      oppScore: game.score.opp,
-      won
-    };
-    if(won) targetSeason.record.wins++; else targetSeason.record.losses++;
-    if(targetSeason.currentGameIndex >= targetSeason.schedule.length - 1){
-      targetSeason.complete = true;
-    }
-  }
-  buildBoxScore();
-  $('box-overlay').classList.add('show');
-  if(targetSeason === collegeSeason && collegeSeason.complete){
-    $('btn-box-close').textContent = 'Proceed to Combine';
-  } else if(targetSeason === nbaSeason && nbaSeason.complete){
-    $('btn-box-close').textContent = 'View Season Summary';
-  } else {
-    $('btn-box-close').textContent = 'Next Game';
-  }
-  if(targetSeason === collegeSeason) updateCollegeUI();
-  else updateNbaUI();
-  persistCareer();
-}
-
-$('btn-box-close').addEventListener('click', ()=>{
-  $('box-overlay').classList.remove('show');
-  if(collegeSeason && !collegeSeason.complete){
-    collegeSeason.currentGameIndex++;
-    if(collegeSeason.currentGameIndex >= 5) collegeSeason.complete = true;
-    if(collegeSeason.currentGameIndex < 5){
-      primeCollegeGame();
-      game.running = false;
-      $('btn-start-game').disabled = false;
-      $('btn-start-game').textContent = 'Tip It Off';
-      $('jb-status').textContent = 'Next game ready';
-      $('feed-body').innerHTML = '<div class="feed-line">Next college game ready — hit "Tip It Off" to start.</div>';
-    } else {
-      showCombine();
-    }
-  } else if(collegeSeason && collegeSeason.complete && !nbaSeason){
-    showCombine();
-  } else if(nbaSeason && !nbaSeason.complete){
-    nbaSeason.currentGameIndex++;
-    if(nbaSeason.currentGameIndex >= 20) nbaSeason.complete = true;
-    if(nbaSeason.currentGameIndex < 20){
-      if(nbaSeason.currentGameIndex === 10){
-        showAllStarWeekend();
-      } else {
-        primeNbaGame();
-        game.running = false;
-        $('btn-start-game').disabled = false;
-        $('btn-start-game').textContent = 'Tip It Off';
-        $('jb-status').textContent = 'Next game ready';
-        $('feed-body').innerHTML = '<div class="feed-line">Next NBA game ready — hit "Tip It Off" to start.</div>';
+    function proceedToCharacterCreation() {
+      if (!state.currentSaveSlot) {
+        alert('Please choose a save file first.');
+        return;
       }
-    } else {
-      showSeasonSummary();
+      // Move to character creation screen (placeholder)
+      showScreen('character-creation');
+      // We could log state for debugging
+      console.log('Starting path:', state.currentPath, 'Save slot:', state.currentSaveSlot);
     }
-  } else if(nbaSeason && nbaSeason.complete){
-    showSeasonSummary();
-  }
-  persistCareer();
-});
 
-function updateCollegeUI(){
-  const gameNum = Math.min(collegeSeason.currentGameIndex + 1, 5);
-  $('season-game-label').textContent = `College Game ${gameNum} of 5`;
-  $('season-record').textContent = `Record: ${collegeSeason.record.wins}-${collegeSeason.record.losses}`;
-}
-function updateNbaUI(){
-  if(!nbaSeason) return;
-  const gameNum = Math.min(nbaSeason.currentGameIndex + 1, 20);
-  $('season-game-label').textContent = `Game ${gameNum} of 20 · Season ${nbaSeason.seasonsPlayed || 1}`;
-  $('season-record').textContent = `Record: ${nbaSeason.record.wins}-${nbaSeason.record.losses}`;
-}
+    // ---------- BACK BUTTON ----------
+    backToMenuBtn.addEventListener('click', function() {
+      showScreen('main-menu');
+    });
 
-/* =========================================================
-   17. COMBINE & DRAFT
-   ========================================================= */
-function showCombine(){
-  $('combine-overlay').classList.add('show');
-  const vertical = Math.floor(30 + player.attributes.vertical/2 + rand()*5);
-  const speed = (10 + (100 - player.attributes.speed)/10 + rand()).toFixed(2);
-  const strength = Math.floor(10 + player.attributes.strength/2 + rand()*5);
-  $('combine-results').innerHTML = `
-    Vertical: ${vertical}"<br>
-    Lane Agility: ${speed}s<br>
-    Strength: ${strength} reps<br>
-    Stock Rating: ${Math.floor(player.overall + rand()*5)} / 99
-  `;
-}
-$('btn-combine-done').addEventListener('click', ()=>{
-  $('combine-overlay').classList.remove('show');
-  showDraft();
-});
-
-function showDraft(){
-  const draftPosition = Math.floor(1 + (100 - player.overall) * 0.3 + rand()*5);
-  player.team = pick(ALL_TEAMS.filter(t=>t!==player.college)); // Assign random NBA team
-  $('draft-results').innerHTML = `
-    You were selected with pick #${draftPosition} by the ${player.team}.<br>
-    Congratulations, ${player.firstName} ${player.lastName}!
-  `;
-  $('draft-overlay').classList.add('show');
-}
-$('btn-draft-done').addEventListener('click', ()=>{
-  $('draft-overlay').classList.remove('show');
-  startNbaSeason();
-  primeNbaGame();
-  persistCareer();
-});
-
-/* =========================================================
-   18. ALL-STAR WEEKEND (auto contest selection)
-   ========================================================= */
-function determineContestType(){
-  const three = player.attributes.threePoint + player.attributes.midRange + player.attributes.freeThrow;
-  const dunk = player.attributes.drivingDunk + player.attributes.standingDunk + player.attributes.vertical;
-  return three >= dunk ? 'three' : 'dunk';
-}
-function showAllStarWeekend(){
-  const contestType = determineContestType();
-  $('btn-my-contest').textContent = contestType === 'three' ? '3-Point Contest' : 'Dunk Contest';
-  $('allstar-overlay').classList.add('show');
-}
-$('btn-allstar-game').addEventListener('click', ()=>{
-  $('allstar-overlay').classList.remove('show');
-  $('jb-user-name').textContent = 'ALL-STARS TEAM A';
-  $('jb-opp-name').textContent = 'ALL-STARS TEAM B';
-  resetGameState();
-  game.isAllStar = true;
-  $('btn-start-game').textContent = 'Start All-Star Game';
-  $('btn-start-game').disabled = false;
-  $('jb-status').textContent = 'All-Star Game Ready';
-  $('feed-body').innerHTML = '<div class="feed-line">All-Star Game — hit "Start All-Star Game" to tip off.</div>';
-  game.afterGameAction = ()=>{
-    $('box-overlay').classList.remove('show');
-    $('allstar-overlay').classList.add('show');
-  };
-});
-$('btn-my-contest').addEventListener('click', ()=>{
-  $('allstar-overlay').classList.remove('show');
-  const contestType = determineContestType();
-  if(contestType === 'three') startThreePointContest();
-  else startDunkContest();
-});
-$('btn-skip-allstar').addEventListener('click', ()=>{
-  $('allstar-overlay').classList.remove('show');
-  primeNbaGame();
-  game.running = false;
-  $('btn-start-game').disabled = false;
-  $('btn-start-game').textContent = 'Tip It Off';
-  $('jb-status').textContent = 'Next game ready';
-  $('feed-body').innerHTML = '<div class="feed-line">All-Star weekend skipped — next game ready.</div>';
-});
-
-/* ---- 3-Point Contest Implementation ---- */
-let threeptState = null;
-function startThreePointContest(){
-  threeptState = {rack:1, ball:1, score:0, speed: 3, targetLeft:40, targetWidth:20};
-  updateThreeptUI();
-  $('threept-overlay').classList.add('show');
-  startThreeptBall();
-}
-function startThreeptBall(){
-  const barWidth = $('threept-bar').clientWidth;
-  const marker = $('threept-marker');
-  let pos = 0;
-  const interval = setInterval(()=>{
-    pos += threeptState.speed;
-    if(pos > barWidth - 20){ pos = barWidth - 20; threeptState.speed = -threeptState.speed; }
-    else if(pos < 0){ pos = 0; threeptState.speed = -threeptState.speed; }
-    marker.style.left = pos+'px';
-    threeptState.currentPos = pos;
-  }, 20);
-  threeptState.interval = interval;
-}
-$('btn-threept-shoot').addEventListener('click', ()=>{
-  if(!threeptState || threeptState.ball > 5) return;
-  clearInterval(threeptState.interval);
-  const barWidth = $('threept-bar').clientWidth;
-  const zoneStart = (threeptState.targetLeft/100)*barWidth;
-  const zoneEnd = ((threeptState.targetLeft+threeptState.targetWidth)/100)*barWidth;
-  const pos = threeptState.currentPos;
-  let made = false;
-  if(pos >= zoneStart && pos <= zoneEnd){ made = true; threeptState.score++; }
-  threeptState.ball++;
-  if(threeptState.ball > 5){
-    threeptState.rack++;
-    threeptState.ball = 1;
-    threeptState.speed += 0.5;
-    threeptState.targetWidth = Math.max(8, threeptState.targetWidth - 4);
-  }
-  updateThreeptUI();
-  if(threeptState.rack > 5){
-    clearInterval(threeptState.interval);
-    const userScore = threeptState.score;
-    const aiScore = Math.floor(rand()*20+10);
-    $('threept-msg').textContent = `Contest over! Your score: ${userScore}. AI score: ${aiScore}. ${userScore > aiScore ? 'You Win! 🏆' : 'You Lose.'}`;
-    if(userScore > aiScore) showTrophySpeech('3-Point Contest');
-    else { $('threept-overlay').classList.remove('show'); showAllStarWeekend(); }
-  } else startThreeptBall();
-});
-function updateThreeptUI(){
-  if(!threeptState) return;
-  $('threept-info').textContent = `Rack ${threeptState.rack} of 5 · Ball ${threeptState.ball} of 5`;
-  $('threept-score').textContent = `Score: ${threeptState.score}`;
-  $('threept-zone').style.left = threeptState.targetLeft+'%';
-  $('threept-zone').style.width = threeptState.targetWidth+'%';
-}
-
-/* ---- Dunk Contest Implementation ---- */
-let dunkState = null;
-const DUNKS = [
-  {name:'Basic One-Hander', difficulty:1},
-  {name:'360 Spin', difficulty:2},
-  {name:'Between Legs', difficulty:3},
-  {name:'Windmill', difficulty:2.5}
-];
-function startDunkContest(){
-  dunkState = {dunkIndex:0, score:0, timingSpeed:5, targetWidth:20};
-  showDunkSelection();
-}
-function showDunkSelection(){
-  $('dunk-info').innerHTML = 'Choose your dunk:';
-  $('dunk-bar').classList.add('hidden');
-  $('btn-dunk-jump').classList.add('hidden');
-  const dunkChoices = DUNKS.map((d,i)=> `<button class="btn" style="margin:5px;" onclick="selectDunk(${i})">${d.name}</button>`).join('');
-  $('dunk-info').insertAdjacentHTML('beforeend', '<div class="btn-row">'+dunkChoices+'</div>');
-  $('dunk-overlay').classList.add('show');
-}
-function selectDunk(index){
-  dunkState.dunkIndex = index;
-  dunkState.dunkName = DUNKS[index].name;
-  dunkState.difficulty = DUNKS[index].difficulty;
-  dunkState.timingSpeed = 5 + dunkState.difficulty*1.5;
-  dunkState.targetWidth = Math.max(10, 20 - dunkState.difficulty*3);
-  $('dunk-info').textContent = `Dunk: ${dunkState.dunkName} — Timing Speed: ${dunkState.timingSpeed}`;
-  $('dunk-bar').classList.remove('hidden');
-  $('btn-dunk-jump').classList.remove('hidden');
-  $('btn-dunk-jump').textContent = 'Jump';
-  startDunkTiming();
-}
-function startDunkTiming(){
-  const barWidth = $('dunk-bar').clientWidth;
-  const marker = $('dunk-marker');
-  let pos = 0;
-  let direction = 1;
-  const interval = setInterval(()=>{
-    pos += direction * dunkState.timingSpeed;
-    if(pos > barWidth - 20){ pos = barWidth - 20; direction = -1; }
-    if(pos < 0){ pos = 0; direction = 1; }
-    marker.style.left = pos+'px';
-    dunkState.currentPos = pos;
-  }, 20);
-  dunkState.interval = interval;
-  $('dunk-zone').style.left = (40 - dunkState.targetWidth/2)+'%';
-  $('dunk-zone').style.width = dunkState.targetWidth+'%';
-}
-$('btn-dunk-jump').addEventListener('click', ()=>{
-  if(!dunkState || dunkState.dunkIndex === undefined) return;
-  clearInterval(dunkState.interval);
-  const barWidth = $('dunk-bar').clientWidth;
-  const zoneStart = ((40 - dunkState.targetWidth/2)/100)*barWidth;
-  const zoneEnd = ((40 + dunkState.targetWidth/2)/100)*barWidth;
-  const pos = dunkState.currentPos;
-  let score = 0;
-  if(pos >= zoneStart && pos <= zoneEnd) score = 50;
-  else {
-    const dist = Math.abs(pos - (barWidth/2));
-    const maxDist = barWidth/2;
-    score = Math.max(0, Math.floor(50 * (1 - dist/maxDist)));
-  }
-  dunkState.score += score;
-  $('dunk-score').textContent = `Total Score: ${dunkState.score}`;
-  $('dunk-msg').textContent = `That dunk scored ${score} points!`;
-  dunkState.dunkIndex = undefined;
-  if(dunkState.score >= 120){
-    const aiScore = Math.floor(rand()*100+50);
-    $('dunk-msg').textContent += ` Contest over! Your total: ${dunkState.score}. AI: ${aiScore}. ${dunkState.score > aiScore ? 'You Win! 🏆' : 'You Lose.'}`;
-    if(dunkState.score > aiScore) showTrophySpeech('Dunk Contest');
-    else { $('dunk-overlay').classList.remove('show'); showAllStarWeekend(); }
-  } else showDunkSelection();
-});
-
-/* ---- Trophy Speech ---- */
-function showTrophySpeech(eventName){
-  $('trophy-overlay').classList.add('show');
-  $('speech-input').value = '';
-  $('trophy-overlay').dataset.event = eventName;
-}
-$('btn-speech-done').addEventListener('click', ()=>{
-  $('trophy-overlay').classList.remove('show');
-  if($('trophy-overlay').dataset.event === '3-Point Contest') $('threept-overlay').classList.remove('show');
-  else $('dunk-overlay').classList.remove('show');
-  showAllStarWeekend();
-});
-
-/* =========================================================
-   19. PLAYOFFS (Best-of-7 series)
-   ========================================================= */
-function startPlayoffs(){
-  const standings = ALL_TEAMS.map(team=>{
-    if(team === player.team) return {team, wins: nbaSeason.record.wins, losses: nbaSeason.record.losses};
-    const wins = Math.floor(rand()*20);
-    return {team, wins, losses: 20 - wins};
-  });
-  standings.sort((a,b)=>b.wins - a.wins || a.team.localeCompare(b.team));
-  const userSeed = standings.findIndex(s=>s.team===player.team) + 1;
-  let playoffTeams;
-  if(userSeed > 8) playoffTeams = standings.slice(0,7).concat(standings.find(s=>s.team===player.team));
-  else playoffTeams = standings.slice(0,8);
-  nbaSeason.playoffTeams = playoffTeams;
-  nbaSeason.playoffWinner = null;
-  nbaSeason.champion = false;
-  const bracket = simulateBracket(playoffTeams);
-  if(bracket.champion === player.team) {
-    nbaSeason.champion = true;
-    nbaSeason.playoffWinner = bracket.champion;
-    showChampionshipCelebration();
-  } else {
-    nbaSeason.playoffWinner = bracket.champion;
-    alert(`Champions: ${bracket.champion}\nYour team did not win the title.`);
-    showOffseason();
-  }
-}
-function simulateBracket(teams){
-  const round1 = [];
-  for(let i=0;i<4;i++){
-    const a = teams[i*2]; const b = teams[i*2+1];
-    if(a.team === player.team || b.team === player.team) round1.push(a.team === player.team ? a : b);
-    else round1.push(a.wins > b.wins ? a : b);
-  }
-  const round2 = [];
-  for(let i=0;i<2;i++){
-    const a = round1[i*2]; const b = round1[i*2+1];
-    if(a.team === player.team || b.team === player.team) round2.push(a.team === player.team ? a : b);
-    else round2.push(a.wins > b.wins ? a : b);
-  }
-  const finals = [];
-  const a = round2[0]; const b = round2[1];
-  if(a.team === player.team || b.team === player.team) finals.push(a.team === player.team ? a : b);
-  else finals.push(a.wins > b.wins ? a : b);
-  return {champion: finals[0].team};
-}
-function showChampionshipCelebration(){
-  $('championship-overlay').classList.add('show');
-}
-$('btn-championship-done').addEventListener('click', ()=>{
-  $('championship-overlay').classList.remove('show');
-  showOffseason();
-});
-
-/* =========================================================
-   20. OFFSEASON (Next Season / Retire / New Career)
-   ========================================================= */
-function showOffseason(){
-  $('offseason-overlay').classList.add('show');
-  $('offseason-result').textContent = '';
-}
-$('btn-next-season').addEventListener('click', ()=>{
-  $('offseason-overlay').classList.remove('show');
-  startNbaSeason();
-  primeNbaGame();
-  persistCareer();
-});
-$('btn-retire-offseason').addEventListener('click', ()=>{
-  if(confirm('Retire from your career? You can start a new one later.')){
-    $('offseason-overlay').classList.remove('show');
-    clearInterval(tickTimer);
-    clearSavedCareer(activeSaveSlot);
-    player = null; game = null; collegeSeason = null; nbaSeason = null;
-    $('screen-game').classList.remove('active');
-    $('screen-create').classList.add('active');
-    initSavedBanner();
-  }
-});
-$('btn-new-career-offseason').addEventListener('click', ()=>{
-  $('offseason-overlay').classList.remove('show');
-  clearInterval(tickTimer);
-  clearSavedCareer(activeSaveSlot);
-  player = null; game = null; collegeSeason = null; nbaSeason = null;
-  $('screen-game').classList.remove('active');
-  $('screen-create').classList.add('active');
-  initSavedBanner();
-});
-
-/* =========================================================
-   21. SAVE/LOAD
-   ========================================================= */
-function initSavedBanner(){
-  const data = readSavedCareer(activeSaveSlot);
-  const banner = $('saved-banner');
-  if(data && data.player){
-    banner.style.display='block';
-    const p = data.player;
-    let statusTxt = 'Player created, no season started';
-    if(data.collegeSeason){
-      const rec = data.collegeSeason.record;
-      if(data.collegeSeason.complete) statusTxt = `College complete — ${rec.wins}-${rec.losses}`;
-      else statusTxt = `College Game ${Math.min(data.collegeSeason.currentGameIndex+1,5)} of 5 — Record ${rec.wins}-${rec.losses}`;
-    } else if(data.nbaSeason){
-      const rec = data.nbaSeason.record;
-      if(data.nbaSeason.complete) statusTxt = `NBA Season complete — ${rec.wins}-${rec.losses}`;
-      else statusTxt = `Game ${Math.min(data.nbaSeason.currentGameIndex+1,20)} of 20 — Record ${rec.wins}-${rec.losses}`;
-    }
-    $('saved-banner-text').textContent = `${p.firstName} ${p.lastName} · ${POSITION_LABELS[p.position]} · OVR ${p.overall} · College: ${p.college} · NBA: ${p.team || 'Not drafted'} — ${statusTxt}`;
-  } else banner.style.display='none';
-}
-$('btn-continue-career').addEventListener('click', ()=>{
-  const data = readSavedCareer(activeSaveSlot);
-  if(data) restoreCareer(data);
-});
-$('btn-delete-save').addEventListener('click', ()=>{
-  clearSavedCareer(activeSaveSlot);
-  initSavedBanner();
-});
-$('btn-save-career').addEventListener('click', persistCareer);
-
-function restoreCareer(data){
-  clearInterval(tickTimer);
-  player = data.player;
-  collegeSeason = data.collegeSeason || null;
-  nbaSeason = data.nbaSeason || null;
-  teamChemistry = data.teamChemistry ?? 80;
-  skillPoints = data.skillPoints ?? 0;
-  $('screen-create').classList.remove('active');
-  $('screen-game').classList.add('active');
-  $('strip-jersey').textContent = '#'+player.jersey;
-  $('strip-name').textContent = player.firstName+' '+player.lastName;
-  $('strip-pos').textContent = player.position+' · '+player.archetype;
-
-  if(collegeSeason && !collegeSeason.complete){
-    primeCollegeGame();
-  } else if(nbaSeason && !nbaSeason.complete){
-    $('jb-user-name').textContent = player.team.toUpperCase();
-    primeNbaGame();
-  } else if(collegeSeason && collegeSeason.complete && !nbaSeason){
-    showCombine();
-  } else if(nbaSeason && nbaSeason.complete){
-    showSeasonSummary();
-  }
-
-  if(!data.game){ return; }
-
-  game = data.game;
-  game.eventTicks = new Set(game.eventTicks||[]);
-  $('jb-opp-name').textContent = game.oppTeamName || '';
-  updateJumbotron();
-  renderStatPanel();
-  renderFeedFromHistory();
-  $('feed-poss-count').textContent = `${game.possessionCount} possessions`;
-
-  if(game.finished){
-    $('btn-start-game').disabled = true;
-    $('btn-start-game').textContent = 'Game Complete';
-    $('jb-status').textContent = 'Final';
-    if(collegeSeason && collegeSeason.complete && !nbaSeason){
-      $('box-overlay').classList.remove('show');
-      showCombine();
-    } else if(nbaSeason && nbaSeason.complete){
-      $('box-overlay').classList.remove('show');
-      showSeasonSummary();
-    } else {
-      buildBoxScore();
-      $('box-overlay').classList.add('show');
-      $('btn-box-close').textContent = 'Next Game';
-    }
-  } else if(game.possessionCount>0){
-    game.running = false;
-    $('btn-start-game').disabled = false;
-    $('btn-start-game').textContent = 'Resume Game';
-    $('jb-status').textContent = 'Paused — resume to continue';
-  } else {
-    $('btn-start-game').disabled = false;
-    $('btn-start-game').textContent = 'Tip It Off';
-  }
-}
-
-/* =========================================================
-   22. INIT
-   ========================================================= */
-// Set default brain sliders to mid
-BRAIN_KEYS.forEach(k=>{ $('b-'+k).value = 50; });
-// Position and archetype presets set overall to ~60
-applyPositionPreset('SF');
-applyArchetypePreset('Slasher');
-renderScoutCard();
-initSaveSlotButtons();
-initSavedBanner();
-</script>
+    // Initialize: no save selected
+    console.log('Game initialized. Waiting for save file selection...');
+  </script>
 </body>
 </html>
