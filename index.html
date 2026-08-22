@@ -195,9 +195,7 @@
   
   <div class="panel" style="max-width:1180px;margin:0 auto 18px;">
     <div class="section-title">Save Slots</div>
-    <div class="save-slot-row" id="save-slots">
-      <!-- dynamically generated -->
-    </div>
+    <div class="save-slot-row" id="save-slots"></div>
   </div>
 
   <div class="panel" id="saved-banner" style="display:none;max-width:1180px;margin:0 auto 18px;">
@@ -238,10 +236,8 @@
           </div>
         </div>
         <div class="field-row">
-          <div class="field"><label for="f-team">Team</label>
-            <select id="f-team">
-              <option value="RANDOM" selected>Random (auto)</option>
-            </select>
+          <div class="field"><label for="f-college">College Team</label>
+            <select id="f-college"></select>
           </div>
           <div class="field"><label for="f-hand">Preferred Hand</label>
             <select id="f-hand"><option>Right</option><option>Left</option></select>
@@ -259,58 +255,12 @@
         </div>
         <div class="field-row">
           <div class="field"><label for="f-wingspan">Wingspan (inches)</label><input id="f-wingspan" type="number" value="81" min="60" max="96"></div>
-          <div class="field"><label for="f-age">Starting Age</label><input id="f-age" type="number" value="19" min="18" max="22"></div>
+          <div class="field"><label for="f-age">Starting Age</label><input id="f-age" type="number" value="18" min="17" max="22"></div>
         </div>
         <div class="field-row">
           <div class="field"><label for="f-jersey">Jersey Number</label><input id="f-jersey" type="number" value="23" min="0" max="99"></div>
         </div>
         <div class="derived-note" id="physical-note"></div>
-      </div>
-
-      <div class="panel">
-        <div class="section-title">Attributes</div>
-        <div class="attr-cols">
-          <div>
-            <div class="attr-group"><h4>Finishing</h4>
-              <div class="slider-row"><label>Close Shot</label><input type="range" id="a-closeShot" min="25" max="99"><span class="val" id="v-closeShot"></span></div>
-              <div class="slider-row"><label>Driving Layup</label><input type="range" id="a-drivingLayup" min="25" max="99"><span class="val" id="v-drivingLayup"></span></div>
-              <div class="slider-row"><label>Driving Dunk</label><input type="range" id="a-drivingDunk" min="25" max="99"><span class="val" id="v-drivingDunk"></span></div>
-              <div class="slider-row"><label>Standing Dunk</label><input type="range" id="a-standingDunk" min="25" max="99"><span class="val" id="v-standingDunk"></span></div>
-              <div class="slider-row"><label>Post Control</label><input type="range" id="a-postControl" min="25" max="99"><span class="val" id="v-postControl"></span></div>
-            </div>
-            <div class="attr-group"><h4>Shooting</h4>
-              <div class="slider-row"><label>Mid-Range</label><input type="range" id="a-midRange" min="25" max="99"><span class="val" id="v-midRange"></span></div>
-              <div class="slider-row"><label>Three-Point</label><input type="range" id="a-threePoint" min="25" max="99"><span class="val" id="v-threePoint"></span></div>
-              <div class="slider-row"><label>Free Throw</label><input type="range" id="a-freeThrow" min="25" max="99"><span class="val" id="v-freeThrow"></span></div>
-            </div>
-          </div>
-          <div>
-            <div class="attr-group"><h4>Playmaking</h4>
-              <div class="slider-row"><label>Pass Accuracy</label><input type="range" id="a-passAccuracy" min="25" max="99"><span class="val" id="v-passAccuracy"></span></div>
-              <div class="slider-row"><label>Ball Handle</label><input type="range" id="a-ballHandle" min="25" max="99"><span class="val" id="v-ballHandle"></span></div>
-              <div class="slider-row"><label>Speed w/ Ball</label><input type="range" id="a-speedWithBall" min="25" max="99"><span class="val" id="v-speedWithBall"></span></div>
-            </div>
-            <div class="attr-group"><h4>Defense</h4>
-              <div class="slider-row"><label>Interior D</label><input type="range" id="a-interiorDefense" min="25" max="99"><span class="val" id="v-interiorDefense"></span></div>
-              <div class="slider-row"><label>Perimeter D</label><input type="range" id="a-perimeterDefense" min="25" max="99"><span class="val" id="v-perimeterDefense"></span></div>
-              <div class="slider-row"><label>Steal</label><input type="range" id="a-steal" min="25" max="99"><span class="val" id="v-steal"></span></div>
-              <div class="slider-row"><label>Block</label><input type="range" id="a-block" min="25" max="99"><span class="val" id="v-block"></span></div>
-            </div>
-          </div>
-        </div>
-        <div class="attr-group" style="margin-top:6px;"><h4>Physical</h4>
-          <div class="attr-cols">
-            <div>
-              <div class="slider-row"><label>Speed</label><input type="range" id="a-speed" min="25" max="99"><span class="val" id="v-speed"></span></div>
-              <div class="slider-row"><label>Acceleration</label><input type="range" id="a-acceleration" min="25" max="99"><span class="val" id="v-acceleration"></span></div>
-            </div>
-            <div>
-              <div class="slider-row"><label>Strength</label><input type="range" id="a-strength" min="25" max="99"><span class="val" id="v-strength"></span></div>
-              <div class="slider-row"><label>Vertical</label><input type="range" id="a-vertical" min="25" max="99"><span class="val" id="v-vertical"></span></div>
-            </div>
-          </div>
-          <div class="slider-row"><label>Stamina</label><input type="range" id="a-stamina" min="25" max="99"><span class="val" id="v-stamina"></span></div>
-        </div>
       </div>
 
       <div class="panel">
@@ -361,15 +311,15 @@
         <div class="ribbon" id="scout-archetype">SLASHER</div>
         <div class="jersey" id="scout-jersey">#23</div>
         <div class="name" id="scout-name">MARCUS JOHNSON</div>
-        <div class="meta" id="scout-meta">Small Forward · 6'6" · 215 lbs · Age 19</div>
+        <div class="meta" id="scout-meta">Small Forward · 6'6" · 215 lbs · Age 18</div>
         <div class="mini-bars" id="scout-bars"></div>
         <div class="badge-chip"><span class="dot"></span><span id="scout-badge">Posterizer (Bronze)</span></div>
-        <div class="overall-seal"><div class="num" id="scout-overall">--</div><div class="lbl">OVR</div></div>
+        <div class="overall-seal"><div class="num" id="scout-overall">60</div><div class="lbl">OVR</div></div>
       </div>
       <div class="panel" style="margin-top:16px;">
         <div class="section-title">Ready</div>
-        <p style="font-size:13px;color:var(--chalk-dim);line-height:1.6;margin:0 0 4px;">You'll suit up for your chosen team and play a full <b style="color:var(--chalk)">20-game season</b> with All-Star Weekend, playoffs, and offseason progression.</p>
-        <button class="btn btn-primary btn-block" id="btn-enter-league" style="margin-top:14px;">Start Career →</button>
+        <p style="font-size:13px;color:var(--chalk-dim);line-height:1.6;margin:0 0 4px;">You'll start your college career at your chosen school, then enter the draft after the season. Your attributes are preset to a 60 overall; earn skill points to upgrade later.</p>
+        <button class="btn btn-primary btn-block" id="btn-enter-league" style="margin-top:14px;">Start College Career →</button>
       </div>
     </div>
   </div>
@@ -386,9 +336,9 @@
     </div>
 
     <div class="jumbotron">
-      <div class="jb-team"><span class="team-name" id="jb-user-name">BAY CITY VOLTS</span><span class="team-score display" id="jb-user-score">0</span></div>
+      <div class="jb-team"><span class="team-name" id="jb-user-name">COLLEGE TEAM</span><span class="team-score display" id="jb-user-score">0</span></div>
       <div class="jb-mid"><div class="qtr" id="jb-qtr">Q1</div><div class="clock" id="jb-clock">12:00</div><div class="status" id="jb-status">Tip-off pending</div></div>
-      <div class="jb-team opp"><span class="team-name" id="jb-opp-name">IRONSIDE GRIZZLIES</span><span class="team-score display" id="jb-opp-score">0</span></div>
+      <div class="jb-team opp"><span class="team-name" id="jb-opp-name">OPPONENT</span><span class="team-score display" id="jb-opp-score">0</span></div>
     </div>
 
     <div class="controls-row">
@@ -554,6 +504,25 @@
   </div>
 </div>
 
+<!-- ============ COMBINE OVERLAY ============ -->
+<div class="box-overlay" id="combine-overlay">
+  <div class="box-card">
+    <h2>Draft Combine</h2>
+    <p>You've completed the combine drills. Here are your results:</p>
+    <div id="combine-results"></div>
+    <button class="btn btn-primary btn-block" id="btn-combine-done" style="margin-top:18px;">Proceed to Draft</button>
+  </div>
+</div>
+
+<!-- ============ DRAFT OVERLAY ============ -->
+<div class="box-overlay" id="draft-overlay">
+  <div class="box-card">
+    <h2>NBA Draft</h2>
+    <div id="draft-results"></div>
+    <button class="btn btn-primary btn-block" id="btn-draft-done" style="margin-top:18px;">Start NBA Career</button>
+  </div>
+</div>
+
 <script>
 /* =========================================================
    1. CONFIG / DATA
@@ -567,20 +536,27 @@ const ALL_TEAMS = [
   'Capital Capitals','Golden Gate Guardians','Desert Dukes','Appalachian Aces','Evergreen Eagles'
 ];
 
+const COLLEGE_TEAMS = [
+  'State University','Tech Institute','Central College','Eastern University','Western State',
+  'Northern Lights','Southern Knights','City College','Metro University','Rural Academy',
+  'Lakeside College','Mountain View U','Riverside State','Summit University','Valley College',
+  'Coastal Carolina','Desert State','Pinewood College','Harbor U','Capital City U'
+];
+
 const POSITION_PRESETS = {
-  PG:{closeShot:62,drivingLayup:78,drivingDunk:52,standingDunk:38,postControl:32,midRange:68,threePoint:74,freeThrow:78,passAccuracy:84,ballHandle:87,speedWithBall:85,interiorDefense:38,perimeterDefense:68,steal:74,block:32,speed:86,acceleration:87,strength:52,vertical:64,stamina:82},
-  SG:{closeShot:66,drivingLayup:76,drivingDunk:60,standingDunk:45,postControl:36,midRange:74,threePoint:78,freeThrow:80,passAccuracy:68,ballHandle:78,speedWithBall:78,interiorDefense:42,perimeterDefense:66,steal:66,block:36,speed:82,acceleration:83,strength:56,vertical:70,stamina:80},
-  SF:{closeShot:68,drivingLayup:74,drivingDunk:66,standingDunk:52,postControl:48,midRange:70,threePoint:70,freeThrow:74,passAccuracy:62,ballHandle:70,speedWithBall:70,interiorDefense:52,perimeterDefense:64,steal:60,block:44,speed:76,acceleration:76,strength:64,vertical:72,stamina:78},
-  PF:{closeShot:72,drivingLayup:66,drivingDunk:70,standingDunk:66,postControl:66,midRange:60,threePoint:52,freeThrow:68,passAccuracy:50,ballHandle:56,speedWithBall:54,interiorDefense:70,perimeterDefense:52,steal:48,block:62,speed:64,acceleration:64,strength:78,vertical:74,stamina:76},
-  C:{closeShot:74,drivingLayup:56,drivingDunk:66,standingDunk:76,postControl:74,midRange:46,threePoint:32,freeThrow:62,passAccuracy:44,ballHandle:40,speedWithBall:38,interiorDefense:80,perimeterDefense:40,steal:36,block:78,speed:54,acceleration:54,strength:84,vertical:70,stamina:74}
+  PG:{closeShot:50,drivingLayup:70,drivingDunk:40,standingDunk:30,postControl:30,midRange:65,threePoint:70,freeThrow:75,passAccuracy:80,ballHandle:85,speedWithBall:80,interiorDefense:35,perimeterDefense:65,steal:70,block:30,speed:82,acceleration:84,strength:50,vertical:60,stamina:78},
+  SG:{closeShot:55,drivingLayup:70,drivingDunk:55,standingDunk:40,postControl:35,midRange:72,threePoint:75,freeThrow:78,passAccuracy:65,ballHandle:75,speedWithBall:72,interiorDefense:40,perimeterDefense:60,steal:65,block:35,speed:80,acceleration:80,strength:55,vertical:68,stamina:76},
+  SF:{closeShot:60,drivingLayup:65,drivingDunk:65,standingDunk:50,postControl:45,midRange:68,threePoint:65,freeThrow:70,passAccuracy:55,ballHandle:65,speedWithBall:65,interiorDefense:50,perimeterDefense:60,steal:55,block:45,speed:74,acceleration:74,strength:60,vertical:70,stamina:75},
+  PF:{closeShot:65,drivingLayup:60,drivingDunk:65,standingDunk:65,postControl:60,midRange:55,threePoint:45,freeThrow:65,passAccuracy:45,ballHandle:50,speedWithBall:48,interiorDefense:65,perimeterDefense:50,steal:45,block:60,speed:62,acceleration:62,strength:75,vertical:70,stamina:72},
+  C:{closeShot:70,drivingLayup:50,drivingDunk:60,standingDunk:75,postControl:70,midRange:40,threePoint:30,freeThrow:60,passAccuracy:40,ballHandle:35,speedWithBall:32,interiorDefense:75,perimeterDefense:35,steal:30,block:75,speed:50,acceleration:50,strength:80,vertical:65,stamina:70}
 };
 
 const ARCHETYPE_PRESETS = {
-  Sharpshooter:{shoot:75,three:88,dunk:30,drive:40,pass:45,isolation:35,postUp:15,steal:40,blockAttempt:20,aggression:35,foul:30,trashTalk:30,badge:'Limitless Range'},
-  Slasher:{shoot:70,three:35,dunk:82,drive:85,pass:40,isolation:55,postUp:25,steal:45,blockAttempt:30,aggression:60,foul:45,trashTalk:55,badge:'Posterizer'},
-  Playmaker:{shoot:50,three:55,dunk:35,drive:60,pass:88,isolation:40,postUp:20,steal:50,blockAttempt:20,aggression:40,foul:30,trashTalk:40,badge:'Dimer'},
-  'Lockdown Defender':{shoot:40,three:35,dunk:40,drive:35,pass:45,isolation:25,postUp:20,steal:78,blockAttempt:70,aggression:55,foul:55,trashTalk:45,badge:'Clamps'},
-  'Post Scorer':{shoot:65,three:15,dunk:55,drive:30,pass:35,isolation:30,postUp:85,steal:30,blockAttempt:50,aggression:50,foul:50,trashTalk:40,badge:'Fearless Finisher'}
+  Sharpshooter:{shoot:80,three:90,dunk:25,drive:40,pass:45,isolation:35,postUp:10,steal:40,blockAttempt:20,aggression:35,foul:30,trashTalk:30,badge:'Limitless Range'},
+  Slasher:{shoot:70,three:35,dunk:85,drive:90,pass:40,isolation:55,postUp:20,steal:45,blockAttempt:30,aggression:60,foul:45,trashTalk:55,badge:'Posterizer'},
+  Playmaker:{shoot:50,three:55,dunk:30,drive:60,pass:90,isolation:40,postUp:15,steal:50,blockAttempt:20,aggression:40,foul:30,trashTalk:40,badge:'Dimer'},
+  'Lockdown Defender':{shoot:40,three:30,dunk:35,drive:35,pass:45,isolation:25,postUp:15,steal:80,blockAttempt:75,aggression:55,foul:55,trashTalk:45,badge:'Clamps'},
+  'Post Scorer':{shoot:65,three:15,dunk:55,drive:30,pass:35,isolation:30,postUp:90,steal:30,blockAttempt:50,aggression:50,foul:50,trashTalk:40,badge:'Fearless Finisher'}
 };
 
 const ARCHETYPE_LIMIT_OVERRIDES = {
@@ -602,13 +578,13 @@ const OPP_NAMES = ['Malik Reyes','Trevor Voss','Isaiah Cross','Bryce Halden','Na
    2. STATE
    ========================================================= */
 let player = null;
-let season = null;       // { playerTeam, schedule[], currentGameIndex, record:{wins,losses}, games[], complete, playoff?, champion, seasonsPlayed }
+let collegeSeason = null;
+let nbaSeason = null;
 let game = null;
 let tickTimer = null;
 let currentSpeed = 1200;
 let activeSaveSlot = 1;
-let seasonAverages = null;
-let teamChemistry = 80; // 0-100
+let teamChemistry = 80;
 let skillPoints = 0;
 
 /* =========================================================
@@ -646,11 +622,11 @@ function persistCareer(){
   try{
     const data = {
       player,
-      season: season ? JSON.parse(JSON.stringify(season)) : null,
+      collegeSeason: collegeSeason ? JSON.parse(JSON.stringify(collegeSeason)) : null,
+      nbaSeason: nbaSeason ? JSON.parse(JSON.stringify(nbaSeason)) : null,
       game: game ? Object.assign({}, game, {eventTicks: Array.from(game.eventTicks||[])}) : null,
       screen: $('screen-game').classList.contains('active') ? 'game' : 'create',
       savedAt: Date.now(),
-      seasonAverages: seasonAverages || null,
       teamChemistry,
       skillPoints
     };
@@ -772,20 +748,18 @@ function buildPlayerFromForm(){
   const {attrs,brains,tends} = readFormAttributes();
   const arch = $('f-archetype').value;
   const bonuses = computePhysicalBonuses();
-  let teamSelect = $('f-team').value;
-  if(teamSelect === 'RANDOM'){
-    teamSelect = pick(ALL_TEAMS);
-  }
+  const collegeTeam = $('f-college').value;
   return {
     firstName: $('f-first').value||'Player',
     lastName: $('f-last').value||'One',
     position: $('f-position').value,
     archetype: arch,
-    team: teamSelect,
+    college: collegeTeam,
+    team: null, // NBA team assigned later
     heightIn: heightInches(),
     weight: parseInt($('f-weight').value)||210,
     wingspan: parseInt($('f-wingspan').value)||heightInches()+2,
-    age: parseInt($('f-age').value)||19,
+    age: parseInt($('f-age').value)||18,
     hand: $('f-hand').value,
     jersey: $('f-jersey').value||'0',
     attributes: attrs,
@@ -810,37 +784,65 @@ function buildPlayerFromForm(){
 $('f-position').addEventListener('change', e=> applyPositionPreset(e.target.value));
 $('f-archetype').addEventListener('change', e=> applyArchetypePreset(e.target.value));
 
-const teamSelectEl = $('f-team');
-ALL_TEAMS.forEach(t=>{
+// Populate college dropdown
+const collegeSelectEl = $('f-college');
+COLLEGE_TEAMS.forEach(t=>{
   const opt = document.createElement('option');
   opt.value = t;
   opt.textContent = t;
-  teamSelectEl.appendChild(opt);
+  collegeSelectEl.appendChild(opt);
 });
 
 $('btn-enter-league').addEventListener('click', ()=>{
   player = buildPlayerFromForm();
+  startCollegeSeason();
   $('screen-create').classList.remove('active');
   $('screen-game').classList.add('active');
-  primeGameScreen();
+  primeCollegeGame();
   persistCareer();
 });
 
 /* =========================================================
-   6. SEASON MANAGEMENT
+   6. COLLEGE SEASON MANAGEMENT
    ========================================================= */
-function generateSeasonSchedule(playerTeam){
-  const opponents = ALL_TEAMS.filter(t=>t!==playerTeam);
+function startCollegeSeason(){
+  const schedule = generateCollegeSchedule(player.college);
+  collegeSeason = {
+    collegeTeam: player.college,
+    schedule,
+    currentGameIndex: 0,
+    record: {wins:0, losses:0},
+    games: [],
+    complete: false
+  };
+}
+function generateCollegeSchedule(collegeTeam){
+  const opponents = COLLEGE_TEAMS.filter(t=>t!==collegeTeam);
   let schedule = [];
-  for(let i=0;i<20;i++){
+  for(let i=0;i<5;i++){
     schedule.push(opponents[Math.floor(rand()*opponents.length)]);
   }
   return schedule;
 }
+function primeCollegeGame(){
+  $('jb-user-name').textContent = player.college.toUpperCase();
+  if(collegeSeason.currentGameIndex < collegeSeason.schedule.length){
+    $('jb-opp-name').textContent = collegeSeason.schedule[collegeSeason.currentGameIndex].toUpperCase();
+  } else {
+    $('jb-opp-name').textContent = '';
+  }
+  $('season-game-label').textContent = `College Game ${collegeSeason.currentGameIndex+1} of 5`;
+  $('season-record').textContent = `Record: ${collegeSeason.record.wins}-${collegeSeason.record.losses}`;
+  resetGameState();
+  renderStatPanel();
+}
 
-function startNewSeason(){
-  const schedule = generateSeasonSchedule(player.team);
-  season = {
+/* =========================================================
+   7. NBA SEASON MANAGEMENT
+   ========================================================= */
+function startNbaSeason(){
+  const schedule = generateNbaSchedule(player.team);
+  nbaSeason = {
     playerTeam: player.team,
     schedule,
     currentGameIndex: 0,
@@ -850,42 +852,39 @@ function startNewSeason(){
     playoffTeams: null,
     playoffWinner: null,
     champion: false,
-    seasonsPlayed: (season?.seasonsPlayed || 0) + 1
+    seasonsPlayed: (nbaSeason?.seasonsPlayed || 0) + 1
   };
-  seasonAverages = null;
-  updateSeasonUI();
+  updateNbaUI();
 }
-
-function updateSeasonUI(){
-  if(!season) return;
-  const gameNum = Math.min(season.currentGameIndex + 1, 20);
-  $('season-game-label').textContent = `Game ${gameNum} of 20 · Season ${season.seasonsPlayed || 1}`;
-  $('season-record').textContent = `Record: ${season.record.wins}-${season.record.losses}`;
-}
-
-/* =========================================================
-   7. GAME SETUP
-   ========================================================= */
-function primeGameScreen(){
-  $('strip-jersey').textContent = '#'+player.jersey;
-  $('strip-name').textContent = player.firstName+' '+player.lastName;
-  $('strip-pos').textContent = player.position+' · '+player.archetype;
-
-  if(!season || season.playerTeam !== player.team){
-    startNewSeason();
+function generateNbaSchedule(playerTeam){
+  const opponents = ALL_TEAMS.filter(t=>t!==playerTeam);
+  let schedule = [];
+  for(let i=0;i<20;i++){
+    schedule.push(opponents[Math.floor(rand()*opponents.length)]);
   }
+  return schedule;
+}
+function updateNbaUI(){
+  if(!nbaSeason) return;
+  const gameNum = Math.min(nbaSeason.currentGameIndex + 1, 20);
+  $('season-game-label').textContent = `Game ${gameNum} of 20 · Season ${nbaSeason.seasonsPlayed || 1}`;
+  $('season-record').textContent = `Record: ${nbaSeason.record.wins}-${nbaSeason.record.losses}`;
+}
+function primeNbaGame(){
   $('jb-user-name').textContent = player.team.toUpperCase();
-  if(season.currentGameIndex < 20){
-    $('jb-opp-name').textContent = season.schedule[season.currentGameIndex].toUpperCase();
+  if(nbaSeason.currentGameIndex < 20){
+    $('jb-opp-name').textContent = nbaSeason.schedule[nbaSeason.currentGameIndex].toUpperCase();
   } else {
     $('jb-opp-name').textContent = '';
   }
-
   resetGameState();
   renderStatPanel();
-  updateSeasonUI();
+  updateNbaUI();
 }
 
+/* =========================================================
+   8. GAME SETUP (common)
+   ========================================================= */
 function resetGameState(){
   const oppOverall = 62 + Math.floor(rand()*22);
   game = {
@@ -916,6 +915,8 @@ function resetGameState(){
   $('trophy-overlay').classList.remove('show');
   $('championship-overlay').classList.remove('show');
   $('offseason-overlay').classList.remove('show');
+  $('combine-overlay').classList.remove('show');
+  $('draft-overlay').classList.remove('show');
 }
 function pickEventTicks(total){
   const count = 7;
@@ -931,7 +932,7 @@ $('btn-new-career').addEventListener('click', ()=>{
   if(player && !confirm('Start a new career? This erases your saved game.')) return;
   clearInterval(tickTimer);
   clearSavedCareer(activeSaveSlot);
-  player = null; game = null; season = null; seasonAverages = null;
+  player = null; game = null; collegeSeason = null; nbaSeason = null;
   $('screen-game').classList.remove('active');
   $('screen-create').classList.add('active');
   initSavedBanner();
@@ -940,7 +941,7 @@ $('btn-retire').addEventListener('click', ()=>{
   if(confirm('Retire from your career? You can start a new one later.')){
     clearInterval(tickTimer);
     clearSavedCareer(activeSaveSlot);
-    player = null; game = null; season = null;
+    player = null; game = null; collegeSeason = null; nbaSeason = null;
     $('screen-game').classList.remove('active');
     $('screen-create').classList.add('active');
     initSavedBanner();
@@ -965,7 +966,7 @@ $('btn-start-game').addEventListener('click', ()=>{
   $('btn-start-game').textContent = 'Game In Progress';
   $('jb-status').textContent='Live';
   if(isFreshStart){
-    appendLog(`Tip-off! ${player.firstName} ${player.lastName} and the ${player.team} take the floor against the ${$('jb-opp-name').textContent}.`, 'hi');
+    appendLog(`Tip-off! ${player.firstName} ${player.lastName} and the ${$('jb-user-name').textContent} take the floor against the ${$('jb-opp-name').textContent}.`, 'hi');
   } else {
     appendLog(`Play resumes.`, 'hi');
   }
@@ -974,17 +975,21 @@ $('btn-start-game').addEventListener('click', ()=>{
 });
 
 /* =========================================================
-   8. SIM MULTIPLE GAMES
+   9. SIM MULTIPLE GAMES (college or NBA)
    ========================================================= */
 function simMultipleGames(count){
+  let targetSeason = collegeSeason && !collegeSeason.complete ? collegeSeason : nbaSeason;
+  if(!targetSeason || targetSeason.complete) return;
+
   let gamesSimmed = 0;
-  while(gamesSimmed < count && season.currentGameIndex < 20 && !season.complete){
-    // Setup a new game if not in progress
+  while(gamesSimmed < count && targetSeason.currentGameIndex < targetSeason.schedule.length && !targetSeason.complete){
+    // Setup new game
     if(!game || game.finished){
-      setupCurrentGame();
+      if(targetSeason === collegeSeason) primeCollegeGame();
+      else primeNbaGame();
       game.running = false;
     }
-    // Quick sim the game
+    // Quick sim
     clearInterval(tickTimer);
     game.running = false;
     while(game.possessionCount < game.totalPossessions && game.quarter <= 4){
@@ -1003,59 +1008,52 @@ function simMultipleGames(count){
     game.running = false;
     updateJumbotron();
     const won = game.score.user > game.score.opp;
-    if(season && !season.games[season.currentGameIndex]){
-      season.games[season.currentGameIndex] = {
+    if(targetSeason && !targetSeason.games[targetSeason.currentGameIndex]){
+      targetSeason.games[targetSeason.currentGameIndex] = {
         opponent: game.oppTeamName,
         userScore: game.score.user,
         oppScore: game.score.opp,
         won
       };
-      if(won) season.record.wins++; else season.record.losses++;
-      if(season.currentGameIndex >= 19){
-        season.complete = true;
+      if(won) targetSeason.record.wins++; else targetSeason.record.losses++;
+      if(targetSeason.currentGameIndex >= targetSeason.schedule.length - 1){
+        targetSeason.complete = true;
       }
     }
-    season.currentGameIndex++;
+    targetSeason.currentGameIndex++;
     gamesSimmed++;
-    // Check for All-Star after 10 games
-    if(season.currentGameIndex === 10){
-      // Pause to show All-Star weekend
+
+    // Check for All-Star in NBA after 10 games
+    if(targetSeason === nbaSeason && targetSeason.currentGameIndex === 10 && !targetSeason.complete){
       showAllStarWeekend();
-      // After All-Star, resume sim? For simplicity, we'll break and let user continue.
       break;
     }
   }
-  updateSeasonUI();
-  if(season.complete){
-    showSeasonSummary();
-  } else {
-    // Set up next game for user
-    if(!game.finished){
-      // reset current game for next
+
+  if(targetSeason.complete){
+    if(targetSeason === collegeSeason){
+      showCombine();
     } else {
-      setupCurrentGame();
-      game.running = false;
-      $('btn-start-game').disabled = false;
-      $('btn-start-game').textContent = 'Tip It Off';
-      $('jb-status').textContent = 'Next game ready';
-      $('feed-body').innerHTML = '<div class="feed-line">Next game ready — hit "Tip It Off" to start.</div>';
+      showSeasonSummary();
     }
+  } else {
+    if(targetSeason === collegeSeason) primeCollegeGame();
+    else primeNbaGame();
+    game.running = false;
+    $('btn-start-game').disabled = false;
+    $('btn-start-game').textContent = 'Tip It Off';
+    $('jb-status').textContent = 'Next game ready';
+    $('feed-body').innerHTML = '<div class="feed-line">Next game ready — hit "Tip It Off" to start.</div>';
   }
   persistCareer();
 }
 
-$('btn-quick-sim').addEventListener('click', ()=>{
-  simMultipleGames(1);
-});
-$('btn-sim5').addEventListener('click', ()=>{
-  simMultipleGames(5);
-});
-$('btn-sim10').addEventListener('click', ()=>{
-  simMultipleGames(10);
-});
+$('btn-quick-sim').addEventListener('click', ()=> simMultipleGames(1));
+$('btn-sim5').addEventListener('click', ()=> simMultipleGames(5));
+$('btn-sim10').addEventListener('click', ()=> simMultipleGames(10));
 
 /* =========================================================
-   9. DERIVED / EFFECTIVE ATTRIBUTES
+   10. DERIVED / EFFECTIVE ATTRIBUTES
    ========================================================= */
 function eff(key){
   const base = player.attributes[key];
@@ -1082,13 +1080,12 @@ function badgeBonusFor(kind){
 const ATTR_FOR_KIND = {three:'threePoint',mid:'midRange',layup:'drivingLayup',dunk:'drivingDunk',close:'closeShot',post:'postControl',ft:'freeThrow'};
 function shotProb(kind, difficultyMod=0){
   const attr = eff(ATTR_FOR_KIND[kind]!==undefined?ATTR_FOR_KIND[kind]:kind);
-  let p = 0.08 + (attr/100)*0.55; // Reduced overall success rate
+  let p = 0.08 + (attr/100)*0.55;
   p *= staminaMult();
   p += difficultyMod;
   p += badgeBonusFor(kind);
   p += game.momentum/900;
   p -= (game.oppOverall-70)/500;
-  // Brain influence: shotSelection, riskTolerance, basketballIQ
   if(kind==='three' && player.brains.shotSelection > 70) p += 0.05;
   else if(kind==='three' && player.brains.shotSelection < 30) p -= 0.05;
   if(player.brains.riskTolerance > 70 && (kind==='three'||kind==='dunk')) p += 0.03;
@@ -1112,13 +1109,12 @@ function foulDrawChance(){
 }
 
 /* =========================================================
-   10. EVENTS POOL (expanded)
+   11. EVENTS POOL (expanded)
    ========================================================= */
 function scoreDiff(){ return game.score.user - game.score.opp; }
 function isLastPeriod(){ return game.quarter>=4; }
 
 const EVENT_POOL = [
-  // Original events
   { id:'closeout_three', category:'offensive', cond:()=> player.tendencies.three>=35 && !game.fouledOut && !game.ejected,
     desc:"Your defender closes out hard as you catch it above the break — three-point line right under your feet.",
     choices:[
@@ -1239,7 +1235,6 @@ const EVENT_POOL = [
       {label:"Draw the defense and dish for the open look", resolve:()=> resolvePassPlay()},
       {label:"Call timeout to reset the play", resolve:()=>({text:"You call timeout — the coach draws up one more look.", freeShotBonus:0.08})}
     ]},
-  // New events
   { id:'social_media_backlash', category:'reputation', cond:()=> player.brains.coachability < 50,
     desc:"Your recent comments about the coach's rotations have gone viral, and now the media is asking about it in the post-game presser.",
     choices:[
@@ -1355,7 +1350,7 @@ function resolveDefend(kind, mod){
   else successChance = 0.5 + eff('perimeterDefense')/300 + mod;
   const success = rand()<clamp(successChance,0.03,0.7);
   if(kind==='steal'){
-    if(success){ game.stats.stl++; game.momentum+=5; return {text:`${player.firstName} ${player.lastName} pokes it away — steal! Ball back to ${player.team}.`}; }
+    if(success){ game.stats.stl++; game.momentum+=5; return {text:`${player.firstName} ${player.lastName} pokes it away — steal! Ball back to ${player.team?player.team:player.college}.`}; }
     game.momentum-=2; return {text:`${player.firstName} ${player.lastName} reaches in but the ball handler gets by. Bucket allowed.`, oppPts:2};
   }
   if(kind==='block'){
@@ -1400,7 +1395,7 @@ function resolveFlopAttempt(){
 }
 
 /* =========================================================
-   11. GAME TICK / SIM LOOP
+   12. GAME TICK / SIM LOOP
    ========================================================= */
 function gameTick(){
   if(!game.running) return;
@@ -1442,7 +1437,7 @@ function gameTick(){
 
 function simulateUserPossession(){
   if(game.fouledOut||game.ejected){ simulateGenericTeamPossession(true); return; }
-  const involveChance = clamp(0.35 + (player.tendencies.isolation+player.tendencies.shoot)/500, 0.25, 0.6); // reduced involvement
+  const involveChance = clamp(0.35 + (player.tendencies.isolation+player.tendencies.shoot)/500, 0.25, 0.6);
   if(rand()>involveChance){ simulateGenericTeamPossession(true); return; }
 
   const t = player.tendencies;
@@ -1500,7 +1495,7 @@ function simulateOppPossession(){
 }
 
 /* =========================================================
-   12. EVENT MODAL FLOW
+   13. EVENT MODAL FLOW
    ========================================================= */
 function fireDecisionEvent(){
   const ev = pickEligibleEvent();
@@ -1518,8 +1513,8 @@ function fireDecisionEvent(){
       const outcome = c.resolve() || {};
       if(outcome.oppPts) game.score.opp += outcome.oppPts;
       if(outcome.teamChem){ teamChemistry = clamp(teamChemistry + outcome.teamChem, 0, 100); }
-      if(outcome.iqBoost){ // temporary boost to brains? We'll just log it for now
-        // Not permanent, just affect current game via game object maybe
+      if(outcome.iqBoost){
+        // Temporary IQ boost not persisted, just log
       }
       $('modal-result').textContent = outcome.text || 'The play unfolds.';
       $('modal-result').classList.add('show');
@@ -1537,7 +1532,7 @@ function fireDecisionEvent(){
 }
 
 /* =========================================================
-   13. FOULS / EJECTIONS
+   14. FOULS / EJECTIONS
    ========================================================= */
 function handleFoulOut(){ game.fouledOut = true; appendLog(`${player.firstName} ${player.lastName} has fouled out of the game!`,'foul'); }
 function handleEjection(){ game.ejected = true; appendLog(`${player.firstName} ${player.lastName} has been EJECTED!`,'foul'); }
@@ -1555,7 +1550,7 @@ function renderTechRow(){
 }
 
 /* =========================================================
-   14. RENDER
+   15. RENDER
    ========================================================= */
 function updateJumbotron(){
   $('jb-user-score').textContent = game.score.user;
@@ -1607,12 +1602,12 @@ setInterval(()=>{
 }, 2600);
 
 /* =========================================================
-   15. END OF GAME / BOX SCORE / SEASON SUMMARY
+   16. END OF GAME / BOX SCORE / SEASON SUMMARY
    ========================================================= */
 function buildBoxScore(){
   const won = game.score.user>game.score.opp;
   $('box-result').textContent = won?'VICTORY':'DEFEAT';
-  $('box-final-line').textContent = `${player.team} ${game.score.user} — ${game.score.opp} ${game.oppTeamName}`;
+  $('box-final-line').textContent = `${$('jb-user-name').textContent} ${game.score.user} — ${game.score.opp} ${game.oppTeamName}`;
   const s = game.stats;
   const rows = [
     [`${player.firstName} ${player.lastName} PTS`, s.pts],
@@ -1635,89 +1630,132 @@ function endGame(){
   game.running=false; game.finished=true;
   updateJumbotron();
   const won = game.score.user>game.score.opp;
-  appendLog(`FINAL: ${player.team} ${game.score.user} — ${game.oppTeamName} ${game.score.opp}. ${won?'Win!':'Loss.'}`,'hi');
+  appendLog(`FINAL: ${$('jb-user-name').textContent} ${game.score.user} — ${game.oppTeamName} ${game.score.opp}. ${won?'Win!':'Loss.'}`,'hi');
 
-  if(season && !season.games[season.currentGameIndex]){
-    season.games[season.currentGameIndex] = {
+  const targetSeason = (collegeSeason && !collegeSeason.complete) ? collegeSeason : nbaSeason;
+  if(targetSeason && !targetSeason.games[targetSeason.currentGameIndex]){
+    targetSeason.games[targetSeason.currentGameIndex] = {
       opponent: game.oppTeamName,
       userScore: game.score.user,
       oppScore: game.score.opp,
       won
     };
-    if(won) season.record.wins++; else season.record.losses++;
-    if(season.currentGameIndex >= 19){
-      season.complete = true;
+    if(won) targetSeason.record.wins++; else targetSeason.record.losses++;
+    if(targetSeason.currentGameIndex >= targetSeason.schedule.length - 1){
+      targetSeason.complete = true;
     }
   }
   buildBoxScore();
   $('box-overlay').classList.add('show');
-  $('btn-box-close').textContent = season.complete ? 'View Season Summary' : 'Next Game';
-  updateSeasonUI();
+  if(targetSeason === collegeSeason && collegeSeason.complete){
+    $('btn-box-close').textContent = 'Proceed to Combine';
+  } else if(targetSeason === nbaSeason && nbaSeason.complete){
+    $('btn-box-close').textContent = 'View Season Summary';
+  } else {
+    $('btn-box-close').textContent = 'Next Game';
+  }
+  if(targetSeason === collegeSeason) updateCollegeUI();
+  else updateNbaUI();
   persistCareer();
 }
 
 $('btn-box-close').addEventListener('click', ()=>{
   $('box-overlay').classList.remove('show');
-  if(season.complete){
-    showSeasonSummary();
-  } else {
-    season.currentGameIndex++;
-    if(season.currentGameIndex >= 20) season.complete = true;
-    if(season.currentGameIndex < 20){
-      if(season.currentGameIndex === 10){
+  if(collegeSeason && !collegeSeason.complete){
+    collegeSeason.currentGameIndex++;
+    if(collegeSeason.currentGameIndex >= 5) collegeSeason.complete = true;
+    if(collegeSeason.currentGameIndex < 5){
+      primeCollegeGame();
+      game.running = false;
+      $('btn-start-game').disabled = false;
+      $('btn-start-game').textContent = 'Tip It Off';
+      $('jb-status').textContent = 'Next game ready';
+      $('feed-body').innerHTML = '<div class="feed-line">Next college game ready — hit "Tip It Off" to start.</div>';
+    } else {
+      showCombine();
+    }
+  } else if(collegeSeason && collegeSeason.complete && !nbaSeason){
+    showCombine();
+  } else if(nbaSeason && !nbaSeason.complete){
+    nbaSeason.currentGameIndex++;
+    if(nbaSeason.currentGameIndex >= 20) nbaSeason.complete = true;
+    if(nbaSeason.currentGameIndex < 20){
+      if(nbaSeason.currentGameIndex === 10){
         showAllStarWeekend();
       } else {
-        setupCurrentGame();
+        primeNbaGame();
         game.running = false;
         $('btn-start-game').disabled = false;
         $('btn-start-game').textContent = 'Tip It Off';
         $('jb-status').textContent = 'Next game ready';
-        $('feed-body').innerHTML = '<div class="feed-line">Next game ready — hit "Tip It Off" to start.</div>';
+        $('feed-body').innerHTML = '<div class="feed-line">Next NBA game ready — hit "Tip It Off" to start.</div>';
       }
     } else {
       showSeasonSummary();
     }
+  } else if(nbaSeason && nbaSeason.complete){
+    showSeasonSummary();
   }
   persistCareer();
 });
 
-function setupCurrentGame(){
-  $('jb-user-name').textContent = player.team.toUpperCase();
-  const opp = season.schedule[season.currentGameIndex] || pick(ALL_TEAMS.filter(t=>t!==player.team));
-  $('jb-opp-name').textContent = opp.toUpperCase();
-  resetGameState();
-  renderStatPanel();
-  updateSeasonUI();
+function updateCollegeUI(){
+  const gameNum = Math.min(collegeSeason.currentGameIndex + 1, 5);
+  $('season-game-label').textContent = `College Game ${gameNum} of 5`;
+  $('season-record').textContent = `Record: ${collegeSeason.record.wins}-${collegeSeason.record.losses}`;
+}
+function updateNbaUI(){
+  if(!nbaSeason) return;
+  const gameNum = Math.min(nbaSeason.currentGameIndex + 1, 20);
+  $('season-game-label').textContent = `Game ${gameNum} of 20 · Season ${nbaSeason.seasonsPlayed || 1}`;
+  $('season-record').textContent = `Record: ${nbaSeason.record.wins}-${nbaSeason.record.losses}`;
 }
 
-function showSeasonSummary(){
-  $('season-title').textContent = 'Season Complete';
-  $('season-record-summary').textContent = `${player.team} — ${season.record.wins}-${season.record.losses}`;
-  const rows = season.schedule.map((opp,i)=>{
-    const g = season.games[i];
-    const result = g ? (g.won?'W':'L') : '—';
-    const score = g ? `${g.userScore}-${g.oppScore}` : '';
-    return `<tr><td>${i+1}</td><td>${opp}</td><td>${result}</td><td>${score}</td></tr>`;
-  }).join('');
-  $('season-table').innerHTML = rows || '<tr><td>No games</td></tr>';
-  $('season-overlay').classList.add('show');
+/* =========================================================
+   17. COMBINE & DRAFT
+   ========================================================= */
+function showCombine(){
+  $('combine-overlay').classList.add('show');
+  const vertical = Math.floor(30 + player.attributes.vertical/2 + rand()*5);
+  const speed = (10 + (100 - player.attributes.speed)/10 + rand()).toFixed(2);
+  const strength = Math.floor(10 + player.attributes.strength/2 + rand()*5);
+  $('combine-results').innerHTML = `
+    Vertical: ${vertical}"<br>
+    Lane Agility: ${speed}s<br>
+    Strength: ${strength} reps<br>
+    Stock Rating: ${Math.floor(player.overall + rand()*5)} / 99
+  `;
 }
-$('btn-season-close').addEventListener('click', ()=>{
-  $('season-overlay').classList.remove('show');
-  startPlayoffs();
+$('btn-combine-done').addEventListener('click', ()=>{
+  $('combine-overlay').classList.remove('show');
+  showDraft();
+});
+
+function showDraft(){
+  const draftPosition = Math.floor(1 + (100 - player.overall) * 0.3 + rand()*5);
+  player.team = pick(ALL_TEAMS.filter(t=>t!==player.college)); // Assign random NBA team
+  $('draft-results').innerHTML = `
+    You were selected with pick #${draftPosition} by the ${player.team}.<br>
+    Congratulations, ${player.firstName} ${player.lastName}!
+  `;
+  $('draft-overlay').classList.add('show');
+}
+$('btn-draft-done').addEventListener('click', ()=>{
+  $('draft-overlay').classList.remove('show');
+  startNbaSeason();
+  primeNbaGame();
+  persistCareer();
 });
 
 /* =========================================================
-   16. ALL-STAR WEEKEND (auto contest selection)
+   18. ALL-STAR WEEKEND (auto contest selection)
    ========================================================= */
 function determineContestType(){
   const three = player.attributes.threePoint + player.attributes.midRange + player.attributes.freeThrow;
   const dunk = player.attributes.drivingDunk + player.attributes.standingDunk + player.attributes.vertical;
   return three >= dunk ? 'three' : 'dunk';
 }
-
 function showAllStarWeekend(){
-  // Update contest button text
   const contestType = determineContestType();
   $('btn-my-contest').textContent = contestType === 'three' ? '3-Point Contest' : 'Dunk Contest';
   $('allstar-overlay').classList.add('show');
@@ -1734,7 +1772,7 @@ $('btn-allstar-game').addEventListener('click', ()=>{
   $('feed-body').innerHTML = '<div class="feed-line">All-Star Game — hit "Start All-Star Game" to tip off.</div>';
   game.afterGameAction = ()=>{
     $('box-overlay').classList.remove('show');
-    $('allstar-overlay').classList.add('show'); // return to all-star menu
+    $('allstar-overlay').classList.add('show');
   };
 });
 $('btn-my-contest').addEventListener('click', ()=>{
@@ -1745,7 +1783,7 @@ $('btn-my-contest').addEventListener('click', ()=>{
 });
 $('btn-skip-allstar').addEventListener('click', ()=>{
   $('allstar-overlay').classList.remove('show');
-  setupCurrentGame();
+  primeNbaGame();
   game.running = false;
   $('btn-start-game').disabled = false;
   $('btn-start-game').textContent = 'Tip It Off';
@@ -1896,12 +1934,11 @@ $('btn-speech-done').addEventListener('click', ()=>{
 });
 
 /* =========================================================
-   17. PLAYOFFS (Best-of-7 series)
+   19. PLAYOFFS (Best-of-7 series)
    ========================================================= */
 function startPlayoffs(){
-  // Generate standings based on season records; user team uses actual record
   const standings = ALL_TEAMS.map(team=>{
-    if(team === player.team) return {team, wins: season.record.wins, losses: season.record.losses};
+    if(team === player.team) return {team, wins: nbaSeason.record.wins, losses: nbaSeason.record.losses};
     const wins = Math.floor(rand()*20);
     return {team, wins, losses: 20 - wins};
   });
@@ -1910,35 +1947,30 @@ function startPlayoffs(){
   let playoffTeams;
   if(userSeed > 8) playoffTeams = standings.slice(0,7).concat(standings.find(s=>s.team===player.team));
   else playoffTeams = standings.slice(0,8);
-  season.playoffTeams = playoffTeams;
-  season.playoffWinner = null;
-  season.champion = false;
-  // Bracket simulation
+  nbaSeason.playoffTeams = playoffTeams;
+  nbaSeason.playoffWinner = null;
+  nbaSeason.champion = false;
   const bracket = simulateBracket(playoffTeams);
   if(bracket.champion === player.team) {
-    season.champion = true;
-    season.playoffWinner = bracket.champion;
+    nbaSeason.champion = true;
+    nbaSeason.playoffWinner = bracket.champion;
     showChampionshipCelebration();
   } else {
-    season.playoffWinner = bracket.champion;
+    nbaSeason.playoffWinner = bracket.champion;
     alert(`Champions: ${bracket.champion}\nYour team did not win the title.`);
     showOffseason();
   }
 }
-
 function simulateBracket(teams){
-  // Simple best-of-7 simulation; user team always wins if involved to keep experience
   const round1 = [];
   for(let i=0;i<4;i++){
-    const a = teams[i*2];
-    const b = teams[i*2+1];
+    const a = teams[i*2]; const b = teams[i*2+1];
     if(a.team === player.team || b.team === player.team) round1.push(a.team === player.team ? a : b);
     else round1.push(a.wins > b.wins ? a : b);
   }
   const round2 = [];
   for(let i=0;i<2;i++){
-    const a = round1[i*2];
-    const b = round1[i*2+1];
+    const a = round1[i*2]; const b = round1[i*2+1];
     if(a.team === player.team || b.team === player.team) round2.push(a.team === player.team ? a : b);
     else round2.push(a.wins > b.wins ? a : b);
   }
@@ -1948,7 +1980,6 @@ function simulateBracket(teams){
   else finals.push(a.wins > b.wins ? a : b);
   return {champion: finals[0].team};
 }
-
 function showChampionshipCelebration(){
   $('championship-overlay').classList.add('show');
 }
@@ -1958,7 +1989,7 @@ $('btn-championship-done').addEventListener('click', ()=>{
 });
 
 /* =========================================================
-   18. OFFSEASON (Next Season / Retire / New Career)
+   20. OFFSEASON (Next Season / Retire / New Career)
    ========================================================= */
 function showOffseason(){
   $('offseason-overlay').classList.add('show');
@@ -1966,9 +1997,8 @@ function showOffseason(){
 }
 $('btn-next-season').addEventListener('click', ()=>{
   $('offseason-overlay').classList.remove('show');
-  // Keep same player, start new season
-  startNewSeason();
-  primeGameScreen();
+  startNbaSeason();
+  primeNbaGame();
   persistCareer();
 });
 $('btn-retire-offseason').addEventListener('click', ()=>{
@@ -1976,7 +2006,7 @@ $('btn-retire-offseason').addEventListener('click', ()=>{
     $('offseason-overlay').classList.remove('show');
     clearInterval(tickTimer);
     clearSavedCareer(activeSaveSlot);
-    player = null; game = null; season = null;
+    player = null; game = null; collegeSeason = null; nbaSeason = null;
     $('screen-game').classList.remove('active');
     $('screen-create').classList.add('active');
     initSavedBanner();
@@ -1986,14 +2016,14 @@ $('btn-new-career-offseason').addEventListener('click', ()=>{
   $('offseason-overlay').classList.remove('show');
   clearInterval(tickTimer);
   clearSavedCareer(activeSaveSlot);
-  player = null; game = null; season = null;
+  player = null; game = null; collegeSeason = null; nbaSeason = null;
   $('screen-game').classList.remove('active');
   $('screen-create').classList.add('active');
   initSavedBanner();
 });
 
 /* =========================================================
-   19. SAVE/LOAD
+   21. SAVE/LOAD
    ========================================================= */
 function initSavedBanner(){
   const data = readSavedCareer(activeSaveSlot);
@@ -2001,13 +2031,17 @@ function initSavedBanner(){
   if(data && data.player){
     banner.style.display='block';
     const p = data.player;
-    let statusTxt = 'Player created, season not started yet';
-    if(data.season){
-      const rec = data.season.record;
-      if(data.season.complete) statusTxt = `Season complete — ${rec.wins}-${rec.losses}`;
-      else statusTxt = `Game ${Math.min(data.season.currentGameIndex+1,20)} of 20 — Record ${rec.wins}-${rec.losses}`;
+    let statusTxt = 'Player created, no season started';
+    if(data.collegeSeason){
+      const rec = data.collegeSeason.record;
+      if(data.collegeSeason.complete) statusTxt = `College complete — ${rec.wins}-${rec.losses}`;
+      else statusTxt = `College Game ${Math.min(data.collegeSeason.currentGameIndex+1,5)} of 5 — Record ${rec.wins}-${rec.losses}`;
+    } else if(data.nbaSeason){
+      const rec = data.nbaSeason.record;
+      if(data.nbaSeason.complete) statusTxt = `NBA Season complete — ${rec.wins}-${rec.losses}`;
+      else statusTxt = `Game ${Math.min(data.nbaSeason.currentGameIndex+1,20)} of 20 — Record ${rec.wins}-${rec.losses}`;
     }
-    $('saved-banner-text').textContent = `${p.firstName} ${p.lastName} · ${POSITION_LABELS[p.position]} · OVR ${p.overall} · Team: ${p.team} — ${statusTxt}`;
+    $('saved-banner-text').textContent = `${p.firstName} ${p.lastName} · ${POSITION_LABELS[p.position]} · OVR ${p.overall} · College: ${p.college} · NBA: ${p.team || 'Not drafted'} — ${statusTxt}`;
   } else banner.style.display='none';
 }
 $('btn-continue-career').addEventListener('click', ()=>{
@@ -2023,8 +2057,8 @@ $('btn-save-career').addEventListener('click', persistCareer);
 function restoreCareer(data){
   clearInterval(tickTimer);
   player = data.player;
-  season = data.season || null;
-  seasonAverages = data.seasonAverages || null;
+  collegeSeason = data.collegeSeason || null;
+  nbaSeason = data.nbaSeason || null;
   teamChemistry = data.teamChemistry ?? 80;
   skillPoints = data.skillPoints ?? 0;
   $('screen-create').classList.remove('active');
@@ -2032,12 +2066,19 @@ function restoreCareer(data){
   $('strip-jersey').textContent = '#'+player.jersey;
   $('strip-name').textContent = player.firstName+' '+player.lastName;
   $('strip-pos').textContent = player.position+' · '+player.archetype;
-  $('jb-user-name').textContent = player.team.toUpperCase();
 
-  if(!season) startNewSeason();
-  else updateSeasonUI();
+  if(collegeSeason && !collegeSeason.complete){
+    primeCollegeGame();
+  } else if(nbaSeason && !nbaSeason.complete){
+    $('jb-user-name').textContent = player.team.toUpperCase();
+    primeNbaGame();
+  } else if(collegeSeason && collegeSeason.complete && !nbaSeason){
+    showCombine();
+  } else if(nbaSeason && nbaSeason.complete){
+    showSeasonSummary();
+  }
 
-  if(!data.game){ setupCurrentGame(); return; }
+  if(!data.game){ return; }
 
   game = data.game;
   game.eventTicks = new Set(game.eventTicks||[]);
@@ -2051,7 +2092,10 @@ function restoreCareer(data){
     $('btn-start-game').disabled = true;
     $('btn-start-game').textContent = 'Game Complete';
     $('jb-status').textContent = 'Final';
-    if(season.complete){
+    if(collegeSeason && collegeSeason.complete && !nbaSeason){
+      $('box-overlay').classList.remove('show');
+      showCombine();
+    } else if(nbaSeason && nbaSeason.complete){
       $('box-overlay').classList.remove('show');
       showSeasonSummary();
     } else {
@@ -2071,10 +2115,11 @@ function restoreCareer(data){
 }
 
 /* =========================================================
-   20. INIT
+   22. INIT
    ========================================================= */
 // Set default brain sliders to mid
 BRAIN_KEYS.forEach(k=>{ $('b-'+k).value = 50; });
+// Position and archetype presets set overall to ~60
 applyPositionPreset('SF');
 applyArchetypePreset('Slasher');
 renderScoutCard();
