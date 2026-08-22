@@ -45,7 +45,6 @@
     .hidden { display: none; }
     .path-options { margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.2); }
     .selected-save-info { background: rgba(255,255,255,0.1); padding: 10px; border-radius: 10px; margin-top: 20px; font-weight: bold; color: #ffd166; }
-    /* Form Styles */
     .form-group { margin-bottom: 20px; text-align: left; }
     .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #ffd166; font-size: 0.9rem; }
     .form-group input, .form-group select {
@@ -63,7 +62,6 @@
     .build-option.selected { border-color: #ffd166; background: rgba(255,209,102,0.2); color: #ffd166; }
     .build-option input { display: none; }
     .validation-error { color: #ff6b6b; font-size: 0.9rem; margin-top: 5px; }
-    /* Team Selection */
     .team-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 20px; max-height: 400px; overflow-y: auto; padding: 10px; }
     .team-card {
       background: rgba(255,255,255,0.1); border: 2px solid transparent; border-radius: 10px; padding: 15px 20px;
@@ -74,14 +72,12 @@
     .team-card p { font-size: 0.8rem; color: #ccc; margin-bottom: 0; }
     .checkbox-label { display: flex; align-items: center; gap: 8px; justify-content: center; margin-bottom: 10px; font-size: 1rem; }
     .checkbox-label input { width: auto; margin: 0; }
-    /* Career Hub */
     .player-summary { background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; margin-bottom: 25px; }
     .player-summary h3 { color: #ffd166; margin-bottom: 10px; }
     .player-summary .stat-line { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
     .player-summary .stat { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; min-width: 80px; }
     .player-summary .stat span { display: block; font-size: 0.8rem; color: #aaa; }
     .player-summary .stat strong { font-size: 1.4rem; }
-    /* Roster Table */
     .roster-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
     .roster-table th, .roster-table td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.2); text-align: left; }
     .roster-table th { background: rgba(255,255,255,0.1); color: #ffd166; }
@@ -89,13 +85,11 @@
     .roster-table tr:hover { background: rgba(255,255,255,0.05); }
     .interaction-btn { padding: 5px 10px; font-size: 0.8rem; background: #444; border: none; border-radius: 5px; cursor: pointer; color: #fff; }
     .interaction-btn:hover { background: #666; }
-    /* Team Screen Tabs */
     .team-tabs { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
     .team-tab { padding: 8px 16px; background: rgba(255,255,255,0.1); border: none; border-radius: 5px; cursor: pointer; color: #fff; }
     .team-tab.active { background: #ffd166; color: #000; }
     .team-tab-content { display: none; }
     .team-tab-content.active { display: block; }
-    /* Game Simulation */
     .game-container { display: flex; gap: 20px; }
     .game-left { flex: 1; }
     .game-right { width: 200px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; }
@@ -227,7 +221,6 @@
           <div class="event-text" id="game-event-text"></div>
           <div id="game-choices" class="button-group"></div>
           <div id="game-result-message" class="result-message hidden"></div>
-          <button id="next-play-btn" class="btn hidden">Next Play</button>
         </div>
       </div>
       <div class="game-right" id="foul-panel">
@@ -285,7 +278,7 @@
   </div>
 
   <script>
-    // ---------- TEAM DATA ----------
+    // ---------- TEAM DATA (same as before) ----------
     const highSchoolTeams = [
       { name: "Montverde Academy", state: "FL" }, { name: "IMG Academy", state: "FL" }, { name: "Oak Hill Academy", state: "VA" },
       { name: "Sierra Canyon", state: "CA" }, { name: "Prolific Prep", state: "CA" }, { name: "Sunrise Christian Academy", state: "KS" },
@@ -424,7 +417,8 @@
       otherRosters: {},
       difficulty: 'Realism',
       teamRecord: { wins: 0, losses: 0 },
-      currentGame: null
+      currentGame: null,
+      autoPlayTimer: null
     };
 
     // ---------- DOM ELEMENTS ----------
@@ -463,7 +457,6 @@
     const backToHubFromRosters = document.getElementById('back-to-hub-from-rosters');
     const backToHubFromRetirement = document.getElementById('back-to-hub-from-retirement');
 
-    // Game screen elements
     const userTeamName = document.getElementById('user-team-name');
     const oppTeamName = document.getElementById('opp-team-name');
     const userScoreEl = document.getElementById('user-score');
@@ -472,12 +465,11 @@
     const gameEventText = document.getElementById('game-event-text');
     const gameChoices = document.getElementById('game-choices');
     const gameResultMessage = document.getElementById('game-result-message');
-    const nextPlayBtn = document.getElementById('next-play-btn');
     const gameFinalArea = document.getElementById('game-final-area');
     const finalPlayerStats = document.getElementById('final-player-stats');
     const finalRelationships = document.getElementById('final-relationships');
     const finishGameBtn = document.getElementById('finish-game');
-    // Foul panel
+
     const foulPoints = document.getElementById('foul-points');
     const personalFouls = document.getElementById('personal-fouls');
     const techFouls = document.getElementById('tech-fouls');
@@ -485,7 +477,6 @@
     const teamFoulsEl = document.getElementById('team-fouls');
     const oppTeamFoulsEl = document.getElementById('opp-team-fouls');
 
-    // Team screen
     const teamTabs = document.querySelectorAll('.team-tab');
     const teamTabContents = document.querySelectorAll('.team-tab-content');
     const teamRosterContainer = document.getElementById('team-roster-container');
@@ -495,6 +486,11 @@
 
     // ---------- SCREEN NAVIGATION ----------
     function showScreen(screenId) {
+      // Clear any auto-play timer if leaving game screen
+      if (screenId !== 'game-screen' && state.autoPlayTimer) {
+        clearTimeout(state.autoPlayTimer);
+        state.autoPlayTimer = null;
+      }
       document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
       document.getElementById(screenId).classList.add('active');
     }
@@ -821,26 +817,24 @@
 
     // ---------- GAME SIMULATION ----------
     function startNewGame() {
-      // Reset game screen elements
+      // Clear any existing timer
+      if (state.autoPlayTimer) clearTimeout(state.autoPlayTimer);
+
       playLog.innerHTML = '';
       gameFinalArea.classList.add('hidden');
-      nextPlayBtn.classList.add('hidden');
       gameChoices.innerHTML = '';
       gameResultMessage.classList.add('hidden');
       gameEventText.textContent = '';
-      // Reset foul panel
       personalFouls.textContent = '0';
       techFouls.textContent = '0';
       playerStatus.textContent = 'Active';
       teamFoulsEl.textContent = '0';
       oppTeamFoulsEl.textContent = '0';
 
-      // Choose opponent
       const availableTeams = state.leagueTeams.filter(t => t.name !== state.player.currentTeam.name);
       if (!availableTeams.length) { alert('No opponents available.'); return; }
       const opponent = availableTeams[Math.floor(Math.random()*availableTeams.length)];
 
-      // Generate opponent roster if not cached
       if (!state.otherRosters[opponent.name]) {
         const roster = [];
         for (let i = 0; i < 10; i++) roster.push(generateRandomPlayer());
@@ -848,30 +842,26 @@
       }
       const oppRoster = state.otherRosters[opponent.name];
 
-      // Compute team averages
       const userAvgOverall = state.teamRoster.reduce((sum,p) => sum + p.overall, 0) / state.teamRoster.length;
       const oppAvgOverall = oppRoster.reduce((sum,p) => sum + p.overall, 0) / oppRoster.length;
 
-      // Generate base scores
       let scoreRange = [55,85];
       if (state.currentPath === 'college') scoreRange = [60,95];
       const baseUserScore = Math.round(scoreRange[0] + (userAvgOverall-55)*0.5 + (Math.random()*10-5));
       const baseOppScore = Math.round(scoreRange[0] + (oppAvgOverall-55)*0.5 + (Math.random()*10-5));
 
-      // Generate baseline player stats
       const baselineStats = generateBaselineStats(state.player);
 
-      // Generate plays: mix of normal and interactive
-      const totalPlays = Math.floor(Math.random()*20)+40; // 40-60 plays
+      // Build play list
+      const totalPlays = Math.floor(Math.random()*20)+40; // 40-60
       const interactivePlays = [];
-      const numInteractive = Math.floor(Math.random()*6)+5; // 5-10 key moments
+      const numInteractive = Math.floor(Math.random()*6)+5; // 5-10
       const eventPool = [...eventTemplates];
       for (let i = 0; i < numInteractive && eventPool.length; i++) {
         const idx = Math.floor(Math.random()*eventPool.length);
         interactivePlays.push({ type: 'interactive', event: eventPool.splice(idx,1)[0] });
       }
 
-      // Build play list with random positions for interactive events
       const plays = [];
       let interactiveIndex = 0;
       for (let i = 0; i < totalPlays; i++) {
@@ -882,7 +872,6 @@
           plays.push(generateNormalPlay());
         }
       }
-      // Ensure any remaining interactive plays are inserted at the end
       while (interactiveIndex < interactivePlays.length) {
         plays.push(interactivePlays[interactiveIndex]);
         interactiveIndex++;
@@ -909,16 +898,16 @@
 
       updateScoreboard();
       updateFoulPanel();
+      // Start auto-play
       processNextPlay();
     }
 
     function generateNormalPlay() {
       const player = state.player;
-      const isUserAction = Math.random() < 0.5; // 50% chance user action
+      const isUserAction = Math.random() < 0.5;
       let text, effects = {};
 
       if (isUserAction) {
-        // User does something
         const actions = [
           { text: `${player.firstName} makes a layup`, stats: { points: 2 }, scoreDelta: 2 },
           { text: `${player.firstName} hits a mid-range jumper`, stats: { points: 2 }, scoreDelta: 2 },
@@ -937,12 +926,11 @@
         effects.teamScoreDelta = action.scoreDelta || 0;
         effects.opponentScoreDelta = action.opponentScoreDelta || 0;
         if (action.foulRisk && Math.random() < action.foulRisk) {
-          effects.playerStats.fouls = (effects.playerStats.fouls || 0) + 1;
+          effects.playerStats = { ...effects.playerStats, fouls: (effects.playerStats.fouls || 0) + 1 };
           effects.teamFouls = 1;
           effects.personalFoul = 1;
         }
       } else {
-        // Opponent or team does something
         const oppName = state.currentGame ? state.currentGame.oppTeamName : "Opponent";
         const actions = [
           { text: `${oppName} makes a layup`, scoreDelta: 2 },
@@ -961,7 +949,7 @@
         if (action.teamFouls) { effects.teamFouls = 1; effects.opponentScoreDelta = 1; }
         if (action.opponentFoulRisk && Math.random() < action.opponentFoulRisk) {
           effects.oppTeamFouls = 1;
-          effects.teamScoreDelta = 1; // free throws for user team
+          effects.teamScoreDelta = 1;
         }
       }
       return { type: 'normal', text, effects };
@@ -1025,36 +1013,19 @@
       gameEventText.textContent = play.text;
       gameChoices.innerHTML = '';
       gameResultMessage.classList.add('hidden');
-      nextPlayBtn.classList.remove('hidden');
-      // Apply effects immediately, but wait for click to move to next play
-      // We'll apply effects when next is clicked to ensure log order.
-      // Instead, we store pending effects.
-      g.pendingEffects = play.effects;
-      // Disable next button until we apply? We'll apply on click.
-    }
-
-    nextPlayBtn.addEventListener('click', () => {
-      const g = state.currentGame;
-      if (!g) return;
-      // Apply pending effects from last normal play
-      if (g.pendingEffects) {
-        applyEffects(g.pendingEffects);
-        // Log the play text to play log
-        addToLog(g.pendingText || gameEventText.textContent);
-        g.pendingEffects = null;
-        g.pendingText = null;
-      }
+      // Apply effects immediately
+      applyEffects(play.effects);
+      addToLog(play.text);
       g.currentPlayIndex++;
-      processNextPlay();
-    });
+      // Schedule next play
+      state.autoPlayTimer = setTimeout(() => processNextPlay(), 1200);
+    }
 
     function showInteractiveEvent(event) {
       const g = state.currentGame;
-      g.pendingEffects = null;
       gameEventText.textContent = event.text;
       gameChoices.innerHTML = '';
       gameResultMessage.classList.add('hidden');
-      nextPlayBtn.classList.add('hidden');
       event.choices.forEach((choice, idx) => {
         const btn = document.createElement('button');
         btn.className = 'btn choice-btn';
@@ -1062,6 +1033,7 @@
         btn.addEventListener('click', () => makeChoice(idx, event));
         gameChoices.appendChild(btn);
       });
+      // No auto-advance; wait for choice
     }
 
     function makeChoice(idx, event) {
@@ -1071,9 +1043,8 @@
       gameResultMessage.textContent = choice.resultMsg;
       gameResultMessage.classList.remove('hidden');
 
-      // Prepare effects object, merging choice.effects with potential random risks
+      // Merge effects and handle risks
       const effects = { ...choice.effects };
-      // Handle risks
       if (effects.foulRisk && Math.random() < effects.foulRisk) {
         effects.playerStats = { ...effects.playerStats, fouls: (effects.playerStats.fouls || 0) + 1 };
         effects.personalFoul = 1;
@@ -1086,29 +1057,27 @@
         effects.teamScoreDelta = (effects.teamScoreDelta || 0) - 2;
       }
       if (effects.injuryRisk && Math.random() < effects.injuryRisk) {
-        // Simulate injury: for now just reduce minutes, no long-term effect
-        effects.playerStats.minutes = -5; // placeholder
+        effects.playerStats = { ...effects.playerStats, minutes: -5 };
         addToLog("You feel a slight tweak in your ankle.");
       }
 
-      // Apply the effects immediately (since it's interactive, no pending)
+      // Apply effects
       applyEffects(effects);
-      // Log the event and result
-      addToLog(`${gameEventText.textContent} → ${choice.text}: ${choice.resultMsg}`);
+      // Log the interaction
+      addToLog(`${event.text} → ${choice.text}: ${choice.resultMsg}`);
       
       g.currentPlayIndex++;
-      processNextPlay();
+      // Resume auto-play after a short delay
+      state.autoPlayTimer = setTimeout(() => processNextPlay(), 1200);
     }
 
     function applyEffects(effects) {
       const g = state.currentGame;
       if (!effects) return;
 
-      // Score
       g.currentUserScore += effects.teamScoreDelta || 0;
       g.currentOppScore += effects.opponentScoreDelta || 0;
 
-      // Player stats
       if (effects.playerStats) {
         const s = g.playerGameStats;
         if (effects.playerStats.points) s.points += effects.playerStats.points;
@@ -1121,11 +1090,10 @@
         if (effects.playerStats.fouls) s.fouls += effects.playerStats.fouls;
       }
 
-      // Fouls
       if (effects.personalFoul) {
         g.personalFouls++;
         g.teamFouls++;
-        if (g.personalFouls >= 5) { // foul out threshold
+        if (g.personalFouls >= 5) {
           g.playerFouledOut = true;
           addToLog("You have fouled out!");
         }
@@ -1140,7 +1108,6 @@
       if (effects.teamFouls) g.teamFouls += effects.teamFouls;
       if (effects.oppTeamFouls) g.oppTeamFouls += effects.oppTeamFouls;
 
-      // Relationships
       if (effects.relationships) {
         g.relationshipsDelta.coach += effects.relationships.coach || 0;
         g.relationshipsDelta.teammates += effects.relationships.teammates || 0;
@@ -1161,10 +1128,14 @@
     function endGame() {
       const g = state.currentGame;
       g.isGameOver = true;
+      // Clear timer
+      if (state.autoPlayTimer) {
+        clearTimeout(state.autoPlayTimer);
+        state.autoPlayTimer = null;
+      }
       gameEventText.textContent = '';
       gameChoices.innerHTML = '';
       gameResultMessage.classList.add('hidden');
-      nextPlayBtn.classList.add('hidden');
       gameFinalArea.classList.remove('hidden');
 
       const userWon = g.currentUserScore > g.currentOppScore;
@@ -1179,12 +1150,10 @@
       p.seasonStats.blocks += g.playerGameStats.blocks;
       p.seasonStats.turnovers += g.playerGameStats.turnovers;
       p.seasonStats.minutes += g.playerGameStats.minutes;
-      // Apply relationship deltas
       p.relationships.coach = Math.max(0, Math.min(100, p.relationships.coach + g.relationshipsDelta.coach));
       p.relationships.teammates = Math.max(0, Math.min(100, p.relationships.teammates + g.relationshipsDelta.teammates));
       p.relationships.gm = Math.max(0, Math.min(100, p.relationships.gm + g.relationshipsDelta.gm));
 
-      // Display final stats
       const stats = g.playerGameStats;
       let html = '';
       html += `<div class="final-stat"><span>Points</span><strong>${stats.points}</strong></div>`;
@@ -1207,6 +1176,7 @@
     }
 
     finishGameBtn.addEventListener('click', () => {
+      if (state.autoPlayTimer) clearTimeout(state.autoPlayTimer);
       showScreen('career-hub');
       showCareerHub();
     });
@@ -1215,7 +1185,7 @@
     backToMenuBtn.addEventListener('click', () => showScreen('main-menu'));
     backToCharacterBtn.addEventListener('click', () => showScreen('character-creation'));
 
-    console.log('Game initialized. Difficulty: Realism. New play-by-play simulation ready.');
+    console.log('Game initialized. Auto play-by-play ready.');
   </script>
 </body>
 </html>
