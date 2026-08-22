@@ -123,6 +123,13 @@
       font-size: 0.9rem;
     }
 
+    .btn-small {
+      padding: 8px 16px;
+      font-size: 0.9rem;
+      min-width: auto;
+      background: #444;
+    }
+
     .hidden {
       display: none;
     }
@@ -140,6 +147,80 @@
       margin-top: 20px;
       font-weight: bold;
       color: #ffd166;
+    }
+
+    /* Character Creation Form Styles */
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #ffd166;
+      font-size: 0.9rem;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      font-size: 1rem;
+    }
+
+    .form-group select option {
+      background: #1a1a2e;
+      color: #fff;
+    }
+
+    .row {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .row .form-group {
+      flex: 1;
+    }
+
+    .build-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .build-option {
+      display: inline-block;
+      padding: 10px 20px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.2s;
+      user-select: none;
+    }
+
+    .build-option.selected {
+      border-color: #ffd166;
+      background: rgba(255, 209, 102, 0.2);
+      color: #ffd166;
+    }
+
+    .build-option input {
+      display: none;
+    }
+
+    .validation-error {
+      color: #ff6b6b;
+      font-size: 0.9rem;
+      margin-top: 5px;
     }
   </style>
 </head>
@@ -167,11 +248,100 @@
     </div>
   </div>
 
-  <!-- CHARACTER CREATION PLACEHOLDER -->
+  <!-- CHARACTER CREATION SCREEN -->
   <div id="character-creation" class="screen">
-    <h2>Character Creation</h2>
-    <p>This screen is under construction.</p>
+    <h2>Create Your Player</h2>
+    <p>Fill in the details to build your future hooper.</p>
+
+    <div class="row">
+      <div class="form-group">
+        <label for="first-name">First Name</label>
+        <input type="text" id="first-name" placeholder="Enter first name">
+      </div>
+      <div class="form-group">
+        <label for="last-name">Last Name</label>
+        <input type="text" id="last-name" placeholder="Enter last name">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="form-group">
+        <label>Height</label>
+        <div style="display: flex; gap: 10px;">
+          <select id="height-feet" style="flex: 1;">
+            <option value="5">5'</option>
+            <option value="6">6'</option>
+            <option value="7">7'</option>
+          </select>
+          <select id="height-inches" style="flex: 1;">
+            <option value="0">0"</option>
+            <option value="1">1"</option>
+            <option value="2">2"</option>
+            <option value="3">3"</option>
+            <option value="4">4"</option>
+            <option value="5">5"</option>
+            <option value="6">6"</option>
+            <option value="7">7"</option>
+            <option value="8">8"</option>
+            <option value="9">9"</option>
+            <option value="10">10"</option>
+            <option value="11">11"</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="weight">Weight (lbs)</label>
+        <input type="number" id="weight" min="140" max="300" value="180">
+      </div>
+      <div class="form-group">
+        <label for="wingspan">Wingspan (inches)</label>
+        <input type="number" id="wingspan" min="60" max="90" value="72">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="form-group">
+        <label for="position">Position</label>
+        <select id="position">
+          <option value="PG">PG</option>
+          <option value="SG">SG</option>
+          <option value="SF">SF</option>
+          <option value="PF">PF</option>
+          <option value="C">C</option>
+          <option value="PG/SG">PG/SG</option>
+          <option value="SG/SF">SG/SF</option>
+          <option value="PF/C">PF/C</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Select Your Build(s) (up to 2)</label>
+      <div class="build-options" id="build-options">
+        <div class="build-option" data-build="Slasher">Slasher</div>
+        <div class="build-option" data-build="Sharpshooter">Sharpshooter</div>
+        <div class="build-option" data-build="Playmaker">Playmaker</div>
+        <div class="build-option" data-build="Defender">Defender</div>
+        <div class="build-option" data-build="Rebounder">Rebounder</div>
+        <div class="build-option" data-build="Athletic">Athletic</div>
+        <div class="build-option" data-build="Post Scorer">Post Scorer</div>
+        <div class="build-option" data-build="Shot Creator">Shot Creator</div>
+      </div>
+      <div class="validation-error" id="build-error"></div>
+    </div>
+
+    <div class="button-group">
+      <button class="btn btn-small" id="randomize-player">Randomize</button>
+      <button class="btn" id="create-player">Create Player</button>
+    </div>
     <button class="btn btn-back" id="back-to-menu">Back to Main Menu</button>
+  </div>
+
+  <!-- TEAM SELECTION PLACEHOLDER -->
+  <div id="team-selection" class="screen">
+    <h2>Team Selection</h2>
+    <p>This screen is under construction.</p>
+    <button class="btn btn-back" id="back-to-character">Back</button>
   </div>
 
   <script>
@@ -179,18 +349,24 @@
     const state = {
       currentSaveSlot: null,   // 1, 2, or 3
       currentPath: null,       // 'highschool' or 'college'
-      player: null             // will hold character data later
+      player: null             // will hold character data
     };
 
     // ---------- DOM ELEMENTS ----------
     const mainMenuScreen = document.getElementById('main-menu');
     const characterCreationScreen = document.getElementById('character-creation');
+    const teamSelectionScreen = document.getElementById('team-selection');
     const saveButtons = document.querySelectorAll('.btn-save');
     const selectedSaveInfo = document.getElementById('selected-save-info');
     const pathOptions = document.getElementById('path-options');
     const startHighschoolBtn = document.getElementById('start-highschool');
     const startCollegeBtn = document.getElementById('start-college');
     const backToMenuBtn = document.getElementById('back-to-menu');
+    const backToCharacterBtn = document.getElementById('back-to-character');
+    const createPlayerBtn = document.getElementById('create-player');
+    const randomizePlayerBtn = document.getElementById('randomize-player');
+    const buildOptionsContainer = document.getElementById('build-options');
+    const buildError = document.getElementById('build-error');
 
     // ---------- SCREEN NAVIGATION ----------
     function showScreen(screenId) {
@@ -203,14 +379,9 @@
     // ---------- SAVE FILE SELECTION ----------
     saveButtons.forEach(btn => {
       btn.addEventListener('click', function() {
-        // Update selected save slot
         state.currentSaveSlot = parseInt(this.dataset.save);
-        
-        // Highlight selected save button
         saveButtons.forEach(b => b.classList.remove('selected'));
         this.classList.add('selected');
-        
-        // Show selected info and path options
         selectedSaveInfo.textContent = `Selected Save File: ${state.currentSaveSlot}`;
         selectedSaveInfo.classList.remove('hidden');
         pathOptions.classList.remove('hidden');
@@ -220,28 +391,288 @@
     // ---------- START PATH SELECTION ----------
     startHighschoolBtn.addEventListener('click', function() {
       state.currentPath = 'highschool';
-      proceedToCharacterCreation();
+      showScreen('character-creation');
     });
 
     startCollegeBtn.addEventListener('click', function() {
       state.currentPath = 'college';
-      proceedToCharacterCreation();
+      showScreen('character-creation');
     });
 
-    function proceedToCharacterCreation() {
-      if (!state.currentSaveSlot) {
-        alert('Please choose a save file first.');
-        return;
+    // ---------- BUILD SELECTION ----------
+    const selectedBuilds = new Set();
+
+    buildOptionsContainer.addEventListener('click', function(e) {
+      const buildOption = e.target.closest('.build-option');
+      if (!buildOption) return;
+      const buildName = buildOption.dataset.build;
+      
+      if (selectedBuilds.has(buildName)) {
+        selectedBuilds.delete(buildName);
+        buildOption.classList.remove('selected');
+      } else {
+        if (selectedBuilds.size >= 2) {
+          buildError.textContent = 'You can select up to 2 builds.';
+          return;
+        }
+        selectedBuilds.add(buildName);
+        buildOption.classList.add('selected');
+        buildError.textContent = '';
       }
-      // Move to character creation screen (placeholder)
-      showScreen('character-creation');
-      // We could log state for debugging
-      console.log('Starting path:', state.currentPath, 'Save slot:', state.currentSaveSlot);
+    });
+
+    // ---------- RANDOMIZE PLAYER ----------
+    function randomizePlayer() {
+      const firstNames = ['Jay', 'Mike', 'Chris', 'Tyler', 'Darius', 'Kobe', 'LeBron', 'Zion', 'Cam', 'Jalen'];
+      const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Davis', 'Miller', 'Wilson', 'Moore', 'Taylor'];
+      document.getElementById('first-name').value = firstNames[Math.floor(Math.random() * firstNames.length)];
+      document.getElementById('last-name').value = lastNames[Math.floor(Math.random() * lastNames.length)];
+      
+      // Random height
+      const feet = [5,6,7][Math.floor(Math.random()*3)];
+      const inches = Math.floor(Math.random()*12);
+      document.getElementById('height-feet').value = feet;
+      document.getElementById('height-inches').value = inches;
+      
+      // Random weight based on height
+      const totalInches = feet*12 + inches;
+      const baseWeight = Math.max(140, Math.min(300, Math.round(totalInches * 2.3 + 20)));
+      document.getElementById('weight').value = baseWeight;
+      
+      // Random wingspan
+      document.getElementById('wingspan').value = Math.floor(Math.random()*31) + 60;
+      
+      // Random position
+      const positions = ['PG','SG','SF','PF','C','PG/SG','SG/SF','PF/C'];
+      document.getElementById('position').value = positions[Math.floor(Math.random()*positions.length)];
+      
+      // Reset builds
+      selectedBuilds.clear();
+      document.querySelectorAll('.build-option').forEach(opt => opt.classList.remove('selected'));
+      buildError.textContent = '';
+      
+      // Randomly select 1 or 2 builds
+      const buildNames = ['Slasher','Sharpshooter','Playmaker','Defender','Rebounder','Athletic','Post Scorer','Shot Creator'];
+      const numBuilds = Math.random() < 0.5 ? 1 : 2;
+      const randomBuilds = [];
+      while (randomBuilds.length < numBuilds) {
+        const b = buildNames[Math.floor(Math.random()*buildNames.length)];
+        if (!randomBuilds.includes(b)) randomBuilds.push(b);
+      }
+      randomBuilds.forEach(b => {
+        selectedBuilds.add(b);
+        document.querySelector(`.build-option[data-build="${b}"]`).classList.add('selected');
+      });
     }
 
-    // ---------- BACK BUTTON ----------
+    randomizePlayerBtn.addEventListener('click', randomizePlayer);
+
+    // ---------- PLAYER ATTRIBUTE GENERATION ----------
+    function generatePlayer(data) {
+      // Hidden potential 1-99
+      const potential = Math.floor(Math.random() * 99) + 1;
+
+      // Starting overall based on potential
+      let overall;
+      if (potential <= 20) overall = 58 + Math.floor(Math.random() * 6);      // 58-63
+      else if (potential <= 40) overall = 62 + Math.floor(Math.random() * 7); // 62-68
+      else if (potential <= 60) overall = 66 + Math.floor(Math.random() * 7); // 66-72
+      else if (potential <= 80) overall = 70 + Math.floor(Math.random() * 7); // 70-76
+      else overall = 74 + Math.floor(Math.random() * 7);                     // 74-80
+
+      // Base skill templates for each position (at overall 70)
+      const templates = {
+        'PG':  { inside: 55, mid: 70, three: 75, play: 80, rebound: 40, per_def: 70, int_def: 40, ath: 70, iq: 75 },
+        'SG':  { inside: 60, mid: 75, three: 80, play: 70, rebound: 40, per_def: 70, int_def: 40, ath: 75, iq: 70 },
+        'SF':  { inside: 65, mid: 70, three: 70, play: 60, rebound: 55, per_def: 65, int_def: 50, ath: 70, iq: 65 },
+        'PF':  { inside: 70, mid: 60, three: 55, play: 50, rebound: 75, per_def: 50, int_def: 65, ath: 65, iq: 60 },
+        'C':   { inside: 75, mid: 50, three: 40, play: 45, rebound: 80, per_def: 40, int_def: 75, ath: 60, iq: 60 },
+        'PG/SG':{ inside: 57, mid: 72, three: 77, play: 75, rebound: 40, per_def: 70, int_def: 40, ath: 72, iq: 72 },
+        'SG/SF':{ inside: 62, mid: 72, three: 75, play: 65, rebound: 47, per_def: 67, int_def: 45, ath: 72, iq: 67 },
+        'PF/C': { inside: 72, mid: 55, three: 47, play: 47, rebound: 77, per_def: 45, int_def: 70, ath: 62, iq: 60 }
+      };
+
+      // If position is hybrid, average the two base templates
+      let baseSkills = {};
+      const pos = data.position;
+      if (pos.includes('/')) {
+        const [pos1, pos2] = pos.split('/');
+        const t1 = templates[pos1];
+        const t2 = templates[pos2];
+        for (const key in t1) {
+          baseSkills[key] = Math.round((t1[key] + t2[key]) / 2);
+        }
+      } else {
+        baseSkills = { ...templates[pos] };
+      }
+
+      // Apply build modifiers
+      const buildModifiers = {
+        'Slasher':       { inside: 8, mid: -2, three: -4, play: 0, rebound: 0, per_def: 0, int_def: 0, ath: 6, iq: -2 },
+        'Sharpshooter':  { inside: -4, mid: 8, three: 10, play: -2, rebound: -2, per_def: 0, int_def: -2, ath: 0, iq: 2 },
+        'Playmaker':     { inside: -2, mid: 0, three: 0, play: 10, rebound: -2, per_def: 0, int_def: -2, ath: 2, iq: 6 },
+        'Defender':      { inside: -2, mid: -2, three: -4, play: -2, rebound: 2, per_def: 8, int_def: 8, ath: 4, iq: 4 },
+        'Rebounder':     { inside: 2, mid: -4, three: -6, play: -2, rebound: 12, per_def: 0, int_def: 4, ath: 2, iq: -2 },
+        'Athletic':      { inside: 2, mid: -2, three: -2, play: 0, rebound: 2, per_def: 2, int_def: 0, ath: 12, iq: -2 },
+        'Post Scorer':   { inside: 10, mid: 4, three: -6, play: -2, rebound: 2, per_def: -2, int_def: 2, ath: 0, iq: 0 },
+        'Shot Creator':  { inside: 0, mid: 8, three: 2, play: 4, rebound: -4, per_def: 0, int_def: -2, ath: 2, iq: 2 }
+      };
+
+      for (const build of data.builds) {
+        const mod = buildModifiers[build];
+        if (mod) {
+          for (const key in mod) {
+            baseSkills[key] += mod[key];
+          }
+        }
+      }
+
+      // Adjust for height/wingspan (simple modifiers)
+      const totalInches = data.heightFeet * 12 + data.heightInches;
+      if (totalInches >= 78) { // 6'6" and up
+        baseSkills.rebound += 5;
+        baseSkills.int_def += 5;
+        baseSkills.ath -= 3;
+        baseSkills.per_def -= 2;
+      } else if (totalInches <= 73) { // 6'1" and below
+        baseSkills.per_def += 3;
+        baseSkills.ath += 3;
+        baseSkills.rebound -= 3;
+        baseSkills.int_def -= 3;
+      }
+      // Wingspan adjustment
+      if (data.wingspan > totalInches + 4) {
+        baseSkills.rebound += 3;
+        baseSkills.int_def += 3;
+        baseSkills.per_def += 2;
+      } else if (data.wingspan < totalInches - 2) {
+        baseSkills.ath += 2;
+        baseSkills.per_def += 1;
+      }
+
+      // Clamp values
+      for (const key in baseSkills) {
+        baseSkills[key] = Math.max(40, Math.min(99, baseSkills[key]));
+      }
+
+      // Scale to target overall
+      const targetOverall = overall;
+      const baseOverall = 70; // templates were at 70
+      const scaleFactor = (targetOverall - 40) / (baseOverall - 40);
+      const finalSkills = {};
+      for (const key in baseSkills) {
+        let val = 40 + (baseSkills[key] - 40) * scaleFactor;
+        // Add small random variation
+        val += Math.floor(Math.random() * 5) - 2;
+        val = Math.max(40, Math.min(99, Math.round(val)));
+        finalSkills[key] = val;
+      }
+
+      // Compute actual overall from skills (average)
+      const skillValues = Object.values(finalSkills);
+      const avg = skillValues.reduce((a,b) => a+b, 0) / skillValues.length;
+      const finalOverall = Math.round(avg);
+
+      return {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        heightFeet: data.heightFeet,
+        heightInches: data.heightInches,
+        weight: data.weight,
+        wingspan: data.wingspan,
+        position: data.position,
+        builds: [...data.builds],
+        potential: potential, // hidden
+        overall: finalOverall,
+        skills: finalSkills,
+        // Additional stats for career tracking
+        seasonStats: {
+          gamesPlayed: 0,
+          points: 0,
+          assists: 0,
+          rebounds: 0,
+          steals: 0,
+          blocks: 0,
+          turnovers: 0,
+          minutes: 0
+        },
+        careerStats: {
+          // will be filled later
+        },
+        relationships: {
+          coach: 50,
+          teammates: 50,
+          gm: 50
+        },
+        currentTeam: null,
+        season: 1,
+        age: 14, // or based on path
+      };
+    }
+
+    // ---------- CREATE PLAYER ----------
+    createPlayerBtn.addEventListener('click', function() {
+      const firstName = document.getElementById('first-name').value.trim();
+      const lastName = document.getElementById('last-name').value.trim();
+      const heightFeet = parseInt(document.getElementById('height-feet').value);
+      const heightInches = parseInt(document.getElementById('height-inches').value);
+      const weight = parseInt(document.getElementById('weight').value);
+      const wingspan = parseInt(document.getElementById('wingspan').value);
+      const position = document.getElementById('position').value;
+
+      if (!firstName || !lastName) {
+        alert('Please enter both first and last name.');
+        return;
+      }
+      if (isNaN(weight) || weight < 140 || weight > 300) {
+        alert('Weight must be between 140 and 300 lbs.');
+        return;
+      }
+      if (isNaN(wingspan) || wingspan < 60 || wingspan > 90) {
+        alert('Wingspan must be between 60 and 90 inches.');
+        return;
+      }
+      if (selectedBuilds.size === 0) {
+        buildError.textContent = 'Please select at least one build.';
+        return;
+      }
+
+      const playerData = {
+        firstName,
+        lastName,
+        heightFeet,
+        heightInches,
+        weight,
+        wingspan,
+        position,
+        builds: [...selectedBuilds]
+      };
+
+      // Generate player
+      state.player = generatePlayer(playerData);
+
+      // Set starting age based on path
+      if (state.currentPath === 'highschool') {
+        state.player.age = 14; // freshman
+      } else {
+        state.player.age = 18; // freshman
+      }
+
+      // Autosave (we'll simulate by storing in memory; later we can add localStorage)
+      console.log('Autosaving to Save Slot', state.currentSaveSlot, '...');
+      console.log('Player created:', state.player);
+
+      // Move to team selection screen
+      showScreen('team-selection');
+    });
+
+    // ---------- NAVIGATION ----------
     backToMenuBtn.addEventListener('click', function() {
       showScreen('main-menu');
+    });
+
+    backToCharacterBtn.addEventListener('click', function() {
+      showScreen('character-creation');
     });
 
     // Initialize: no save selected
