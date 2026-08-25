@@ -3,1241 +3,498 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Static's Hooper Generator</title>
+  <title>HOOPER ASCENT · Build a Hooper Career Sim</title>
+  <!-- Tailwind CSS via CDN + dark sports UI -->
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-      min-height: 100vh; display: flex; justify-content: center; align-items: center;
-      color: #fff; padding: 20px;
-    }
-    .screen {
-      display: none; width: 100%; max-width: 900px; background: rgba(0,0,0,0.6);
-      border-radius: 20px; padding: 40px 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-      text-align: center; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);
-      transition: all 0.3s ease; max-height: 90vh; overflow-y: auto;
-    }
-    .screen.active { display: block; }
-    h1 {
-      font-size: 3rem; font-weight: 900; letter-spacing: 2px; margin-bottom: 10px;
-      background: linear-gradient(45deg, #ff6b35, #ffd166);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-transform: uppercase;
-    }
-    h2 { font-size: 1.8rem; margin-bottom: 20px; color: #ffd166; }
-    h3 { color: #ffd166; margin-bottom: 10px; }
-    p { font-size: 1.1rem; margin-bottom: 25px; color: #ddd; }
-    .button-group { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-top: 20px; }
-    .btn {
-      padding: 15px 30px; font-size: 1.2rem; font-weight: bold; border: none; border-radius: 12px;
-      cursor: pointer; transition: all 0.2s ease; text-transform: uppercase; letter-spacing: 1px;
-      color: #fff; background: #1e3a8a; box-shadow: 0 5px 15px rgba(0,0,0,0.3); min-width: 180px;
-    }
-    .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.5); filter: brightness(1.1); }
-    .btn:active { transform: translateY(0); }
-    .btn-save { background: #6d28d9; }
-    .btn-save.selected { background: #10b981; box-shadow: 0 0 20px rgba(16,185,129,0.6); }
-    .btn-highschool { background: #e67e22; }
-    .btn-college { background: #2980b9; }
-    .btn-back { background: #555; margin-top: 20px; min-width: auto; padding: 10px 20px; font-size: 0.9rem; }
-    .btn-small { padding: 8px 16px; font-size: 0.9rem; min-width: auto; background: #444; }
-    .btn-danger { background: #8b0000; }
-    .hidden { display: none; }
-    .path-options { margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.2); }
-    .selected-save-info { background: rgba(255,255,255,0.1); padding: 10px; border-radius: 10px; margin-top: 20px; font-weight: bold; color: #ffd166; }
-    .form-group { margin-bottom: 20px; text-align: left; }
-    .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #ffd166; font-size: 0.9rem; }
-    .form-group input, .form-group select {
-      width: 100%; padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.3);
-      background: rgba(255,255,255,0.1); color: #fff; font-size: 1rem;
-    }
-    .form-group select option { background: #1a1a2e; color: #fff; }
-    .row { display: flex; gap: 15px; flex-wrap: wrap; }
-    .row .form-group { flex: 1; }
-    .build-options { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
-    .build-option {
-      display: inline-block; padding: 10px 20px; border-radius: 20px; background: rgba(255,255,255,0.1);
-      cursor: pointer; border: 2px solid transparent; transition: all 0.2s; user-select: none;
-    }
-    .build-option.selected { border-color: #ffd166; background: rgba(255,209,102,0.2); color: #ffd166; }
-    .build-option input { display: none; }
-    .validation-error { color: #ff6b6b; font-size: 0.9rem; margin-top: 5px; }
-    .team-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 20px; max-height: 400px; overflow-y: auto; padding: 10px; }
-    .team-card {
-      background: rgba(255,255,255,0.1); border: 2px solid transparent; border-radius: 10px; padding: 15px 20px;
-      cursor: pointer; transition: all 0.2s; min-width: 150px; text-align: center;
-    }
-    .team-card:hover { background: rgba(255,209,102,0.2); border-color: #ffd166; transform: translateY(-2px); }
-    .team-card h3 { margin-bottom: 5px; font-size: 1.1rem; }
-    .team-card p { font-size: 0.8rem; color: #ccc; margin-bottom: 0; }
-    .checkbox-label { display: flex; align-items: center; gap: 8px; justify-content: center; margin-bottom: 10px; font-size: 1rem; }
-    .checkbox-label input { width: auto; margin: 0; }
-    .player-summary { background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; margin-bottom: 25px; }
-    .player-summary h3 { color: #ffd166; margin-bottom: 10px; }
-    .player-summary .stat-line { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
-    .player-summary .stat { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; min-width: 80px; }
-    .player-summary .stat span { display: block; font-size: 0.8rem; color: #aaa; }
-    .player-summary .stat strong { font-size: 1.4rem; }
-    .roster-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-    .roster-table th, .roster-table td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.2); text-align: left; }
-    .roster-table th { background: rgba(255,255,255,0.1); color: #ffd166; }
-    .roster-table td { color: #ddd; }
-    .roster-table tr:hover { background: rgba(255,255,255,0.05); }
-    .interaction-btn { padding: 5px 10px; font-size: 0.8rem; background: #444; border: none; border-radius: 5px; cursor: pointer; color: #fff; }
-    .interaction-btn:hover { background: #666; }
-    .team-tabs { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
-    .team-tab { padding: 8px 16px; background: rgba(255,255,255,0.1); border: none; border-radius: 5px; cursor: pointer; color: #fff; }
-    .team-tab.active { background: #ffd166; color: #000; }
-    .team-tab-content { display: none; }
-    .team-tab-content.active { display: block; }
-    .game-container { display: flex; gap: 20px; }
-    .game-left { flex: 1; }
-    .game-right { width: 200px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; }
-    .scoreboard { display: flex; justify-content: space-around; align-items: center; margin-bottom: 20px; font-size: 1.5rem; }
-    .team-score { background: rgba(0,0,0,0.4); padding: 15px; border-radius: 10px; min-width: 150px; }
-    .team-score h3 { margin-bottom: 5px; font-size: 1.2rem; }
-    .score-number { font-size: 2.5rem; font-weight: bold; }
-    .vs { font-size: 1.8rem; color: #ffd166; }
-    .quarter-display {
-      background: rgba(0,0,0,0.3); border-radius: 8px; padding: 8px; margin-bottom: 10px; text-align: center; font-weight: bold;
-    }
-    .speed-btn {
-      padding: 5px 10px; font-size: 0.9rem; background: #444; border: none; border-radius: 5px; cursor: pointer; color: #fff; margin-left: 10px;
-    }
-    .speed-btn:hover { background: #666; }
-    .foul-box { background: rgba(0,0,0,0.5); border-radius: 8px; padding: 10px; margin-bottom: 10px; }
-    .foul-box h4 { color: #ffd166; margin-bottom: 5px; }
-    .foul-box p { margin: 5px 0; font-size: 0.9rem; }
-    .play-log { background: rgba(0,0,0,0.3); border-radius: 10px; padding: 10px; height: 300px; overflow-y: auto; text-align: left; font-size: 0.9rem; }
-    .play-log p { margin: 5px 0; color: #ccc; }
-    .current-play { margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 10px; }
-    .event-text { font-size: 1.2rem; margin-bottom: 15px; }
-    .choice-btn { margin: 5px; }
-    .result-message { background: rgba(255,209,102,0.2); padding: 10px; border-radius: 8px; margin-bottom: 10px; color: #ffd166; font-weight: bold; }
-    .final-stats { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin: 20px 0; }
-    .final-stat { background: rgba(0,0,0,0.4); padding: 10px; border-radius: 8px; min-width: 80px; }
-    .final-stat span { display: block; font-size: 0.8rem; color: #aaa; }
-    .final-stat strong { font-size: 1.3rem; }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap');
+    * { font-family: 'Inter', system-ui, sans-serif; }
+    .glow-card { box-shadow: 0 20px 35px -8px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.04); }
+    .stat-badge { transition: all 0.2s ease; }
+    .stat-badge:hover { transform: translateY(-2px); }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+    .progress-fill { transition: width 0.15s linear; }
+    .draft-card { transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1); border: 1px solid rgba(255,255,255,0.06); }
+    .draft-card:hover { border-color: #f59e0b; box-shadow: 0 0 0 3px rgba(245,158,11,0.2); transform: scale(1.02); }
   </style>
 </head>
-<body>
+<body class="bg-slate-950 text-slate-200 min-h-screen flex items-center justify-center p-4 md:p-6 selection:bg-amber-400 selection:text-slate-900">
 
-  <!-- MAIN MENU -->
-  <div id="main-menu" class="screen active">
-    <h1>Static's Hooper Generator</h1>
-    <p>Choose a save file to begin your basketball journey</p>
-    <div class="button-group">
-      <button class="btn btn-save" data-save="1">Save 1</button>
-      <button class="btn btn-save" data-save="2">Save 2</button>
-      <button class="btn btn-save" data-save="3">Save 3</button>
-    </div>
-    <div id="selected-save-info" class="selected-save-info hidden"></div>
-    <div id="path-options" class="path-options hidden">
-      <h2>Choose Your Starting Path</h2>
-      <div class="button-group">
-        <button class="btn btn-highschool" id="start-highschool">High School</button>
-        <button class="btn btn-college" id="start-college">College</button>
+  <!-- main app container -->
+  <div class="max-w-7xl w-full mx-auto flex flex-col gap-6">
+    
+    <!-- Header / branding -->
+    <header class="flex flex-col md:flex-row items-start md:items-end justify-between gap-4">
+      <div>
+        <h1 class="text-5xl font-black tracking-tight text-white leading-none drop-shadow-lg">🏀 HOOPER <span class="text-amber-400">ASCENT</span></h1>
+        <p class="text-slate-400 mt-2 text-sm uppercase tracking-widest font-semibold">Build a legacy · Draft. Develop. Dominate.</p>
       </div>
-    </div>
-  </div>
+      <div id="phaseBadge" class="bg-slate-800/90 backdrop-blur px-6 py-3 rounded-2xl border border-slate-700 text-lg font-bold uppercase tracking-wider">
+        <span id="phaseIndicator" class="text-amber-300">Draft Phase</span>
+      </div>
+    </header>
 
-  <!-- CHARACTER CREATION -->
-  <div id="character-creation" class="screen">
-    <h2>Create Your Player</h2>
-    <p>Fill in the details to build your future hooper.</p>
-    <div class="row">
-      <div class="form-group"><label for="first-name">First Name</label><input type="text" id="first-name" placeholder="Enter first name"></div>
-      <div class="form-group"><label for="last-name">Last Name</label><input type="text" id="last-name" placeholder="Enter last name"></div>
-    </div>
-    <div class="row">
-      <div class="form-group">
-        <label>Height</label>
-        <div style="display: flex; gap: 10px;">
-          <select id="height-feet" style="flex:1;"><option value="5">5'</option><option value="6">6'</option><option value="7">7'</option></select>
-          <select id="height-inches" style="flex:1;"><option value="0">0"</option><option value="1">1"</option><option value="2">2"</option><option value="3">3"</option><option value="4">4"</option><option value="5">5"</option><option value="6">6"</option><option value="7">7"</option><option value="8">8"</option><option value="9">9"</option><option value="10">10"</option><option value="11">11"</option></select>
+    <!-- Main dashboard grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      
+      <!-- LEFT: Career Hub + Stats Table -->
+      <div class="lg:col-span-2 space-y-6">
+        <!-- career hub card -->
+        <section class="bg-slate-900/80 backdrop-blur-md p-6 rounded-3xl glow-card border border-slate-800">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-2xl font-extrabold text-white flex items-center gap-2"><span class="w-2.5 h-2.5 bg-amber-400 rounded-full"></span> Career Hub</h2>
+            <span id="ageDisplay" class="bg-slate-800 px-4 py-1.5 rounded-full text-sm font-bold text-amber-300">Age: 18</span>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+            <div class="bg-slate-950/60 rounded-2xl p-4 border border-slate-700/50">
+              <div class="text-xs uppercase tracking-wider text-slate-400">Phase</div>
+              <div id="hubPhase" class="text-xl font-extrabold text-white mt-1">HS</div>
+            </div>
+            <div class="bg-slate-950/60 rounded-2xl p-4 border border-slate-700/50">
+              <div class="text-xs uppercase tracking-wider text-slate-400">Team Record</div>
+              <div id="hubRecord" class="text-xl font-extrabold text-white mt-1">0-0</div>
+            </div>
+            <div class="bg-slate-950/60 rounded-2xl p-4 border border-slate-700/50">
+              <div class="text-xs uppercase tracking-wider text-slate-400">Career PPG</div>
+              <div id="hubPpg" class="text-xl font-extrabold text-white mt-1">0.0</div>
+            </div>
+            <div class="bg-slate-950/60 rounded-2xl p-4 border border-slate-700/50">
+              <div class="text-xs uppercase tracking-wider text-slate-400">Career OVR</div>
+              <div id="hubOvr" class="text-xl font-extrabold text-white mt-1">-</div>
+            </div>
+          </div>
+          <!-- attribute bars -->
+          <div class="mt-6 grid grid-cols-5 gap-2 text-center">
+            <div><span class="text-xs text-slate-400">SCOR</span><div id="attrScoring" class="text-lg font-black text-white">0</div></div>
+            <div><span class="text-xs text-slate-400">DEF</span><div id="attrDefense" class="text-lg font-black text-white">0</div></div>
+            <div><span class="text-xs text-slate-400">PLAY</span><div id="attrPlay" class="text-lg font-black text-white">0</div></div>
+            <div><span class="text-xs text-slate-400">ATH</span><div id="attrAthleticism" class="text-lg font-black text-white">0</div></div>
+            <div><span class="text-xs text-slate-400">IQ</span><div id="attrIq" class="text-lg font-black text-white">0</div></div>
+          </div>
+        </section>
+
+        <!-- Stats table history -->
+        <section class="bg-slate-900/80 backdrop-blur-md p-5 rounded-3xl glow-card border border-slate-800 overflow-hidden">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-xl font-bold text-white">📋 Season History</h3>
+            <span id="seasonCountLabel" class="text-xs bg-slate-800 px-3 py-1 rounded-full text-slate-300">0 seasons</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead class="text-xs uppercase text-slate-400 bg-slate-950/50">
+                <tr>
+                  <th class="px-3 py-2 rounded-l-lg">Year</th>
+                  <th class="px-3 py-2">Team/Phase</th>
+                  <th class="px-3 py-2">Record</th>
+                  <th class="px-3 py-2">PPG</th>
+                  <th class="px-3 py-2">RPG</th>
+                  <th class="px-3 py-2">APG</th>
+                  <th class="px-3 py-2 rounded-r-lg">Awards</th>
+                </tr>
+              </thead>
+              <tbody id="statsTableBody" class="divide-y divide-slate-800">
+                <tr><td colspan="7" class="text-center py-6 text-slate-500 italic">Draft your hooper to begin</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- RIGHT: Draft & simulation panel -->
+      <div class="space-y-6">
+        <!-- draft / action card -->
+        <div id="actionPanel" class="bg-slate-900/80 backdrop-blur-md p-6 rounded-3xl glow-card border border-slate-800">
+          <div id="draftSection">
+            <h2 class="text-2xl font-black text-white mb-1">🏆 NBA Draft Pool</h2>
+            <p class="text-slate-400 text-sm mb-4" id="draftInstruction">Select a player to inherit his attribute</p>
+            <!-- three player cards -->
+            <div id="draftCandidates" class="grid grid-cols-1 gap-3"></div>
+          </div>
+          <div id="simulationSection" class="hidden">
+            <h2 class="text-2xl font-black text-white mb-2">⚡ Simulate Season</h2>
+            <p class="text-slate-400 text-sm mb-4" id="nextPhaseLabel">Up next: High School</p>
+            <button id="simulateBtn" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-4 rounded-2xl transition-all text-lg shadow-lg shadow-amber-500/20 active:scale-95">
+              SIMULATE SEASON
+            </button>
+            <!-- loading bar -->
+            <div id="loadingBarContainer" class="hidden mt-5">
+              <div class="flex justify-between text-xs mb-1 text-slate-400"><span>simulating games...</span><span id="progressPercent">0%</span></div>
+              <div class="w-full h-4 bg-slate-800 rounded-full overflow-hidden">
+                <div id="loadingBarFill" class="progress-fill h-full bg-gradient-to-r from-amber-400 to-orange-500 rounded-full" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="form-group"><label for="weight">Weight (lbs)</label><input type="number" id="weight" min="140" max="300" value="180"></div>
-      <div class="form-group"><label for="wingspan">Wingspan (inches)</label><input type="number" id="wingspan" min="60" max="90" value="72"></div>
-    </div>
-    <div class="row">
-      <div class="form-group">
-        <label for="position">Position</label>
-        <select id="position">
-          <option value="PG">PG</option><option value="SG">SG</option><option value="SF">SF</option><option value="PF">PF</option><option value="C">C</option>
-          <option value="PG/SG">PG/SG</option><option value="SG/SF">SG/SF</option><option value="PF/C">PF/C</option>
-        </select>
-      </div>
-    </div>
-    <div class="form-group">
-      <label>Select Your Build(s) (up to 2)</label>
-      <div class="build-options" id="build-options">
-        <div class="build-option" data-build="Slasher">Slasher</div>
-        <div class="build-option" data-build="Sharpshooter">Sharpshooter</div>
-        <div class="build-option" data-build="Playmaker">Playmaker</div>
-        <div class="build-option" data-build="Defender">Defender</div>
-        <div class="build-option" data-build="Rebounder">Rebounder</div>
-        <div class="build-option" data-build="Athletic">Athletic</div>
-        <div class="build-option" data-build="Post Scorer">Post Scorer</div>
-        <div class="build-option" data-build="Shot Creator">Shot Creator</div>
-      </div>
-      <div class="validation-error" id="build-error"></div>
-    </div>
-    <div class="button-group">
-      <button class="btn btn-small" id="randomize-player">Randomize</button>
-      <button class="btn" id="create-player">Create Player</button>
-    </div>
-    <button class="btn btn-back" id="back-to-menu">Back to Main Menu</button>
-  </div>
 
-  <!-- TEAM SELECTION -->
-  <div id="team-selection" class="screen">
-    <h2>Select Your Team</h2>
-    <p id="team-selection-subtitle"></p>
-    <div id="aau-checkbox-container" class="hidden">
-      <label class="checkbox-label"><input type="checkbox" id="aau-only-checkbox"> AAU Only</label>
-    </div>
-    <div id="team-grid" class="team-grid"></div>
-    <button class="btn btn-back" id="back-to-character">Back</button>
-  </div>
-
-  <!-- CAREER HUB -->
-  <div id="career-hub" class="screen">
-    <h2>Career Hub</h2>
-    <div class="player-summary" id="player-summary"></div>
-    <div class="button-group">
-      <button class="btn" id="play-btn">Play Next Game</button>
-      <button class="btn" id="team-btn">Team</button>
-      <button class="btn" id="rosters-btn">Rosters</button>
-      <button class="btn btn-danger" id="retire-btn" style="background:#8b0000;">Retire</button>
-    </div>
-  </div>
-
-  <!-- GAME SIMULATION -->
-  <div id="game-screen" class="screen">
-    <h2>Game Simulation</h2>
-    <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 10px;">
-      <div class="quarter-display" id="quarter-display">1st Quarter</div>
-      <button class="speed-btn" id="speed-btn">Speed: Normal</button>
-    </div>
-    <div class="game-container">
-      <div class="game-left">
-        <div class="scoreboard">
-          <div class="team-score"><h3 id="user-team-name">Your Team</h3><span class="score-number" id="user-score">0</span></div>
-          <span class="vs">vs</span>
-          <div class="team-score"><h3 id="opp-team-name">Opponent</h3><span class="score-number" id="opp-score">0</span></div>
-        </div>
-        <div class="play-log" id="play-log"></div>
-        <div class="current-play" id="current-play-area">
-          <div class="event-text" id="game-event-text"></div>
-          <div id="game-choices" class="button-group"></div>
-          <div id="game-result-message" class="result-message hidden"></div>
-        </div>
-      </div>
-      <div class="game-right" id="foul-panel">
-        <div class="foul-box">
-          <h4>Your Player</h4>
-          <p>Points: <span id="foul-points">0</span></p>
-          <p>Personal Fouls: <span id="personal-fouls">0</span></p>
-          <p>Technical Fouls: <span id="tech-fouls">0</span></p>
-          <p>Status: <span id="player-status">Active</span></p>
-        </div>
-        <div class="foul-box">
-          <h4>Team Fouls</h4>
-          <p>Your Team: <span id="team-fouls">0</span></p>
-          <p>Opponent: <span id="opp-team-fouls">0</span></p>
+        <!-- Award notification card -->
+        <div id="awardBanner" class="bg-gradient-to-br from-amber-500/20 to-slate-900 p-5 rounded-3xl border border-amber-500/30 text-center hidden">
+          <p class="text-amber-300 font-bold text-sm uppercase tracking-widest">🏆 Award earned!</p>
+          <p id="awardText" class="text-white text-lg font-extrabold mt-1"></p>
         </div>
       </div>
     </div>
-    <div id="game-final-area" class="hidden">
-      <h3>Final Result</h3>
-      <div class="final-stats" id="final-player-stats"></div>
-      <div id="final-relationships"></div>
-      <button id="finish-game" class="btn">Back to Career Hub</button>
-    </div>
-  </div>
-
-  <!-- TEAM SCREEN -->
-  <div id="team-screen" class="screen">
-    <h2>Your Team</h2>
-    <div class="team-tabs">
-      <button class="team-tab active" data-tab="roster">Roster</button>
-      <button class="team-tab" data-tab="coach">Coach</button>
-      <button class="team-tab" data-tab="gm">GM</button>
-      <button class="team-tab" data-tab="teammates">Teammates</button>
-    </div>
-    <div id="roster-tab" class="team-tab-content active"><div id="team-roster-container"></div></div>
-    <div id="coach-tab" class="team-tab-content"><p>Coach interactions coming soon.</p></div>
-    <div id="gm-tab" class="team-tab-content"><p>GM interactions coming soon.</p></div>
-    <div id="teammates-tab" class="team-tab-content"><p>Teammate interactions coming soon.</p></div>
-    <button class="btn btn-back" id="back-to-hub-from-team">Back to Career Hub</button>
-  </div>
-
-  <!-- ROSTERS SCREEN -->
-  <div id="rosters-screen" class="screen">
-    <h2>League Rosters</h2>
-    <div class="form-group"><label for="team-select">Select Team</label><select id="team-select"></select></div>
-    <div id="other-roster-container"></div>
-    <button class="btn btn-back" id="back-to-hub-from-rosters">Back to Career Hub</button>
-  </div>
-
-  <!-- RETIREMENT SCREEN -->
-  <div id="retirement-screen" class="screen">
-    <h2>Retirement</h2>
-    <div id="retirement-summary"></div>
-    <button class="btn btn-back" id="back-to-hub-from-retirement">Back to Career Hub</button>
   </div>
 
   <script>
-    // ---------- TEAM DATA (same as before) ----------
-    const highSchoolTeams = [
-      { name: "Montverde Academy", state: "FL" }, { name: "IMG Academy", state: "FL" }, { name: "Oak Hill Academy", state: "VA" },
-      { name: "Sierra Canyon", state: "CA" }, { name: "Prolific Prep", state: "CA" }, { name: "Sunrise Christian Academy", state: "KS" },
-      { name: "Link Academy", state: "MO" }, { name: "AZ Compass Prep", state: "AZ" }, { name: "La Lumiere School", state: "IN" },
-      { name: "Wasatch Academy", state: "UT" }, { name: "Brewster Academy", state: "NH" }, { name: "Paul VI Catholic", state: "VA" },
-      { name: "Camden High School", state: "NJ" }, { name: "Duncanville High School", state: "TX" }, { name: "Centennial High School", state: "CA" },
-      { name: "Columbus High School", state: "FL" }, { name: "Cardinal Hayes", state: "NY" }, { name: "Roselle Catholic", state: "NJ" },
-      { name: "St. Frances Academy", state: "MD" }, { name: "Bishop Gorman", state: "NV" }, { name: "Long Island Lutheran", state: "NY" },
-      { name: "Harvard-Westlake", state: "CA" }, { name: "Notre Dame High School", state: "CA" }, { name: "DeMatha Catholic", state: "MD" },
-      { name: "Gonzaga College High School", state: "DC" }, { name: "St. Vincent-St. Mary", state: "OH" }, { name: "Simeon Career Academy", state: "IL" },
-      { name: "Whitney Young", state: "IL" }, { name: "Westtown School", state: "PA" }, { name: "Oak Cliff Faith Family Academy", state: "TX" }
-    ];
-    const aauTeams = [
-      { name: "Team Takeover", region: "DC" }, { name: "Expressions Elite", region: "MA" }, { name: "MoKan Elite", region: "MO" },
-      { name: "Mac Irvin Fire", region: "IL" }, { name: "Houston Hoops", region: "TX" }, { name: "Drive Nation", region: "TX" },
-      { name: "Oakland Soldiers", region: "CA" }, { name: "Compton Magic", region: "CA" }, { name: "Team WhyNot", region: "CA" },
-      { name: "NY Renaissance", region: "NY" }, { name: "PSA Cardinals", region: "NY" }, { name: "Team Final", region: "PA" },
-      { name: "Boo Williams", region: "VA" }, { name: "E1T1", region: "FL" }, { name: "Nightrydas Elite", region: "FL" },
-      { name: "Vegas Elite", region: "NV" }, { name: "Indy Heat", region: "IN" }, { name: "All Ohio Red", region: "OH" },
-      { name: "MeanStreets", region: "IL" }, { name: "Bradley Beal Elite", region: "MO" }
-    ];
-    const collegeTeams = [
-      { name: "Duke", conference: "ACC" }, { name: "Kentucky", conference: "SEC" }, { name: "North Carolina", conference: "ACC" },
-      { name: "Kansas", conference: "Big 12" }, { name: "UCLA", conference: "Pac-12" }, { name: "Gonzaga", conference: "WCC" },
-      { name: "Michigan State", conference: "Big Ten" }, { name: "Villanova", conference: "Big East" }, { name: "Arizona", conference: "Pac-12" },
-      { name: "Baylor", conference: "Big 12" }, { name: "Houston", conference: "Big 12" }, { name: "Illinois", conference: "Big Ten" },
-      { name: "Indiana", conference: "Big Ten" }, { name: "Ohio State", conference: "Big Ten" }, { name: "Texas", conference: "Big 12" },
-      { name: "Alabama", conference: "SEC" }, { name: "Tennessee", conference: "SEC" }, { name: "Florida", conference: "SEC" },
-      { name: "Auburn", conference: "SEC" }, { name: "Arkansas", conference: "SEC" }, { name: "Creighton", conference: "Big East" },
-      { name: "Xavier", conference: "Big East" }, { name: "San Diego State", conference: "Mountain West" }, { name: "Miami", conference: "ACC" },
-      { name: "Virginia", conference: "ACC" }, { name: "Wisconsin", conference: "Big Ten" }, { name: "Purdue", conference: "Big Ten" },
-      { name: "Marquette", conference: "Big East" }, { name: "Iowa State", conference: "Big 12" }, { name: "Texas Tech", conference: "Big 12" }
-    ];
-
-    // ---------- EVENT TEMPLATES (4 choices each) ----------
-    const eventTemplates = [
-      {
-        text: "You're wide open at the top of the key.",
-        choices: [
-          { text: "Shoot the three", effects: { playerStats: { points: 3 }, teamScoreDelta: 3, relationships: { coach: 2, teammates: -1 } }, resultMsg: "You drain the three! Coach loves your confidence." },
-          { text: "Drive to the basket", effects: { playerStats: { points: 2 }, teamScoreDelta: 2, relationships: { coach: 1, teammates: 0 }, foulRisk: 0.2 }, resultMsg: "You finish strong at the rim." },
-          { text: "Pass to the open teammate", effects: { playerStats: { assists: 1 }, teamScoreDelta: 2, relationships: { coach: -1, teammates: 3 } }, resultMsg: "You pass up the shot; teammate scores. Coach wanted you to shoot." },
-          { text: "Pump fake and draw foul", effects: { playerStats: { }, teamScoreDelta: 0, relationships: { coach: 0, teammates: 0 }, foulRisk: 0.5, technicalRisk: 0 }, resultMsg: "You draw a foul, but no points. Coach is neutral." }
+    (function() {
+      // ---------- GAME STATE ----------
+      const TIER_VALUES = { S: 95, A: 88, B: 80, C: 72, D: 65, F: 55 };
+      
+      // Real NBA players pool (for draft: each round uses category-specific players)
+      const DRAFT_POOL = {
+        Scoring: [
+          { name: 'Stephen Curry', tier: 'S' }, { name: 'Luka Doncic', tier: 'A' }, { name: 'Devin Booker', tier: 'B' },
+          { name: 'Jalen Green', tier: 'C' }, { name: 'Cam Thomas', tier: 'D' }, { name: 'Malik Beasley', tier: 'F' }
+        ],
+        Defense: [
+          { name: 'Rudy Gobert', tier: 'S' }, { name: 'Anthony Davis', tier: 'A' }, { name: 'Mikal Bridges', tier: 'B' },
+          { name: 'Jaden McDaniels', tier: 'C' }, { name: 'Dorian Finney-Smith', tier: 'D' }, { name: 'Kevin Huerter', tier: 'F' }
+        ],
+        Playmaking: [
+          { name: 'Nikola Jokic', tier: 'S' }, { name: 'Chris Paul', tier: 'A' }, { name: 'Darius Garland', tier: 'B' },
+          { name: 'Markelle Fultz', tier: 'C' }, { name: 'T.J. McConnell', tier: 'D' }, { name: 'Davion Mitchell', tier: 'F' }
+        ],
+        Athleticism: [
+          { name: 'Giannis Antetokounmpo', tier: 'S' }, { name: 'Zion Williamson', tier: 'A' }, { name: 'Anthony Edwards', tier: 'B' },
+          { name: 'Obi Toppin', tier: 'C' }, { name: 'KJ Martin', tier: 'D' }, { name: 'Frank Ntilikina', tier: 'F' }
+        ],
+        IQ: [
+          { name: 'LeBron James', tier: 'S' }, { name: 'Chris Paul', tier: 'A' }, { name: 'Draymond Green', tier: 'B' },
+          { name: 'Kyle Lowry', tier: 'C' }, { name: 'Dennis Schroder', tier: 'D' }, { name: 'Theo Maledon', tier: 'F' }
         ]
-      },
-      {
-        text: "You're guarding the opponent's best scorer in the post.",
-        choices: [
-          { text: "Play aggressive defense", effects: { playerStats: { steals: 1, fouls: 1 }, teamScoreDelta: 0, opponentScoreDelta: -2, relationships: { coach: 1, teammates: 0 } }, resultMsg: "You force a turnover but pick up a foul. Coach likes the intensity." },
-          { text: "Play conservative", effects: { playerStats: { }, teamScoreDelta: 0, opponentScoreDelta: 2, relationships: { coach: -1, teammates: 0 } }, resultMsg: "You stay out of foul trouble but allow an easy basket." },
-          { text: "Double-team him", effects: { playerStats: { }, teamScoreDelta: 0, opponentScoreDelta: -1, relationships: { coach: 1, teammates: 1 }, foulRisk: 0.3 }, resultMsg: "The double-team forces a tough shot, but you risk a foul." },
-          { text: "Trash-talk him", effects: { playerStats: { }, teamScoreDelta: 0, opponentScoreDelta: 0, relationships: { coach: -1, teammates: 0 }, technicalRisk: 0.2 }, resultMsg: "You get in his head, but also draw a technical foul warning." }
-        ]
-      },
-      {
-        text: "Your team is on a fast break, you have the ball.",
-        choices: [
-          { text: "Drive for the layup", effects: { playerStats: { points: 2 }, teamScoreDelta: 2, relationships: { coach: 1, teammates: 0 } }, resultMsg: "You finish strong at the rim!" },
-          { text: "Pull up for a mid-range jumper", effects: { playerStats: { points: 2 }, teamScoreDelta: 2, relationships: { coach: 0, teammates: 1 } }, resultMsg: "You knock down the jumper." },
-          { text: "Pass to the trailing big man", effects: { playerStats: { assists: 1 }, teamScoreDelta: 2, relationships: { coach: 0, teammates: 2 } }, resultMsg: "Great unselfish play, the big man slams it home." },
-          { text: "Try a flashy dunk", effects: { playerStats: { points: 2 }, teamScoreDelta: 2, relationships: { coach: 0, teammates: 1 }, injuryRisk: 0.1 }, resultMsg: "You throw down a monster dunk! The crowd erupts." }
-        ]
-      },
-      {
-        text: "You're double-teamed near the baseline.",
-        choices: [
-          { text: "Force a shot", effects: { playerStats: { turnovers: 1 }, teamScoreDelta: 0, relationships: { coach: -2, teammates: -1 } }, resultMsg: "You force it and turn it over. Bad decision." },
-          { text: "Pass out to the open shooter", effects: { playerStats: { assists: 1 }, teamScoreDelta: 3, relationships: { coach: 1, teammates: 2 } }, resultMsg: "Great vision! The shooter knocks down the three." },
-          { text: "Call timeout", effects: { playerStats: { }, teamScoreDelta: 0, relationships: { coach: 1, teammates: 0 } }, resultMsg: "You wisely call timeout to reset the offense." },
-          { text: "Try to split the double team", effects: { playerStats: { points: 2 }, teamScoreDelta: 2, relationships: { coach: 0, teammates: 0 }, turnoverRisk: 0.3 }, resultMsg: "You split the defenders and score!" }
-        ]
-      },
-      {
-        text: "Rebound opportunity on the defensive end.",
-        choices: [
-          { text: "Box out and grab the board", effects: { playerStats: { rebounds: 1 }, teamScoreDelta: 0, relationships: { coach: 1, teammates: 1 } }, resultMsg: "You secure the rebound." },
-          { text: "Leak out for a fast break", effects: { playerStats: { }, teamScoreDelta: 2, relationships: { coach: -1, teammates: 0 } }, resultMsg: "Your team gets the board and you get an easy basket, but coach wanted you to rebound." },
-          { text: "Tap it to a teammate", effects: { playerStats: { assists: 1, rebounds: 1 }, teamScoreDelta: 0, relationships: { coach: 1, teammates: 2 } }, resultMsg: "You tip it to a teammate for the board, then assist." },
-          { text: "Go for the steal instead", effects: { playerStats: { steals: 1, fouls: 1 }, teamScoreDelta: 0, opponentScoreDelta: -1, relationships: { coach: 0, teammates: 0 } }, resultMsg: "You gamble for a steal and get it, but pick up a foul." }
-        ]
-      },
-      {
-        text: "You have the ball at the top of the key with 10 seconds left in the half.",
-        choices: [
-          { text: "Take the last shot", effects: { playerStats: { points: 2 }, teamScoreDelta: 2, relationships: { coach: 1, teammates: 0 } }, resultMsg: "You hit the buzzer-beater!" },
-          { text: "Pass to the open shooter", effects: { playerStats: { assists: 1 }, teamScoreDelta: 2, relationships: { coach: 0, teammates: 2 } }, resultMsg: "The shooter makes it; teammate chemistry up." },
-          { text: "Drive and dish", effects: { playerStats: { assists: 1, points: 0 }, teamScoreDelta: 2, relationships: { coach: 1, teammates: 2 } }, resultMsg: "You drive and dish for an easy layup." },
-          { text: "Hold for last shot but miss", effects: { playerStats: { }, teamScoreDelta: 0, relationships: { coach: -1, teammates: -1 } }, resultMsg: "You hold too long and miss. Bad possession." }
-        ]
-      },
-      {
-        text: "You're at the free throw line for two shots.",
-        choices: [
-          { text: "Focus and make both", effects: { playerStats: { points: 2 }, teamScoreDelta: 2, relationships: { coach: 1, teammates: 0 } }, resultMsg: "You calmly sink both free throws." },
-          { text: "Take a quick first shot", effects: { playerStats: { points: 1 }, teamScoreDelta: 1, relationships: { coach: -1, teammates: 0 } }, resultMsg: "You make one of two. Coach wanted a better routine." },
-          { text: "Try to draw a lane violation", effects: { playerStats: { }, teamScoreDelta: 0, relationships: { coach: 0, teammates: 0 } }, resultMsg: "You miss both, but the refs miss a violation." },
-          { text: "Use the opportunity to rest", effects: { playerStats: { }, teamScoreDelta: 0, relationships: { coach: 0, teammates: 0 }, staminaBoost: 5 }, resultMsg: "You take a deep breath. No points but you feel refreshed." }
-        ]
-      },
-      {
-        text: "Your matchup is playing physical and trash-talking.",
-        choices: [
-          { text: "Respond with a big play", effects: { playerStats: { points: 2 }, teamScoreDelta: 2, relationships: { coach: 1, teammates: 1 } }, resultMsg: "You silence him with a bucket." },
-          { text: "Stay calm and defend harder", effects: { playerStats: { steals: 1 }, teamScoreDelta: 0, opponentScoreDelta: -2, relationships: { coach: 1, teammates: 0 } }, resultMsg: "Your defense forces a turnover." },
-          { text: "Trash-talk back", effects: { playerStats: { }, teamScoreDelta: 0, opponentScoreDelta: 0, relationships: { coach: -1, teammates: 0 }, technicalRisk: 0.2 }, resultMsg: "You get caught up and lose focus. Coach is not happy." },
-          { text: "Complain to the referee", effects: { playerStats: { }, teamScoreDelta: 0, opponentScoreDelta: 0, relationships: { coach: -1, teammates: 0 }, technicalRisk: 0.5 }, resultMsg: "You complain and get a technical foul warning." }
-        ]
-      },
-      {
-        text: "Your team is down by 1 with 20 seconds left.",
-        choices: [
-          { text: "Take the game-winning shot", effects: { playerStats: { points: 2 }, teamScoreDelta: 2, relationships: { coach: 2, teammates: 2 } }, resultMsg: "You hit the game winner! Hero!" },
-          { text: "Pass to the open teammate", effects: { playerStats: { assists: 1 }, teamScoreDelta: 2, relationships: { coach: 0, teammates: 3 } }, resultMsg: "Your teammate hits the winner. Great team play." },
-          { text: "Drive and draw a foul", effects: { playerStats: { points: 0 }, teamScoreDelta: 0, relationships: { coach: 1, teammates: 0 }, foulRisk: 0.6 }, resultMsg: "You draw a foul but the refs swallow the whistle." },
-          { text: "Call a timeout to set up a play", effects: { playerStats: { }, teamScoreDelta: 2, relationships: { coach: 2, teammates: 1 } }, resultMsg: "The timeout leads to a wide-open layup." }
-        ]
-      },
-      {
-        text: "You're assigned to guard the opponent's best three-point shooter.",
-        choices: [
-          { text: "Tight defense", effects: { playerStats: { }, teamScoreDelta: 0, opponentScoreDelta: -3, relationships: { coach: 1, teammates: 0 } }, resultMsg: "You lock him down. Great defense!" },
-          { text: "Sag off and help on drives", effects: { playerStats: { }, teamScoreDelta: 0, opponentScoreDelta: 0, relationships: { coach: -1, teammates: 0 } }, resultMsg: "He gets a couple open looks." },
-          { text: "Deny him the ball", effects: { playerStats: { steals: 1 }, teamScoreDelta: 0, opponentScoreDelta: -1, relationships: { coach: 1, teammates: 0 } }, resultMsg: "You deny him and get a steal." },
-          { text: "Bump him off his spot", effects: { playerStats: { fouls: 1 }, teamScoreDelta: 0, opponentScoreDelta: -1, relationships: { coach: 0, teammates: 0 } }, resultMsg: "You bump him, he misses, but you get called for a foul." }
-        ]
-      }
-    ];
-
-    // ---------- GAME STATE ----------
-    const state = {
-      currentSaveSlot: null,
-      currentPath: null,
-      player: null,
-      teamRoster: [],
-      leagueTeams: [],
-      otherRosters: {},
-      difficulty: 'Realism',
-      teamRecord: { wins: 0, losses: 0 },
-      currentGame: null,
-      autoPlayTimer: null,
-      gameSpeed: 'normal'  // 'normal' or 'fast'
-    };
-
-    // ---------- DOM ELEMENTS ----------
-    const mainMenuScreen = document.getElementById('main-menu');
-    const characterCreationScreen = document.getElementById('character-creation');
-    const teamSelectionScreen = document.getElementById('team-selection');
-    const careerHubScreen = document.getElementById('career-hub');
-    const gameScreen = document.getElementById('game-screen');
-    const teamScreen = document.getElementById('team-screen');
-    const rostersScreen = document.getElementById('rosters-screen');
-    const retirementScreen = document.getElementById('retirement-screen');
-
-    const saveButtons = document.querySelectorAll('.btn-save');
-    const selectedSaveInfo = document.getElementById('selected-save-info');
-    const pathOptions = document.getElementById('path-options');
-    const startHighschoolBtn = document.getElementById('start-highschool');
-    const startCollegeBtn = document.getElementById('start-college');
-    const backToMenuBtn = document.getElementById('back-to-menu');
-    const backToCharacterBtn = document.getElementById('back-to-character');
-    const createPlayerBtn = document.getElementById('create-player');
-    const randomizePlayerBtn = document.getElementById('randomize-player');
-    const buildOptionsContainer = document.getElementById('build-options');
-    const buildError = document.getElementById('build-error');
-    const aauCheckboxContainer = document.getElementById('aau-checkbox-container');
-    const aauOnlyCheckbox = document.getElementById('aau-only-checkbox');
-    const teamGrid = document.getElementById('team-grid');
-    const teamSelectionSubtitle = document.getElementById('team-selection-subtitle');
-    const playerSummaryDiv = document.getElementById('player-summary');
-
-    const playBtn = document.getElementById('play-btn');
-    const teamBtn = document.getElementById('team-btn');
-    const rostersBtn = document.getElementById('rosters-btn');
-    const retireBtn = document.getElementById('retire-btn');
-    const backToHubFromGame = document.getElementById('back-to-hub-from-game');
-    const backToHubFromTeam = document.getElementById('back-to-hub-from-team');
-    const backToHubFromRosters = document.getElementById('back-to-hub-from-rosters');
-    const backToHubFromRetirement = document.getElementById('back-to-hub-from-retirement');
-
-    const userTeamName = document.getElementById('user-team-name');
-    const oppTeamName = document.getElementById('opp-team-name');
-    const userScoreEl = document.getElementById('user-score');
-    const oppScoreEl = document.getElementById('opp-score');
-    const playLog = document.getElementById('play-log');
-    const gameEventText = document.getElementById('game-event-text');
-    const gameChoices = document.getElementById('game-choices');
-    const gameResultMessage = document.getElementById('game-result-message');
-    const gameFinalArea = document.getElementById('game-final-area');
-    const finalPlayerStats = document.getElementById('final-player-stats');
-    const finalRelationships = document.getElementById('final-relationships');
-    const finishGameBtn = document.getElementById('finish-game');
-    const quarterDisplay = document.getElementById('quarter-display');
-    const speedBtn = document.getElementById('speed-btn');
-
-    const foulPoints = document.getElementById('foul-points');
-    const personalFouls = document.getElementById('personal-fouls');
-    const techFouls = document.getElementById('tech-fouls');
-    const playerStatus = document.getElementById('player-status');
-    const teamFoulsEl = document.getElementById('team-fouls');
-    const oppTeamFoulsEl = document.getElementById('opp-team-fouls');
-
-    const teamTabs = document.querySelectorAll('.team-tab');
-    const teamTabContents = document.querySelectorAll('.team-tab-content');
-    const teamRosterContainer = document.getElementById('team-roster-container');
-    const teamSelect = document.getElementById('team-select');
-    const otherRosterContainer = document.getElementById('other-roster-container');
-    const retirementSummary = document.getElementById('retirement-summary');
-
-    // ---------- SCREEN NAVIGATION ----------
-    function showScreen(screenId) {
-      if (screenId !== 'game-screen' && state.autoPlayTimer) {
-        clearTimeout(state.autoPlayTimer);
-        state.autoPlayTimer = null;
-      }
-      document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
-      document.getElementById(screenId).classList.add('active');
-    }
-
-    // ---------- SAVE FILE SELECTION ----------
-    saveButtons.forEach(btn => {
-      btn.addEventListener('click', function() {
-        state.currentSaveSlot = parseInt(this.dataset.save);
-        saveButtons.forEach(b => b.classList.remove('selected'));
-        this.classList.add('selected');
-        selectedSaveInfo.textContent = `Selected Save File: ${state.currentSaveSlot}`;
-        selectedSaveInfo.classList.remove('hidden');
-        pathOptions.classList.remove('hidden');
-      });
-    });
-
-    // ---------- START PATH SELECTION ----------
-    startHighschoolBtn.addEventListener('click', () => { state.currentPath = 'highschool'; showScreen('character-creation'); });
-    startCollegeBtn.addEventListener('click', () => { state.currentPath = 'college'; showScreen('character-creation'); });
-
-    // ---------- BUILD SELECTION ----------
-    const selectedBuilds = new Set();
-    buildOptionsContainer.addEventListener('click', function(e) {
-      const buildOption = e.target.closest('.build-option');
-      if (!buildOption) return;
-      const buildName = buildOption.dataset.build;
-      if (selectedBuilds.has(buildName)) {
-        selectedBuilds.delete(buildName);
-        buildOption.classList.remove('selected');
-      } else {
-        if (selectedBuilds.size >= 2) { buildError.textContent = 'You can select up to 2 builds.'; return; }
-        selectedBuilds.add(buildName);
-        buildOption.classList.add('selected');
-        buildError.textContent = '';
-      }
-    });
-
-    // ---------- RANDOMIZE PLAYER ----------
-    function randomizePlayer() {
-      const firstNames = ['Jay','Mike','Chris','Tyler','Darius','Kobe','LeBron','Zion','Cam','Jalen'];
-      const lastNames = ['Smith','Johnson','Williams','Brown','Jones','Davis','Miller','Wilson','Moore','Taylor'];
-      document.getElementById('first-name').value = firstNames[Math.floor(Math.random()*firstNames.length)];
-      document.getElementById('last-name').value = lastNames[Math.floor(Math.random()*lastNames.length)];
-      const feet = [5,6,7][Math.floor(Math.random()*3)];
-      const inches = Math.floor(Math.random()*12);
-      document.getElementById('height-feet').value = feet;
-      document.getElementById('height-inches').value = inches;
-      const totalInches = feet*12 + inches;
-      document.getElementById('weight').value = Math.max(140, Math.min(300, Math.round(totalInches*2.3+20)));
-      document.getElementById('wingspan').value = Math.floor(Math.random()*31)+60;
-      const positions = ['PG','SG','SF','PF','C','PG/SG','SG/SF','PF/C'];
-      document.getElementById('position').value = positions[Math.floor(Math.random()*positions.length)];
-      selectedBuilds.clear();
-      document.querySelectorAll('.build-option').forEach(opt => opt.classList.remove('selected'));
-      buildError.textContent = '';
-      const buildNames = ['Slasher','Sharpshooter','Playmaker','Defender','Rebounder','Athletic','Post Scorer','Shot Creator'];
-      const numBuilds = Math.random() < 0.5 ? 1 : 2;
-      const randomBuilds = [];
-      while (randomBuilds.length < numBuilds) {
-        const b = buildNames[Math.floor(Math.random()*buildNames.length)];
-        if (!randomBuilds.includes(b)) randomBuilds.push(b);
-      }
-      randomBuilds.forEach(b => { selectedBuilds.add(b); document.querySelector(`.build-option[data-build="${b}"]`).classList.add('selected'); });
-    }
-    randomizePlayerBtn.addEventListener('click', randomizePlayer);
-
-    // ---------- PLAYER ATTRIBUTE GENERATION ----------
-    function generatePlayer(data) {
-      const potential = Math.floor(Math.random()*99)+1;
-      let overall;
-      if (potential <= 20) overall = 58 + Math.floor(Math.random()*6);
-      else if (potential <= 40) overall = 62 + Math.floor(Math.random()*7);
-      else if (potential <= 60) overall = 66 + Math.floor(Math.random()*7);
-      else if (potential <= 80) overall = 70 + Math.floor(Math.random()*7);
-      else overall = 74 + Math.floor(Math.random()*7);
-
-      const templates = {
-        'PG':  { inside:55, mid:70, three:75, play:80, rebound:40, per_def:70, int_def:40, ath:70, iq:75 },
-        'SG':  { inside:60, mid:75, three:80, play:70, rebound:40, per_def:70, int_def:40, ath:75, iq:70 },
-        'SF':  { inside:65, mid:70, three:70, play:60, rebound:55, per_def:65, int_def:50, ath:70, iq:65 },
-        'PF':  { inside:70, mid:60, three:55, play:50, rebound:75, per_def:50, int_def:65, ath:65, iq:60 },
-        'C':   { inside:75, mid:50, three:40, play:45, rebound:80, per_def:40, int_def:75, ath:60, iq:60 },
-        'PG/SG':{ inside:57, mid:72, three:77, play:75, rebound:40, per_def:70, int_def:40, ath:72, iq:72 },
-        'SG/SF':{ inside:62, mid:72, three:75, play:65, rebound:47, per_def:67, int_def:45, ath:72, iq:67 },
-        'PF/C': { inside:72, mid:55, three:47, play:47, rebound:77, per_def:45, int_def:70, ath:62, iq:60 }
       };
-      let baseSkills = {};
-      const pos = data.position;
-      if (pos.includes('/')) {
-        const [pos1,pos2] = pos.split('/');
-        const t1 = templates[pos1], t2 = templates[pos2];
-        for (const key in t1) baseSkills[key] = Math.round((t1[key]+t2[key])/2);
-      } else {
-        baseSkills = { ...templates[pos] };
+      
+      // Attributes: scoring, defense, playmaking, athleticism, iq
+      let attributes = { scoring: 0, defense: 0, playmaking: 0, athleticism: 0, iq: 0 };
+      let currentDraftRound = 0;        // 0-indexed: 0->scoring, 1->defense, 2->playmaking, 3->athleticism, 4->iq
+      let phase = 'draft';              // 'draft' | 'highschool' | 'college' | 'nba'
+      let nbaYear = 0;                  // 0 until NBA phase, then increments after each NBA season (year1 -> nbaYear=1)
+      let age = 18;
+      let seasonHistory = [];           // array of season objects
+      let overall = 0;
+      
+      // temporary candidate storage
+      let currentCandidates = [];
+      
+      // UI elements
+      const draftSection = document.getElementById('draftSection');
+      const simulationSection = document.getElementById('simulationSection');
+      const draftCandidatesDiv = document.getElementById('draftCandidates');
+      const draftInstruction = document.getElementById('draftInstruction');
+      const simulateBtn = document.getElementById('simulateBtn');
+      const loadingBarContainer = document.getElementById('loadingBarContainer');
+      const loadingBarFill = document.getElementById('loadingBarFill');
+      const progressPercent = document.getElementById('progressPercent');
+      const statsTableBody = document.getElementById('statsTableBody');
+      const phaseIndicator = document.getElementById('phaseIndicator');
+      const hubPhase = document.getElementById('hubPhase');
+      const hubRecord = document.getElementById('hubRecord');
+      const hubPpg = document.getElementById('hubPpg');
+      const hubOvr = document.getElementById('hubOvr');
+      const ageDisplay = document.getElementById('ageDisplay');
+      const awardBanner = document.getElementById('awardBanner');
+      const awardText = document.getElementById('awardText');
+      const seasonCountLabel = document.getElementById('seasonCountLabel');
+      const nextPhaseLabel = document.getElementById('nextPhaseLabel');
+      
+      // attribute display spans
+      const attrScoring = document.getElementById('attrScoring');
+      const attrDefense = document.getElementById('attrDefense');
+      const attrPlay = document.getElementById('attrPlay');
+      const attrAthleticism = document.getElementById('attrAthleticism');
+      const attrIq = document.getElementById('attrIq');
+      
+      // Helper: update overall (average of attributes)
+      function updateOverall() {
+        const sum = attributes.scoring + attributes.defense + attributes.playmaking + attributes.athleticism + attributes.iq;
+        overall = Math.round(sum / 5);
+        hubOvr.textContent = overall;
       }
-      const buildModifiers = {
-        'Slasher':       { inside:8, mid:-2, three:-4, play:0, rebound:0, per_def:0, int_def:0, ath:6, iq:-2 },
-        'Sharpshooter':  { inside:-4, mid:8, three:10, play:-2, rebound:-2, per_def:0, int_def:-2, ath:0, iq:2 },
-        'Playmaker':     { inside:-2, mid:0, three:0, play:10, rebound:-2, per_def:0, int_def:-2, ath:2, iq:6 },
-        'Defender':      { inside:-2, mid:-2, three:-4, play:-2, rebound:2, per_def:8, int_def:8, ath:4, iq:4 },
-        'Rebounder':     { inside:2, mid:-4, three:-6, play:-2, rebound:12, per_def:0, int_def:4, ath:2, iq:-2 },
-        'Athletic':      { inside:2, mid:-2, three:-2, play:0, rebound:2, per_def:2, int_def:0, ath:12, iq:-2 },
-        'Post Scorer':   { inside:10, mid:4, three:-6, play:-2, rebound:2, per_def:-2, int_def:2, ath:0, iq:0 },
-        'Shot Creator':  { inside:0, mid:8, three:2, play:4, rebound:-4, per_def:0, int_def:-2, ath:2, iq:2 }
-      };
-      for (const build of data.builds) {
-        const mod = buildModifiers[build];
-        if (mod) for (const key in mod) baseSkills[key] += mod[key];
+      
+      // Helper: refresh attribute displays
+      function refreshAttributeDisplays() {
+        attrScoring.textContent = attributes.scoring;
+        attrDefense.textContent = attributes.defense;
+        attrPlay.textContent = attributes.playmaking;
+        attrAthleticism.textContent = attributes.athleticism;
+        attrIq.textContent = attributes.iq;
+        updateOverall();
       }
-      const totalInches = data.heightFeet*12 + data.heightInches;
-      if (totalInches >= 78) { baseSkills.rebound += 5; baseSkills.int_def += 5; baseSkills.ath -= 3; baseSkills.per_def -= 2; }
-      else if (totalInches <= 73) { baseSkills.per_def += 3; baseSkills.ath += 3; baseSkills.rebound -= 3; baseSkills.int_def -= 3; }
-      if (data.wingspan > totalInches+4) { baseSkills.rebound += 3; baseSkills.int_def += 3; baseSkills.per_def += 2; }
-      else if (data.wingspan < totalInches-2) { baseSkills.ath += 2; baseSkills.per_def += 1; }
-      for (const key in baseSkills) baseSkills[key] = Math.max(40, Math.min(99, baseSkills[key]));
-      const targetOverall = overall;
-      const baseOverall = 70;
-      const scaleFactor = (targetOverall-40)/(baseOverall-40);
-      const finalSkills = {};
-      for (const key in baseSkills) {
-        let val = 40 + (baseSkills[key]-40)*scaleFactor;
-        val += Math.floor(Math.random()*5)-2;
-        val = Math.max(40, Math.min(99, Math.round(val)));
-        finalSkills[key] = val;
-      }
-      const skillValues = Object.values(finalSkills);
-      const avg = skillValues.reduce((a,b)=>a+b,0)/skillValues.length;
-      const finalOverall = Math.round(avg);
-      return {
-        firstName: data.firstName,
-        lastName: data.lastName,
-        heightFeet: data.heightFeet,
-        heightInches: data.heightInches,
-        weight: data.weight,
-        wingspan: data.wingspan,
-        position: data.position,
-        builds: [...data.builds],
-        potential: potential,
-        overall: finalOverall,
-        skills: finalSkills,
-        seasonStats: { gamesPlayed:0, points:0, assists:0, rebounds:0, steals:0, blocks:0, turnovers:0, minutes:0 },
-        careerStats: {},
-        relationships: { coach:50, teammates:50, gm:50 },
-        currentTeam: null,
-        season: 1,
-        age: state.currentPath === 'highschool' ? 14 : 18,
-      };
-    }
-
-    // ---------- CREATE PLAYER ----------
-    createPlayerBtn.addEventListener('click', function() {
-      const firstName = document.getElementById('first-name').value.trim();
-      const lastName = document.getElementById('last-name').value.trim();
-      const heightFeet = parseInt(document.getElementById('height-feet').value);
-      const heightInches = parseInt(document.getElementById('height-inches').value);
-      const weight = parseInt(document.getElementById('weight').value);
-      const wingspan = parseInt(document.getElementById('wingspan').value);
-      const position = document.getElementById('position').value;
-
-      if (!firstName || !lastName) { alert('Please enter both first and last name.'); return; }
-      if (isNaN(weight) || weight < 140 || weight > 300) { alert('Weight must be between 140 and 300 lbs.'); return; }
-      if (isNaN(wingspan) || wingspan < 60 || wingspan > 90) { alert('Wingspan must be between 60 and 90 inches.'); return; }
-      if (selectedBuilds.size === 0) { buildError.textContent = 'Please select at least one build.'; return; }
-
-      const playerData = { firstName, lastName, heightFeet, heightInches, weight, wingspan, position, builds: [...selectedBuilds] };
-      state.player = generatePlayer(playerData);
-      prepareTeamSelection();
-      showScreen('team-selection');
-    });
-
-    // ---------- TEAM SELECTION ----------
-    function prepareTeamSelection() {
-      const isHighSchool = state.currentPath === 'highschool';
-      aauCheckboxContainer.classList.toggle('hidden', !isHighSchool);
-      aauOnlyCheckbox.checked = false;
-      updateTeamGrid();
-    }
-    function updateTeamGrid() {
-      const isHighSchool = state.currentPath === 'highschool';
-      const showAAU = isHighSchool && aauOnlyCheckbox.checked;
-      let teams = [];
-      if (isHighSchool) { teams = showAAU ? aauTeams : highSchoolTeams; teamSelectionSubtitle.textContent = showAAU ? 'AAU Teams' : 'High School Teams'; }
-      else { teams = collegeTeams; teamSelectionSubtitle.textContent = 'College Teams'; }
-      state.leagueTeams = teams;
-      teamGrid.innerHTML = '';
-      teams.forEach(team => {
-        const card = document.createElement('div');
-        card.className = 'team-card';
-        const detail = team.state ? team.state : team.region ? team.region : team.conference;
-        card.innerHTML = `<h3>${team.name}</h3><p>${detail}</p>`;
-        card.addEventListener('click', () => selectTeam(team));
-        teamGrid.appendChild(card);
-      });
-    }
-    aauOnlyCheckbox.addEventListener('change', updateTeamGrid);
-
-    function selectTeam(team) {
-      state.player.currentTeam = team;
-      generateTeamRoster(team);
-      showCareerHub();
-    }
-
-    // ---------- ROSTER GENERATION ----------
-    function generateRandomPlayer() {
-      const firstNames = ['Jay','Mike','Chris','Tyler','Darius','Kobe','LeBron','Zion','Cam','Jalen','Devin','Malik','Isaiah','Tre','Jordan'];
-      const lastNames = ['Smith','Johnson','Williams','Brown','Jones','Davis','Miller','Wilson','Moore','Taylor','Anderson','Thomas','Jackson','White','Harris'];
-      const positions = ['PG','SG','SF','PF','C'];
-      return {
-        firstName: firstNames[Math.floor(Math.random()*firstNames.length)],
-        lastName: lastNames[Math.floor(Math.random()*lastNames.length)],
-        position: positions[Math.floor(Math.random()*positions.length)],
-        overall: Math.floor(Math.random()*20)+55,
-        isUser: false
-      };
-    }
-    function generateTeamRoster(team) {
-      const roster = [];
-      roster.push({ ...state.player, isUser: true });
-      for (let i = 0; i < 9; i++) roster.push(generateRandomPlayer());
-      state.teamRoster = roster;
-    }
-
-    // ---------- CAREER HUB ----------
-    function showCareerHub() {
-      const p = state.player;
-      const stats = p.seasonStats;
-      const avgPoints = stats.gamesPlayed ? (stats.points/stats.gamesPlayed).toFixed(1) : '0.0';
-      const avgAssists = stats.gamesPlayed ? (stats.assists/stats.gamesPlayed).toFixed(1) : '0.0';
-      const avgRebounds = stats.gamesPlayed ? (stats.rebounds/stats.gamesPlayed).toFixed(1) : '0.0';
-      playerSummaryDiv.innerHTML = `
-        <h3>${p.firstName} ${p.lastName}</h3>
-        <p>${p.position} | ${p.heightFeet}'${p.heightInches}" | ${p.weight} lbs | Overall: ${p.overall}</p>
-        <p>Team: ${p.currentTeam.name}</p>
-        <div class="stat-line">
-          <div class="stat"><span>PPG</span><strong>${avgPoints}</strong></div>
-          <div class="stat"><span>APG</span><strong>${avgAssists}</strong></div>
-          <div class="stat"><span>RPG</span><strong>${avgRebounds}</strong></div>
-        </div>
-      `;
-      showScreen('career-hub');
-    }
-
-    // ---------- NAVIGATION HANDLERS ----------
-    playBtn.addEventListener('click', () => { startNewGame(); showScreen('game-screen'); });
-    teamBtn.addEventListener('click', () => { displayTeamRoster(); resetTeamTabs(); showScreen('team-screen'); });
-    rostersBtn.addEventListener('click', () => { populateTeamSelect(); if (state.leagueTeams.length) displayOtherTeamRoster(state.leagueTeams[0]); showScreen('rosters-screen'); });
-    retireBtn.addEventListener('click', () => { displayRetirementSummary(); showScreen('retirement-screen'); });
-    backToHubFromGame.addEventListener('click', () => showScreen('career-hub'));
-    backToHubFromTeam.addEventListener('click', () => showScreen('career-hub'));
-    backToHubFromRosters.addEventListener('click', () => showScreen('career-hub'));
-    backToHubFromRetirement.addEventListener('click', () => showScreen('career-hub'));
-
-    function resetTeamTabs() {
-      document.querySelectorAll('.team-tab').forEach(t => t.classList.remove('active'));
-      document.querySelector('.team-tab[data-tab="roster"]').classList.add('active');
-      document.querySelectorAll('.team-tab-content').forEach(c => c.classList.remove('active'));
-      document.getElementById('roster-tab').classList.add('active');
-    }
-
-    function displayTeamRoster() {
-      let html = '<table class="roster-table"><tr><th>Name</th><th>Position</th><th>Overall</th></tr>';
-      state.teamRoster.forEach(p => {
-        html += `<tr><td>${p.firstName} ${p.lastName} ${p.isUser ? '(You)' : ''}</td><td>${p.position}</td><td>${p.overall}</td></tr>`;
-      });
-      html += '</table>';
-      teamRosterContainer.innerHTML = html;
-    }
-
-    teamTabs.forEach(tab => {
-      tab.addEventListener('click', function() {
-        const tabName = this.dataset.tab;
-        teamTabs.forEach(t => t.classList.remove('active'));
-        this.classList.add('active');
-        teamTabContents.forEach(c => c.classList.remove('active'));
-        document.getElementById(tabName+'-tab').classList.add('active');
-        if (tabName === 'roster') displayTeamRoster();
-      });
-    });
-
-    function populateTeamSelect() {
-      teamSelect.innerHTML = '';
-      state.leagueTeams.forEach(team => {
-        const option = document.createElement('option');
-        option.value = team.name; option.textContent = team.name;
-        teamSelect.appendChild(option);
-      });
-      teamSelect.onchange = function() {
-        const selectedTeam = state.leagueTeams.find(t => t.name === this.value);
-        if (selectedTeam) displayOtherTeamRoster(selectedTeam);
-      };
-    }
-
-    function displayOtherTeamRoster(team) {
-      if (!state.otherRosters[team.name]) {
-        const roster = [];
-        for (let i = 0; i < 10; i++) roster.push(generateRandomPlayer());
-        state.otherRosters[team.name] = roster;
-      }
-      const roster = state.otherRosters[team.name];
-      let html = `<h3>${team.name} Roster</h3>`;
-      html += '<table class="roster-table"><tr><th>Name</th><th>Position</th><th>Overall</th></tr>';
-      roster.forEach(p => { html += `<tr><td>${p.firstName} ${p.lastName}</td><td>${p.position}</td><td>${p.overall}</td></tr>`; });
-      html += '</table>';
-      otherRosterContainer.innerHTML = html;
-    }
-
-    function displayRetirementSummary() {
-      const p = state.player; const stats = p.seasonStats;
-      const avgPoints = stats.gamesPlayed ? (stats.points/stats.gamesPlayed).toFixed(1) : '0.0';
-      const avgAssists = stats.gamesPlayed ? (stats.assists/stats.gamesPlayed).toFixed(1) : '0.0';
-      const avgRebounds = stats.gamesPlayed ? (stats.rebounds/stats.gamesPlayed).toFixed(1) : '0.0';
-      retirementSummary.innerHTML = `
-        <h3>${p.firstName} ${p.lastName}</h3>
-        <p>Position: ${p.position} | Overall: ${p.overall}</p>
-        <p>Team: ${p.currentTeam.name}</p>
-        <p>Season: ${p.season} | Age: ${p.age}</p>
-        <hr style="border-color: rgba(255,255,255,0.2); margin: 20px 0;">
-        <h4>Career Summary</h4>
-        <p>Games Played: ${stats.gamesPlayed}</p>
-        <p>Season Averages: ${avgPoints} PPG, ${avgAssists} APG, ${avgRebounds} RPG</p>
-        <p>Career totals coming soon.</p>
-      `;
-    }
-
-    // ---------- SPEED TOGGLE ----------
-    speedBtn.addEventListener('click', () => {
-      if (state.gameSpeed === 'normal') {
-        state.gameSpeed = 'fast';
-        speedBtn.textContent = 'Speed: Fast';
-      } else {
-        state.gameSpeed = 'normal';
-        speedBtn.textContent = 'Speed: Normal';
-      }
-    });
-
-    // ---------- GAME SIMULATION ----------
-    function startNewGame() {
-      if (state.autoPlayTimer) clearTimeout(state.autoPlayTimer);
-
-      playLog.innerHTML = '';
-      gameFinalArea.classList.add('hidden');
-      gameChoices.innerHTML = '';
-      gameResultMessage.classList.add('hidden');
-      gameEventText.textContent = '';
-      personalFouls.textContent = '0';
-      techFouls.textContent = '0';
-      playerStatus.textContent = 'Active';
-      teamFoulsEl.textContent = '0';
-      oppTeamFoulsEl.textContent = '0';
-      quarterDisplay.textContent = '1st Quarter';
-      speedBtn.textContent = state.gameSpeed === 'normal' ? 'Speed: Normal' : 'Speed: Fast';
-
-      const availableTeams = state.leagueTeams.filter(t => t.name !== state.player.currentTeam.name);
-      if (!availableTeams.length) { alert('No opponents available.'); return; }
-      const opponent = availableTeams[Math.floor(Math.random()*availableTeams.length)];
-
-      if (!state.otherRosters[opponent.name]) {
-        const roster = [];
-        for (let i = 0; i < 10; i++) roster.push(generateRandomPlayer());
-        state.otherRosters[opponent.name] = roster;
-      }
-      const oppRoster = state.otherRosters[opponent.name];
-
-      const userAvgOverall = state.teamRoster.reduce((sum,p) => sum + p.overall, 0) / state.teamRoster.length;
-      const oppAvgOverall = oppRoster.reduce((sum,p) => sum + p.overall, 0) / oppRoster.length;
-
-      let scoreRange = [55,85];
-      if (state.currentPath === 'college') scoreRange = [60,95];
-      const baseUserScore = Math.round(scoreRange[0] + (userAvgOverall-55)*0.5 + (Math.random()*10-5));
-      const baseOppScore = Math.round(scoreRange[0] + (oppAvgOverall-55)*0.5 + (Math.random()*10-5));
-
-      const baselineStats = generateBaselineStats(state.player);
-
-      // Build play list
-      const totalPlays = Math.floor(Math.random()*20)+40; // 40-60
-      const playsPerQuarter = Math.ceil(totalPlays / 4);
-      const interactivePlays = [];
-      const numInteractive = Math.floor(Math.random()*6)+5; // 5-10
-      const eventPool = [...eventTemplates];
-      for (let i = 0; i < numInteractive && eventPool.length; i++) {
-        const idx = Math.floor(Math.random()*eventPool.length);
-        interactivePlays.push({ type: 'interactive', event: eventPool.splice(idx,1)[0] });
-      }
-
-      const plays = [];
-      let interactiveIndex = 0;
-      for (let i = 0; i < totalPlays; i++) {
-        if (interactiveIndex < interactivePlays.length && Math.random() < 0.15) {
-          plays.push(interactivePlays[interactiveIndex]);
-          interactiveIndex++;
+      
+      // Helper: update dashboard hub info
+      function updateHub() {
+        ageDisplay.textContent = `Age: ${age}`;
+        let phaseLabel = phase === 'highschool' ? 'HS' : phase === 'college' ? 'COLLEGE' : phase === 'nba' ? `NBA Y${nbaYear}` : 'DRAFT';
+        if (phase === 'draft') phaseLabel = 'DRAFT';
+        hubPhase.textContent = phaseLabel;
+        phaseIndicator.textContent = phase === 'draft' ? '🏀 Draft Phase' : phase === 'highschool' ? 'High School' : phase === 'college' ? 'College' : (nbaYear ? `NBA Year ${nbaYear}` : 'NBA');
+        
+        // record from last season if exists
+        if (seasonHistory.length > 0) {
+          const last = seasonHistory[seasonHistory.length-1];
+          hubRecord.textContent = `${last.wins}-${last.losses}`;
         } else {
-          plays.push(generateNormalPlay());
+          hubRecord.textContent = '0-0';
+        }
+        // career ppg average
+        if (seasonHistory.length > 0) {
+          const totalPpg = seasonHistory.reduce((acc, s) => acc + s.ppg, 0);
+          hubPpg.textContent = (totalPpg / seasonHistory.length).toFixed(1);
+        } else {
+          hubPpg.textContent = '0.0';
+        }
+        seasonCountLabel.textContent = `${seasonHistory.length} season${seasonHistory.length !== 1 ? 's' : ''}`;
+      }
+      
+      // Render draft candidates
+      function generateDraftRound() {
+        if (currentDraftRound > 4) return; // no more rounds
+        const categories = ['Scoring', 'Defense', 'Playmaking', 'Athleticism', 'IQ'];
+        const category = categories[currentDraftRound];
+        const pool = DRAFT_POOL[category];
+        // pick 3 random players without replacement
+        const shuffled = [...pool].sort(() => Math.random() - 0.5);
+        currentCandidates = shuffled.slice(0, 3);
+        
+        draftInstruction.textContent = `Round ${currentDraftRound+1} · ${category} — select a player to inherit his tier`;
+        draftCandidatesDiv.innerHTML = '';
+        currentCandidates.forEach((player, idx) => {
+          const card = document.createElement('button');
+          card.className = 'draft-card bg-slate-950/60 hover:bg-slate-800/80 p-4 rounded-2xl text-left flex justify-between items-center border border-slate-700/50';
+          card.innerHTML = `
+            <div>
+              <div class="font-black text-lg text-white">${player.name}</div>
+              <div class="text-xs uppercase tracking-wider text-slate-400">${category} tier</div>
+            </div>
+            <div class="text-3xl font-black ${player.tier === 'S' ? 'text-amber-300' : 'text-slate-200'}">${player.tier}</div>
+          `;
+          card.addEventListener('click', () => selectDraftCandidate(player, category));
+          draftCandidatesDiv.appendChild(card);
+        });
+      }
+      
+      function selectDraftCandidate(player, category) {
+        const value = TIER_VALUES[player.tier] || 65;
+        const attrKey = category.toLowerCase(); // scoring, defense, playmaking, athleticism, iq
+        attributes[attrKey] = value;
+        refreshAttributeDisplays();
+        
+        currentDraftRound++;
+        if (currentDraftRound < 5) {
+          generateDraftRound();
+        } else {
+          // draft complete -> enter high school phase
+          phase = 'highschool';
+          draftSection.classList.add('hidden');
+          simulationSection.classList.remove('hidden');
+          nextPhaseLabel.textContent = 'Up next: High School (20 games)';
+          updateHub();
         }
       }
-      while (interactiveIndex < interactivePlays.length) {
-        plays.push(interactivePlays[interactiveIndex]);
-        interactiveIndex++;
-      }
-
-      state.currentGame = {
-        opponent: opponent,
-        userTeamName: state.player.currentTeam.name,
-        oppTeamName: opponent.name,
-        currentUserScore: baseUserScore,
-        currentOppScore: baseOppScore,
-        plays: plays,
-        playsPerQuarter: playsPerQuarter,
-        currentPlayIndex: 0,
-        playerGameStats: baselineStats,
-        relationshipsDelta: { coach:0, teammates:0, gm:0 },
-        personalFouls: 0,
-        techFouls: 0,
-        teamFouls: 0,
-        oppTeamFouls: 0,
-        playerEjected: false,
-        playerFouledOut: false,
-        isGameOver: false,
-        quarter: 1
-      };
-
-      updateScoreboard();
-      updateFoulPanel();
-      processNextPlay();
-    }
-
-    function generateNormalPlay() {
-      const player = state.player;
-      const isUserAction = Math.random() < 0.5;
-      let text, effects = {};
-
-      if (isUserAction) {
-        const actions = [
-          { text: `${player.firstName} makes a layup`, stats: { points: 2 }, scoreDelta: 2 },
-          { text: `${player.firstName} hits a mid-range jumper`, stats: { points: 2 }, scoreDelta: 2 },
-          { text: `${player.firstName} drills a three-pointer`, stats: { points: 3 }, scoreDelta: 3 },
-          { text: `${player.firstName} grabs a defensive rebound`, stats: { rebounds: 1 }, scoreDelta: 0 },
-          { text: `${player.firstName} dishes an assist`, stats: { assists: 1 }, scoreDelta: 2 },
-          { text: `${player.firstName} gets a steal`, stats: { steals: 1 }, scoreDelta: 0, opponentScoreDelta: -2 },
-          { text: `${player.firstName} commits a turnover`, stats: { turnovers: 1 }, scoreDelta: 0, opponentScoreDelta: 2 },
-          { text: `${player.firstName} blocks a shot`, stats: { blocks: 1 }, scoreDelta: 0, opponentScoreDelta: -2 },
-          { text: `${player.firstName} draws a foul`, stats: { }, scoreDelta: 0, foulRisk: 0.3 },
-          { text: `${player.firstName} misses a shot`, stats: { }, scoreDelta: 0 }
-        ];
-        const action = actions[Math.floor(Math.random()*actions.length)];
-        text = action.text;
-        effects.playerStats = action.stats;
-        effects.teamScoreDelta = action.scoreDelta || 0;
-        effects.opponentScoreDelta = action.opponentScoreDelta || 0;
-        if (action.foulRisk && Math.random() < action.foulRisk) {
-          effects.playerStats = { ...effects.playerStats, fouls: (effects.playerStats.fouls || 0) + 1 };
-          effects.teamFouls = 1;
-          effects.personalFoul = 1;
-        }
-      } else {
-        const oppName = state.currentGame ? state.currentGame.oppTeamName : "Opponent";
-        const actions = [
-          { text: `${oppName} makes a layup`, scoreDelta: 2 },
-          { text: `${oppName} hits a three-pointer`, scoreDelta: 3 },
-          { text: `${oppName} grabs an offensive rebound`, scoreDelta: 0 },
-          { text: `${oppName} turns the ball over`, scoreDelta: 0, opponentScoreDelta: -2 },
-          { text: `Your team gets a steal`, scoreDelta: 0, opponentScoreDelta: -2 },
-          { text: `Your team commits a foul`, teamFouls: 1, opponentScoreDelta: 1 },
-          { text: `${oppName} misses a shot`, scoreDelta: 0 },
-          { text: `${oppName} draws a foul`, opponentFoulRisk: 0.3 }
-        ];
-        const action = actions[Math.floor(Math.random()*actions.length)];
-        text = action.text;
-        effects.teamScoreDelta = action.scoreDelta || 0;
-        effects.opponentScoreDelta = action.opponentScoreDelta || 0;
-        if (action.teamFouls) { effects.teamFouls = 1; effects.opponentScoreDelta = 1; }
-        if (action.opponentFoulRisk && Math.random() < action.opponentFoulRisk) {
-          effects.oppTeamFouls = 1;
-          effects.teamScoreDelta = 1;
+      
+      // Simulate one season based on phase
+      function simulateSeason() {
+        if (phase === 'highschool' || phase === 'college' || phase === 'nba') {
+          // Determine total games and win% factor
+          let totalGames, winPctFactor;
+          if (phase === 'highschool') { totalGames = 20; winPctFactor = 0.8; }
+          else if (phase === 'college') { totalGames = 40; winPctFactor = 0.6; }
+          else { totalGames = 82; winPctFactor = 0.4; }
+          
+          simulateBtn.disabled = true;
+          loadingBarContainer.classList.remove('hidden');
+          let progress = 0;
+          const totalSteps = totalGames;
+          let gameIndex = 0;
+          
+          // Simulate with interval to show loading bar
+          const interval = setInterval(() => {
+            gameIndex++;
+            progress = Math.min(100, Math.round((gameIndex / totalGames) * 100));
+            loadingBarFill.style.width = progress + '%';
+            progressPercent.textContent = progress + '%';
+            
+            if (gameIndex >= totalGames) {
+              clearInterval(interval);
+              // After simulation, compute stats
+              const stats = computeSeasonStats(totalGames, winPctFactor);
+              const record = stats.teamRecord; // { wins, losses }
+              const seasonData = {
+                year: getSeasonLabel(),
+                phaseLabel: phase === 'highschool' ? 'High School' : phase === 'college' ? 'College' : (nbaYear ? `NBA Y${nbaYear}` : 'NBA'),
+                wins: record.wins,
+                losses: record.losses,
+                ppg: stats.ppg,
+                rpg: stats.rpg,
+                apg: stats.apg,
+                stls: stats.stls,
+                blks: stats.blks,
+                awards: []
+              };
+              
+              // Evaluate awards
+              const awards = evaluateAwards(seasonData, phase, nbaYear);
+              seasonData.awards = awards;
+              seasonHistory.push(seasonData);
+              
+              // update UI
+              renderStatsTable();
+              updateHub();
+              if (awards.length > 0) {
+                awardBanner.classList.remove('hidden');
+                awardText.textContent = awards.join(' • ');
+                setTimeout(() => awardBanner.classList.add('hidden'), 5000);
+              } else {
+                awardBanner.classList.add('hidden');
+              }
+              
+              // progression to next phase/year
+              proceedToNextPhase();
+              
+              simulateBtn.disabled = false;
+              loadingBarContainer.classList.add('hidden');
+              loadingBarFill.style.width = '0%';
+              progressPercent.textContent = '0%';
+            }
+          }, 20); // fast simulation
         }
       }
-      return { type: 'normal', text, effects };
-    }
-
-    function generateBaselineStats(player) {
-      const overall = player.overall;
-      const pos = player.position;
-      let points = Math.round(8 + (overall-40)*0.35 + (Math.random()*6-3));
-      let assists = Math.round(2 + (overall-40)*0.15 + (Math.random()*3-1.5));
-      let rebounds = Math.round(2 + (overall-40)*0.2 + (Math.random()*3-1.5));
-      let steals = Math.round(0.5 + (overall-40)*0.05 + (Math.random()*1.5-0.75));
-      let blocks = Math.round(0.3 + (overall-40)*0.05 + (Math.random()*1-0.5));
-      let turnovers = Math.round(1 + Math.random()*2);
-      if (pos.includes('PG') || pos.includes('SG')) { assists += 2; rebounds -= 1; steals += 1; }
-      else if (pos.includes('SF')) { rebounds += 1; }
-      else if (pos.includes('PF') || pos.includes('C')) { rebounds += 4; assists -= 1; blocks += 1; points -= 2; }
-      points = Math.max(0, Math.min(50, points));
-      assists = Math.max(0, Math.min(20, assists));
-      rebounds = Math.max(0, Math.min(20, rebounds));
-      steals = Math.max(0, Math.min(10, steals));
-      blocks = Math.max(0, Math.min(10, blocks));
-      turnovers = Math.max(0, Math.min(10, turnovers));
-      return { points, assists, rebounds, steals, blocks, turnovers, minutes: Math.round(20+Math.random()*15), fouls: 0 };
-    }
-
-    function updateScoreboard() {
-      const g = state.currentGame;
-      userTeamName.textContent = g.userTeamName;
-      oppTeamName.textContent = g.oppTeamName;
-      userScoreEl.textContent = g.currentUserScore;
-      oppScoreEl.textContent = g.currentOppScore;
-    }
-
-    function updateQuarterDisplay() {
-      const g = state.currentGame;
-      const quarterNum = g.quarter;
-      const suffixes = ['', 'st', 'nd', 'rd', 'th'];
-      const quarterText = quarterNum <= 4 ? `${quarterNum}${suffixes[quarterNum]} Quarter` : 'Overtime';
-      quarterDisplay.textContent = quarterText;
-    }
-
-    function updateFoulPanel() {
-      const g = state.currentGame;
-      foulPoints.textContent = g.playerGameStats.points;
-      personalFouls.textContent = g.personalFouls;
-      techFouls.textContent = g.techFouls;
-      playerStatus.textContent = g.playerEjected ? 'Ejected' : g.playerFouledOut ? 'Fouled Out' : 'Active';
-      teamFoulsEl.textContent = g.teamFouls;
-      oppTeamFoulsEl.textContent = g.oppTeamFouls;
-    }
-
-    function processNextPlay() {
-      const g = state.currentGame;
-      if (g.currentPlayIndex >= g.plays.length || g.isGameOver) {
-        endGame();
-        return;
+      
+      function computeSeasonStats(totalGames, winPctFactor) {
+        // Attributes
+        const scoring = attributes.scoring || 55;
+        const defense = attributes.defense || 55;
+        const playmaking = attributes.playmaking || 55;
+        const athleticism = attributes.athleticism || 55;
+        const iq = attributes.iq || 55;
+        
+        // Base per-game stats formulas
+        let basePpg = (scoring * 0.7 + athleticism * 0.15 + iq * 0.15) * 0.29;
+        let baseApg = (playmaking * 0.65 + iq * 0.35) * 0.18;
+        let baseRpg = (athleticism * 0.55 + defense * 0.45) * 0.15;
+        let baseStls = (defense * 0.6 + athleticism * 0.4) * 0.04;
+        let baseBlks = (defense * 0.7 + athleticism * 0.3) * 0.03;
+        
+        // Random variance -3 to +3 per game for each stat avg
+        const variance = () => (Math.random() * 6) - 3;
+        let ppg = Math.max(0, basePpg + variance());
+        let apg = Math.max(0, baseApg + variance());
+        let rpg = Math.max(0, baseRpg + variance());
+        let stls = Math.max(0, baseStls + variance());
+        let blks = Math.max(0, baseBlks + variance());
+        
+        // Round to 1 decimal
+        ppg = Math.round(ppg * 10) / 10;
+        apg = Math.round(apg * 10) / 10;
+        rpg = Math.round(rpg * 10) / 10;
+        stls = Math.round(stls * 10) / 10;
+        blks = Math.round(blks * 10) / 10;
+        
+        // Team wins
+        const ovr = Math.round((scoring+defense+playmaking+athleticism+iq)/5);
+        const randomFactor = Math.random() * 0.25 + 0.0; // 0 to 0.25
+        let winPct = (ovr * winPctFactor) / 100 + randomFactor;
+        winPct = Math.min(0.95, Math.max(0.05, winPct));
+        const wins = Math.round(winPct * totalGames);
+        const losses = totalGames - wins;
+        
+        return { ppg, apg, rpg, stls, blks, teamRecord: { wins, losses } };
       }
-      const play = g.plays[g.currentPlayIndex];
-      if (play.type === 'interactive') {
-        showInteractiveEvent(play.event);
-      } else {
-        showNormalPlay(play);
-      }
-    }
-
-    function scheduleNextPlay(delay) {
-      if (state.autoPlayTimer) clearTimeout(state.autoPlayTimer);
-      state.autoPlayTimer = setTimeout(() => processNextPlay(), delay);
-    }
-
-    function handleQuarterTransition() {
-      const g = state.currentGame;
-      if (g.currentPlayIndex > 0 && g.currentPlayIndex % g.playsPerQuarter === 0 && g.currentPlayIndex < g.plays.length) {
-        // End of a quarter
-        const finishedQuarter = g.quarter;
-        g.quarter++;
-        updateQuarterDisplay();
-        addToLog(`--- End of ${finishedQuarter}${finishedQuarter === 1 ? 'st' : finishedQuarter === 2 ? 'nd' : finishedQuarter === 3 ? 'rd' : 'th'} Quarter ---`);
-        return true;
-      }
-      return false;
-    }
-
-    function showNormalPlay(play) {
-      const g = state.currentGame;
-      gameEventText.textContent = play.text;
-      gameChoices.innerHTML = '';
-      gameResultMessage.classList.add('hidden');
-      applyEffects(play.effects);
-      addToLog(play.text);
-      g.currentPlayIndex++;
-
-      const isQuarterBreak = handleQuarterTransition();
-      const normalDelay = state.gameSpeed === 'normal' ? 1200 : 300;
-      const quarterDelay = state.gameSpeed === 'normal' ? 2500 : 800;
-      scheduleNextPlay(isQuarterBreak ? quarterDelay : normalDelay);
-    }
-
-    function showInteractiveEvent(event) {
-      const g = state.currentGame;
-      gameEventText.textContent = event.text;
-      gameChoices.innerHTML = '';
-      gameResultMessage.classList.add('hidden');
-      event.choices.forEach((choice, idx) => {
-        const btn = document.createElement('button');
-        btn.className = 'btn choice-btn';
-        btn.textContent = choice.text;
-        btn.addEventListener('click', () => makeChoice(idx, event));
-        gameChoices.appendChild(btn);
-      });
-    }
-
-    function makeChoice(idx, event) {
-      const g = state.currentGame;
-      const choice = event.choices[idx];
-      gameChoices.innerHTML = '';
-      gameResultMessage.textContent = choice.resultMsg;
-      gameResultMessage.classList.remove('hidden');
-
-      const effects = { ...choice.effects };
-      if (effects.foulRisk && Math.random() < effects.foulRisk) {
-        effects.playerStats = { ...effects.playerStats, fouls: (effects.playerStats.fouls || 0) + 1 };
-        effects.personalFoul = 1;
-      }
-      if (effects.technicalRisk && Math.random() < effects.technicalRisk) {
-        effects.techFoul = 1;
-      }
-      if (effects.turnoverRisk && Math.random() < effects.turnoverRisk) {
-        effects.playerStats = { ...effects.playerStats, turnovers: (effects.playerStats.turnovers || 0) + 1 };
-        effects.teamScoreDelta = (effects.teamScoreDelta || 0) - 2;
-      }
-      if (effects.injuryRisk && Math.random() < effects.injuryRisk) {
-        effects.playerStats = { ...effects.playerStats, minutes: -5 };
-        addToLog("You feel a slight tweak in your ankle.");
-      }
-
-      applyEffects(effects);
-      addToLog(`${event.text} → ${choice.text}: ${choice.resultMsg}`);
-      g.currentPlayIndex++;
-
-      const isQuarterBreak = handleQuarterTransition();
-      const normalDelay = state.gameSpeed === 'normal' ? 1200 : 300;
-      const quarterDelay = state.gameSpeed === 'normal' ? 2500 : 800;
-      scheduleNextPlay(isQuarterBreak ? quarterDelay : normalDelay);
-    }
-
-    function applyEffects(effects) {
-      const g = state.currentGame;
-      if (!effects) return;
-
-      g.currentUserScore += effects.teamScoreDelta || 0;
-      g.currentOppScore += effects.opponentScoreDelta || 0;
-
-      if (effects.playerStats) {
-        const s = g.playerGameStats;
-        if (effects.playerStats.points) s.points += effects.playerStats.points;
-        if (effects.playerStats.assists) s.assists += effects.playerStats.assists;
-        if (effects.playerStats.rebounds) s.rebounds += effects.playerStats.rebounds;
-        if (effects.playerStats.steals) s.steals += effects.playerStats.steals;
-        if (effects.playerStats.blocks) s.blocks += effects.playerStats.blocks;
-        if (effects.playerStats.turnovers) s.turnovers += effects.playerStats.turnovers;
-        if (effects.playerStats.minutes) s.minutes += effects.playerStats.minutes;
-        if (effects.playerStats.fouls) s.fouls += effects.playerStats.fouls;
-      }
-
-      if (effects.personalFoul) {
-        g.personalFouls++;
-        g.teamFouls++;
-        if (g.personalFouls >= 5) {
-          g.playerFouledOut = true;
-          addToLog("You have fouled out!");
+      
+      function evaluateAwards(season, phase, nbaYear) {
+        const awards = [];
+        if (phase === 'highschool') {
+          if (season.ppg > 25 || overall > 85) awards.push('Gatorade POY');
+        } else if (phase === 'college') {
+          if (season.wins > 32) awards.push('National Champion');
+          if (season.ppg > 22 && season.apg > 5) awards.push('Wooden Award');
+        } else if (phase === 'nba') {
+          if (nbaYear === 1 && season.ppg > 15) awards.push('Rookie of the Year');
+          if (season.ppg > 28 && season.wins > 50) awards.push('MVP');
+          if (attributes.defense > 85 && (season.stls + season.blks) > 3.5) awards.push('DPOY');
         }
+        return awards;
       }
-      if (effects.techFoul) {
-        g.techFouls++;
-        if (g.techFouls >= 2) {
-          g.playerEjected = true;
-          addToLog("You have been ejected!");
+      
+      function getSeasonLabel() {
+        if (phase === 'highschool') return `Year ${seasonHistory.length+1} (HS)`;
+        if (phase === 'college') return `Year ${seasonHistory.length+1} (COL)`;
+        if (phase === 'nba') return `NBA Y${nbaYear}`;
+        return '';
+      }
+      
+      function proceedToNextPhase() {
+        if (phase === 'highschool') {
+          phase = 'college';
+          age = 19;
+          nextPhaseLabel.textContent = 'Up next: College (40 games)';
+        } else if (phase === 'college') {
+          phase = 'nba';
+          nbaYear = 1;
+          age = 20;
+          nextPhaseLabel.textContent = `Up next: NBA Year 1 (82 games)`;
+        } else if (phase === 'nba') {
+          if (nbaYear >= 15) {
+            // retire simulation (stop at 15 seasons)
+            simulateBtn.disabled = true;
+            nextPhaseLabel.textContent = 'Legendary career complete!';
+            phase = 'retired';
+            return;
+          }
+          nbaYear++;
+          age++;
+          nextPhaseLabel.textContent = `Up next: NBA Year ${nbaYear} (82 games)`;
         }
+        updateHub();
       }
-      if (effects.teamFouls) g.teamFouls += effects.teamFouls;
-      if (effects.oppTeamFouls) g.oppTeamFouls += effects.oppTeamFouls;
-
-      if (effects.relationships) {
-        g.relationshipsDelta.coach += effects.relationships.coach || 0;
-        g.relationshipsDelta.teammates += effects.relationships.teammates || 0;
-        g.relationshipsDelta.gm += effects.relationships.gm || 0;
+      
+      function renderStatsTable() {
+        if (seasonHistory.length === 0) {
+          statsTableBody.innerHTML = '<tr><td colspan="7" class="text-center py-6 text-slate-500 italic">No seasons yet</td></tr>';
+          return;
+        }
+        let html = '';
+        seasonHistory.forEach((s, idx) => {
+          html += `<tr class="hover:bg-slate-800/30">
+            <td class="px-3 py-2 font-bold">${s.year}</td>
+            <td class="px-3 py-2">${s.phaseLabel}</td>
+            <td class="px-3 py-2">${s.wins}-${s.losses}</td>
+            <td class="px-3 py-2">${s.ppg}</td>
+            <td class="px-3 py-2">${s.rpg}</td>
+            <td class="px-3 py-2">${s.apg}</td>
+            <td class="px-3 py-2 text-amber-300 font-semibold">${s.awards.length ? s.awards.join(', ') : '—'}</td>
+          </tr>`;
+        });
+        statsTableBody.innerHTML = html;
       }
-
-      updateScoreboard();
-      updateFoulPanel();
-    }
-
-    function addToLog(text) {
-      const p = document.createElement('p');
-      p.textContent = text;
-      playLog.appendChild(p);
-      playLog.scrollTop = playLog.scrollHeight;
-    }
-
-    function endGame() {
-      const g = state.currentGame;
-      g.isGameOver = true;
-      if (state.autoPlayTimer) {
-        clearTimeout(state.autoPlayTimer);
-        state.autoPlayTimer = null;
+      
+      // Initialize
+      function initGame() {
+        currentDraftRound = 0;
+        phase = 'draft';
+        nbaYear = 0;
+        age = 18;
+        seasonHistory = [];
+        attributes = { scoring: 0, defense: 0, playmaking: 0, athleticism: 0, iq: 0 };
+        refreshAttributeDisplays();
+        draftSection.classList.remove('hidden');
+        simulationSection.classList.add('hidden');
+        awardBanner.classList.add('hidden');
+        updateHub();
+        renderStatsTable();
+        generateDraftRound();
+        simulateBtn.disabled = false;
+        nextPhaseLabel.textContent = 'Up next: High School';
       }
-      gameEventText.textContent = '';
-      gameChoices.innerHTML = '';
-      gameResultMessage.classList.add('hidden');
-      gameFinalArea.classList.remove('hidden');
-
-      const userWon = g.currentUserScore > g.currentOppScore;
-      if (userWon) state.teamRecord.wins++; else state.teamRecord.losses++;
-
-      const p = state.player;
-      p.seasonStats.gamesPlayed++;
-      p.seasonStats.points += g.playerGameStats.points;
-      p.seasonStats.assists += g.playerGameStats.assists;
-      p.seasonStats.rebounds += g.playerGameStats.rebounds;
-      p.seasonStats.steals += g.playerGameStats.steals;
-      p.seasonStats.blocks += g.playerGameStats.blocks;
-      p.seasonStats.turnovers += g.playerGameStats.turnovers;
-      p.seasonStats.minutes += g.playerGameStats.minutes;
-      p.relationships.coach = Math.max(0, Math.min(100, p.relationships.coach + g.relationshipsDelta.coach));
-      p.relationships.teammates = Math.max(0, Math.min(100, p.relationships.teammates + g.relationshipsDelta.teammates));
-      p.relationships.gm = Math.max(0, Math.min(100, p.relationships.gm + g.relationshipsDelta.gm));
-
-      const stats = g.playerGameStats;
-      let html = '';
-      html += `<div class="final-stat"><span>Points</span><strong>${stats.points}</strong></div>`;
-      html += `<div class="final-stat"><span>Assists</span><strong>${stats.assists}</strong></div>`;
-      html += `<div class="final-stat"><span>Rebounds</span><strong>${stats.rebounds}</strong></div>`;
-      html += `<div class="final-stat"><span>Steals</span><strong>${stats.steals}</strong></div>`;
-      html += `<div class="final-stat"><span>Blocks</span><strong>${stats.blocks}</strong></div>`;
-      html += `<div class="final-stat"><span>Turnovers</span><strong>${stats.turnovers}</strong></div>`;
-      html += `<div class="final-stat"><span>Minutes</span><strong>${stats.minutes}</strong></div>`;
-      finalPlayerStats.innerHTML = html;
-
-      let relHtml = `<p>Final Score: ${g.userTeamName} ${g.currentUserScore} - ${g.currentOppScore} ${g.oppTeamName}</p>`;
-      relHtml += `<p>Result: ${userWon ? 'Win' : 'Loss'}</p>`;
-      relHtml += `<p>Coach Relationship: ${p.relationships.coach} (${g.relationshipsDelta.coach >= 0 ? '+' : ''}${g.relationshipsDelta.coach})</p>`;
-      relHtml += `<p>Teammate Relationship: ${p.relationships.teammates} (${g.relationshipsDelta.teammates >= 0 ? '+' : ''}${g.relationshipsDelta.teammates})</p>`;
-      relHtml += `<p>GM Relationship: ${p.relationships.gm} (${g.relationshipsDelta.gm >= 0 ? '+' : ''}${g.relationshipsDelta.gm})</p>`;
-      finalRelationships.innerHTML = relHtml;
-
-      updateScoreboard();
-    }
-
-    finishGameBtn.addEventListener('click', () => {
-      if (state.autoPlayTimer) clearTimeout(state.autoPlayTimer);
-      showScreen('career-hub');
-      showCareerHub();
-    });
-
-    // ---------- INITIAL NAVIGATION ----------
-    backToMenuBtn.addEventListener('click', () => showScreen('main-menu'));
-    backToCharacterBtn.addEventListener('click', () => showScreen('character-creation'));
-
-    console.log('Game initialized. Auto play-by-play with quarters and speed control ready.');
+      
+      // Event listener for simulate button
+      simulateBtn.addEventListener('click', simulateSeason);
+      
+      // Start game
+      initGame();
+    })();
   </script>
 </body>
 </html>
