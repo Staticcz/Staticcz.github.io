@@ -463,4 +463,98 @@
       function generateGameStatLine() {
         const points = Math.round((TIER_VALUES[attributes['3P']] * 0.2 + TIER_VALUES[attributes['MID']] * 0.2 + TIER_VALUES[attributes['FIN']] * 0.25 + TIER_VALUES[attributes['CLU']] * 0.15) * 0.35 + Math.random() * 8);
         const rebounds = Math.round((TIER_VALUES[attributes['REB']] * 0.4 + TIER_VALUES[attributes['IDEF']] * 0.3 + TIER_VALUES[attributes['ATH']] * 0.3) * 0.18);
-        const assists = Math.round((TIER_VALUES[attributes['PAS']]
+        const assists = Math.round((TIER_VALUES[attributes['PAS']] * 0.5 + TIER_VALUES[attributes['HAN']] * 0.3 + TIER_VALUES[attributes['CLU']] * 0.2) * 0.25);
+        const blocks = Math.round((TIER_VALUES[attributes['BLK']] * 0.5 + TIER_VALUES[attributes['IDEF']] * 0.3) * 0.08);
+        const steals = Math.round((TIER_VALUES[attributes['PDEF']] * 0.5 + TIER_VALUES[attributes['ATH']] * 0.3) * 0.06);
+        return { points: Math.max(0, points), rebounds: Math.max(0, rebounds), assists: Math.max(0, assists), blocks: Math.max(0, blocks), steals: Math.max(0, steals) };
+      }
+
+      function completeSeasonAndAdvance() {
+        // calculate season averages
+        const ppg = (seasonStats.totalPoints / gamesPlayedThisSeason).toFixed(1);
+        const rpg = (seasonStats.totalRebounds / gamesPlayedThisSeason).toFixed(1);
+        const apg = (seasonStats.totalAssists / gamesPlayedThisSeason).toFixed(1);
+        const bpg = (seasonStats.totalBlocks / gamesPlayedThisSeason).toFixed(1);
+        const spg = (seasonStats.totalSteals / gamesPlayedThisSeason).toFixed(1);
+        
+        let awards = [];
+        if (phase === 'highschool') {
+          if (parseFloat(ppg) > 25 || overall > 85) awards.push('Gatorade POY');
+        } else if (phase === 'college') {
+          if (teamRecord.wins > 32) awards.push('National Champion');
+          if (parseFloat(ppg) > 22 && parseFloat(apg) > 5) awards.push('Wooden Award');
+        } else if (phase === 'nba') {
+          if (nbaYear === 1 && parseFloat(ppg) > 15) awards.push('ROTY');
+          if (parseFloat(ppg) > 28 && teamRecord.wins > 50) awards.push('MVP');
+          if (attributes['PDEF'] && TIER_VALUES[attributes['PDEF']] > 85 && (parseFloat(spg)+parseFloat(bpg)) > 3.5) awards.push('DPOY');
+        }
+        
+        const seasonObj = {
+          year: getYearLabel(),
+          phase: phase === 'highschool' ? 'HS' : phase === 'college' ? 'COL' : (nbaYear ? `NBA Y${nbaYear}` : 'NBA'),
+          record: `${teamRecord.wins}-${teamRecord.losses}`,
+          ppg, rpg, apg, bpg, spg,
+          awards: awards
+        };
+        seasonHistory.push(seasonObj);
+        renderStatsTable();
+        if (awards.length) {
+          awardBanner.classList.remove('hidden');
+          awardText.textContent = awards.join(' • ');
+          setTimeout(() => awardBanner.classList.add('hidden'), 4000);
+        }
+        
+        // Advance phase
+        if (phase === 'highschool') {
+          phase = 'college'; age = 19; totalGamesInSeason = 40;
+        } else if (phase === 'college') {
+          phase = 'nba'; nbaYear = 1; age = 20; totalGamesInSeason = 82;
+        } else if (phase === 'nba') {
+          if (nbaYear >= 15) { phase = 'retired'; simulateGameBtn.disabled = true; gameStatusText.textContent = 'Legendary career complete'; return; }
+          nbaYear++; age++; totalGamesInSeason = 82;
+        }
+        // reset current season stats
+        gamesPlayedThisSeason = 0;
+        seasonStats = { totalPoints: 0, totalRebounds: 0, totalAssists: 0, totalBlocks: 0, totalSteals: 0 };
+        teamRecord = { wins: 0, losses: 0 };
+        updateHub();
+        gameStatusText.textContent = `New season: ${phase === 'highschool' ? 'HS' : phase === 'college' ? 'College' : 'NBA'} ready`;
+      }
+
+      function getYearLabel() {
+        return `Y${seasonHistory.length+1}`;
+      }
+
+      function renderStatsTable() {
+        if (!seasonHistory.length) {
+          statsTableBody.innerHTML = '<tr><td colspan="7" class="text-center py-6 text-slate-500 italic">No seasons completed</td></tr>';
+          return;
+        }
+        let html = '';
+        seasonHistory.forEach((s, i) => {
+          html += `<tr class="hover:bg-slate-800/30">
+            <td class="px-3 py-2 font-bold">${s.year}</td>
+            <td class="px-3 py-2">${s.phase}</td>
+            <td class="px-3 py-2">${s.record}</td>
+            <td class="px-3 py-2">${s.ppg}</td>
+            <td class="px-3 py-2">${s.rpg}</td>
+            <td class="px-3 py-2">${s.apg}</td>
+            <td class="px-3 py-2 text-amber-300 font-semibold">${s.awards.length ? s.awards.join(', ') : '—'}</td>
+          </tr>`;
+        });
+        statsTableBody.innerHTML = html;
+      }
+
+      // Event listeners
+      spinWheelBtn.addEventListener('click', spinWheel);
+      simulateGameBtn.addEventListener('click', startNextGame);
+
+      // Initial
+      refreshAttributeDisplays();
+      updateHub();
+      gameStatusText.textContent = 'Draft phase active';
+      seasonProgressLabel.textContent = '';
+    })();
+  </script>
+</body>
+</html>
