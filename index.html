@@ -3,45 +3,45 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HOOPER ASCENT · Build a Hooper Career Sim</title>
-  <!-- Tailwind CSS via CDN + dark sports UI -->
+  <title>HOOPER ASCENT · Team Wheel & Game-by-Game Sim</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap');
     * { font-family: 'Inter', system-ui, sans-serif; }
-    .glow-card { box-shadow: 0 20px 35px -8px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.04); }
+    .glow-card { box-shadow: 0 25px 40px -12px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.05); }
     .stat-badge { transition: all 0.2s ease; }
-    .stat-badge:hover { transform: translateY(-2px); }
-    ::-webkit-scrollbar { width: 8px; }
+    .draft-player-card { transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1); border: 1px solid rgba(255,255,255,0.06); }
+    .draft-player-card:hover { border-color: #f59e0b; box-shadow: 0 0 0 3px rgba(245,158,11,0.25); transform: scale(1.02); }
+    .attribute-chip { transition: all 0.15s ease; }
+    .attribute-chip:hover { background: #f59e0b !important; color: #0f172a !important; border-color: #f59e0b !important; }
+    ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: #0f172a; }
     ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-    .progress-fill { transition: width 0.15s linear; }
-    .draft-card { transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1); border: 1px solid rgba(255,255,255,0.06); }
-    .draft-card:hover { border-color: #f59e0b; box-shadow: 0 0 0 3px rgba(245,158,11,0.2); transform: scale(1.02); }
+    .wheel-animation { animation: pulse 0.3s infinite alternate; }
+    @keyframes pulse { from { opacity: 0.7; transform: scale(0.98); } to { opacity: 1; transform: scale(1.02); } }
+    .play-by-play-item { animation: fadeIn 0.4s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-200 min-h-screen flex items-center justify-center p-4 md:p-6 selection:bg-amber-400 selection:text-slate-900">
 
-  <!-- main app container -->
   <div class="max-w-7xl w-full mx-auto flex flex-col gap-6">
-    
-    <!-- Header / branding -->
+    <!-- Header -->
     <header class="flex flex-col md:flex-row items-start md:items-end justify-between gap-4">
       <div>
-        <h1 class="text-5xl font-black tracking-tight text-white leading-none drop-shadow-lg">🏀 HOOPER <span class="text-amber-400">ASCENT</span></h1>
-        <p class="text-slate-400 mt-2 text-sm uppercase tracking-widest font-semibold">Build a legacy · Draft. Develop. Dominate.</p>
+        <h1 class="text-5xl font-black tracking-tight text-white drop-shadow-lg">🏀 HOOPER <span class="text-amber-400">ASCENT</span></h1>
+        <p class="text-slate-400 mt-1 text-sm uppercase tracking-widest font-semibold">Steal attributes · Play every game · Become immortal</p>
       </div>
       <div id="phaseBadge" class="bg-slate-800/90 backdrop-blur px-6 py-3 rounded-2xl border border-slate-700 text-lg font-bold uppercase tracking-wider">
         <span id="phaseIndicator" class="text-amber-300">Draft Phase</span>
       </div>
     </header>
 
-    <!-- Main dashboard grid -->
+    <!-- Main Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      
-      <!-- LEFT: Career Hub + Stats Table -->
+      <!-- LEFT & CENTER : Career Hub, Stats, Live Game -->
       <div class="lg:col-span-2 space-y-6">
-        <!-- career hub card -->
+        <!-- Career Hub -->
         <section class="bg-slate-900/80 backdrop-blur-md p-6 rounded-3xl glow-card border border-slate-800">
           <div class="flex items-center justify-between mb-3">
             <h2 class="text-2xl font-extrabold text-white flex items-center gap-2"><span class="w-2.5 h-2.5 bg-amber-400 rounded-full"></span> Career Hub</h2>
@@ -50,35 +50,52 @@
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
             <div class="bg-slate-950/60 rounded-2xl p-4 border border-slate-700/50">
               <div class="text-xs uppercase tracking-wider text-slate-400">Phase</div>
-              <div id="hubPhase" class="text-xl font-extrabold text-white mt-1">HS</div>
+              <div id="hubPhase" class="text-xl font-extrabold text-white mt-1">DRAFT</div>
             </div>
             <div class="bg-slate-950/60 rounded-2xl p-4 border border-slate-700/50">
-              <div class="text-xs uppercase tracking-wider text-slate-400">Team Record</div>
+              <div class="text-xs uppercase tracking-wider text-slate-400">Record</div>
               <div id="hubRecord" class="text-xl font-extrabold text-white mt-1">0-0</div>
             </div>
             <div class="bg-slate-950/60 rounded-2xl p-4 border border-slate-700/50">
-              <div class="text-xs uppercase tracking-wider text-slate-400">Career PPG</div>
+              <div class="text-xs uppercase tracking-wider text-slate-400">PPG</div>
               <div id="hubPpg" class="text-xl font-extrabold text-white mt-1">0.0</div>
             </div>
             <div class="bg-slate-950/60 rounded-2xl p-4 border border-slate-700/50">
-              <div class="text-xs uppercase tracking-wider text-slate-400">Career OVR</div>
+              <div class="text-xs uppercase tracking-wider text-slate-400">OVR</div>
               <div id="hubOvr" class="text-xl font-extrabold text-white mt-1">-</div>
             </div>
           </div>
-          <!-- attribute bars -->
-          <div class="mt-6 grid grid-cols-5 gap-2 text-center">
-            <div><span class="text-xs text-slate-400">SCOR</span><div id="attrScoring" class="text-lg font-black text-white">0</div></div>
-            <div><span class="text-xs text-slate-400">DEF</span><div id="attrDefense" class="text-lg font-black text-white">0</div></div>
-            <div><span class="text-xs text-slate-400">PLAY</span><div id="attrPlay" class="text-lg font-black text-white">0</div></div>
-            <div><span class="text-xs text-slate-400">ATH</span><div id="attrAthleticism" class="text-lg font-black text-white">0</div></div>
-            <div><span class="text-xs text-slate-400">IQ</span><div id="attrIq" class="text-lg font-black text-white">0</div></div>
+          <!-- 13 attributes visual -->
+          <div class="mt-5 grid grid-cols-5 sm:grid-cols-7 gap-1 text-center">
+            <span class="text-xs text-slate-500">3P <span id="attr3P" class="font-bold text-slate-200">-</span></span>
+            <span class="text-xs text-slate-500">MID <span id="attrMID" class="font-bold text-slate-200">-</span></span>
+            <span class="text-xs text-slate-500">FIN <span id="attrFIN" class="font-bold text-slate-200">-</span></span>
+            <span class="text-xs text-slate-500">DNK <span id="attrDNK" class="font-bold text-slate-200">-</span></span>
+            <span class="text-xs text-slate-500">HAN <span id="attrHAN" class="font-bold text-slate-200">-</span></span>
+            <span class="text-xs text-slate-500">PAS <span id="attrPAS" class="font-bold text-slate-200">-</span></span>
+            <span class="text-xs text-slate-500">PDEF <span id="attrPDEF" class="font-bold text-slate-200">-</span></span>
+            <span class="text-xs text-slate-500">IDEF <span id="attrIDEF" class="font-bold text-slate-200">-</span></span>
+            <span class="text-xs text-slate-500">BLK <span id="attrBLK" class="font-bold text-slate-200">-</span></span>
+            <span class="text-xs text-slate-500">REB <span id="attrREB" class="font-bold text-slate-200">-</span></span>
+            <span class="text-xs text-slate-500">ATH <span id="attrATH" class="font-bold text-slate-200">-</span></span>
+            <span class="text-xs text-slate-500">STR <span id="attrSTR" class="font-bold text-slate-200">-</span></span>
+            <span class="text-xs text-slate-500">CLU <span id="attrCLU" class="font-bold text-slate-200">-</span></span>
           </div>
         </section>
 
-        <!-- Stats table history -->
-        <section class="bg-slate-900/80 backdrop-blur-md p-5 rounded-3xl glow-card border border-slate-800 overflow-hidden">
+        <!-- LIVE GAME VIEW (hidden by default) -->
+        <section id="liveMatchSection" class="hidden bg-slate-900/80 backdrop-blur-md p-5 rounded-3xl glow-card border border-amber-500/30">
+          <h3 class="text-xl font-bold text-white flex items-center gap-2">🎙️ Live Play-by-Play</h3>
+          <div id="playByPlayContainer" class="mt-3 space-y-2 max-h-64 overflow-y-auto pr-2 text-sm"></div>
+          <div id="gameResultArea" class="mt-4 hidden text-center bg-slate-950/60 p-3 rounded-xl">
+            <span id="gameResultText" class="font-black text-lg text-amber-300"></span>
+          </div>
+        </section>
+
+        <!-- Career Stats History Table -->
+        <section class="bg-slate-900/80 backdrop-blur-md p-5 rounded-3xl glow-card border border-slate-800">
           <div class="flex items-center justify-between mb-4">
-            <h3 class="text-xl font-bold text-white">📋 Season History</h3>
+            <h3 class="text-xl font-bold text-white">📊 Career Stats History</h3>
             <span id="seasonCountLabel" class="text-xs bg-slate-800 px-3 py-1 rounded-full text-slate-300">0 seasons</span>
           </div>
           <div class="overflow-x-auto">
@@ -86,51 +103,59 @@
               <thead class="text-xs uppercase text-slate-400 bg-slate-950/50">
                 <tr>
                   <th class="px-3 py-2 rounded-l-lg">Year</th>
-                  <th class="px-3 py-2">Team/Phase</th>
+                  <th class="px-3 py-2">Phase</th>
                   <th class="px-3 py-2">Record</th>
                   <th class="px-3 py-2">PPG</th>
                   <th class="px-3 py-2">RPG</th>
                   <th class="px-3 py-2">APG</th>
-                  <th class="px-3 py-2 rounded-r-lg">Awards</th>
+                  <th class="px-3 py-2">Awards</th>
                 </tr>
               </thead>
               <tbody id="statsTableBody" class="divide-y divide-slate-800">
-                <tr><td colspan="7" class="text-center py-6 text-slate-500 italic">Draft your hooper to begin</td></tr>
+                <tr><td colspan="7" class="text-center py-6 text-slate-500 italic">No seasons completed</td></tr>
               </tbody>
             </table>
           </div>
         </section>
       </div>
 
-      <!-- RIGHT: Draft & simulation panel -->
+      <!-- RIGHT PANEL: Draft & Action Buttons -->
       <div class="space-y-6">
-        <!-- draft / action card -->
+        <!-- Draft / Action Panel -->
         <div id="actionPanel" class="bg-slate-900/80 backdrop-blur-md p-6 rounded-3xl glow-card border border-slate-800">
+          <!-- DRAFT SECTION -->
           <div id="draftSection">
-            <h2 class="text-2xl font-black text-white mb-1">🏆 NBA Draft Pool</h2>
-            <p class="text-slate-400 text-sm mb-4" id="draftInstruction">Select a player to inherit his attribute</p>
-            <!-- three player cards -->
-            <div id="draftCandidates" class="grid grid-cols-1 gap-3"></div>
-          </div>
-          <div id="simulationSection" class="hidden">
-            <h2 class="text-2xl font-black text-white mb-2">⚡ Simulate Season</h2>
-            <p class="text-slate-400 text-sm mb-4" id="nextPhaseLabel">Up next: High School</p>
-            <button id="simulateBtn" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-4 rounded-2xl transition-all text-lg shadow-lg shadow-amber-500/20 active:scale-95">
-              SIMULATE SEASON
+            <h2 class="text-2xl font-black text-white mb-2">🎡 Spin the Team Wheel</h2>
+            <p class="text-slate-400 text-sm mb-3" id="draftInstruction">Click spin to receive your next team</p>
+            <button id="spinWheelBtn" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-4 rounded-2xl transition-all text-lg shadow-lg shadow-amber-500/20 active:scale-95 disabled:opacity-50">
+              SPIN WHEEL
             </button>
-            <!-- loading bar -->
-            <div id="loadingBarContainer" class="hidden mt-5">
-              <div class="flex justify-between text-xs mb-1 text-slate-400"><span>simulating games...</span><span id="progressPercent">0%</span></div>
-              <div class="w-full h-4 bg-slate-800 rounded-full overflow-hidden">
-                <div id="loadingBarFill" class="progress-fill h-full bg-gradient-to-r from-amber-400 to-orange-500 rounded-full" style="width: 0%"></div>
+            <div id="wheelResult" class="mt-4 text-center text-xl font-extrabold text-white bg-slate-950/60 p-4 rounded-xl border border-slate-700">—</div>
+            <!-- Player & attribute selection -->
+            <div id="playerSelectionArea" class="mt-4 hidden">
+              <p class="text-xs uppercase text-slate-500 mb-2">Select a player from <span id="teamNameDisplay" class="text-amber-300"></span></p>
+              <div id="teamRosterDiv" class="grid grid-cols-1 gap-2"></div>
+              <div id="attributeSelectionArea" class="mt-4 hidden">
+                <p class="text-xs uppercase text-slate-500 mb-2">Choose ONE attribute to steal from <span id="chosenPlayerName" class="text-amber-300"></span></p>
+                <div id="attributeChoices" class="flex flex-wrap gap-2"></div>
               </div>
             </div>
           </div>
+
+          <!-- SIMULATION / GAME BUTTONS -->
+          <div id="simulationSection" class="hidden">
+            <h2 class="text-2xl font-black text-white mb-2">⚡ Next Game</h2>
+            <p class="text-slate-400 text-sm mb-4" id="gameStatusText">Season ready</p>
+            <button id="simulateGameBtn" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-4 rounded-2xl transition-all text-lg shadow-lg shadow-amber-500/20 active:scale-95">
+              SIMULATE NEXT GAME
+            </button>
+            <div id="seasonProgressLabel" class="mt-3 text-center text-sm text-slate-400 bg-slate-950/50 rounded-xl p-2"></div>
+          </div>
         </div>
 
-        <!-- Award notification card -->
+        <!-- Awards Banner -->
         <div id="awardBanner" class="bg-gradient-to-br from-amber-500/20 to-slate-900 p-5 rounded-3xl border border-amber-500/30 text-center hidden">
-          <p class="text-amber-300 font-bold text-sm uppercase tracking-widest">🏆 Award earned!</p>
+          <p class="text-amber-300 font-bold text-sm uppercase tracking-widest">🏆 Season Complete!</p>
           <p id="awardText" class="text-white text-lg font-extrabold mt-1"></p>
         </div>
       </div>
@@ -139,362 +164,303 @@
 
   <script>
     (function() {
-      // ---------- GAME STATE ----------
-      const TIER_VALUES = { S: 95, A: 88, B: 80, C: 72, D: 65, F: 55 };
-      
-      // Real NBA players pool (for draft: each round uses category-specific players)
-      const DRAFT_POOL = {
-        Scoring: [
-          { name: 'Stephen Curry', tier: 'S' }, { name: 'Luka Doncic', tier: 'A' }, { name: 'Devin Booker', tier: 'B' },
-          { name: 'Jalen Green', tier: 'C' }, { name: 'Cam Thomas', tier: 'D' }, { name: 'Malik Beasley', tier: 'F' }
+      // ----- DATA: Teams & Roster (hardcoded with attribute tiers for each player) -----
+      const TEAMS = {
+        'Lakers': [
+          { name: 'LeBron James', attrs: { '3P': 'B', 'MID': 'A', 'FIN': 'S', 'DNK': 'B', 'HAN': 'A', 'PAS': 'S', 'PDEF': 'B', 'IDEF': 'B', 'BLK': 'C', 'REB': 'B', 'ATH': 'A', 'STR': 'S', 'CLU': 'S' } },
+          { name: 'Anthony Davis', attrs: { '3P': 'C', 'MID': 'B', 'FIN': 'A', 'DNK': 'A', 'HAN': 'C', 'PAS': 'C', 'PDEF': 'B', 'IDEF': 'S', 'BLK': 'S', 'REB': 'S', 'ATH': 'A', 'STR': 'A', 'CLU': 'B' } },
+          { name: 'Austin Reaves', attrs: { '3P': 'B', 'MID': 'B', 'FIN': 'C', 'DNK': 'D', 'HAN': 'B', 'PAS': 'B', 'PDEF': 'C', 'IDEF': 'D', 'BLK': 'D', 'REB': 'D', 'ATH': 'C', 'STR': 'C', 'CLU': 'B' } }
         ],
-        Defense: [
-          { name: 'Rudy Gobert', tier: 'S' }, { name: 'Anthony Davis', tier: 'A' }, { name: 'Mikal Bridges', tier: 'B' },
-          { name: 'Jaden McDaniels', tier: 'C' }, { name: 'Dorian Finney-Smith', tier: 'D' }, { name: 'Kevin Huerter', tier: 'F' }
+        'Celtics': [
+          { name: 'Jayson Tatum', attrs: { '3P': 'A', 'MID': 'A', 'FIN': 'A', 'DNK': 'B', 'HAN': 'B', 'PAS': 'B', 'PDEF': 'B', 'IDEF': 'C', 'BLK': 'D', 'REB': 'C', 'ATH': 'A', 'STR': 'B', 'CLU': 'A' } },
+          { name: 'Jaylen Brown', attrs: { '3P': 'B', 'MID': 'A', 'FIN': 'B', 'DNK': 'A', 'HAN': 'C', 'PAS': 'C', 'PDEF': 'B', 'IDEF': 'B', 'BLK': 'D', 'REB': 'C', 'ATH': 'A', 'STR': 'A', 'CLU': 'B' } },
+          { name: 'Derrick White', attrs: { '3P': 'B', 'MID': 'C', 'FIN': 'C', 'DNK': 'D', 'HAN': 'B', 'PAS': 'B', 'PDEF': 'A', 'IDEF': 'C', 'BLK': 'C', 'REB': 'D', 'ATH': 'C', 'STR': 'C', 'CLU': 'C' } }
         ],
-        Playmaking: [
-          { name: 'Nikola Jokic', tier: 'S' }, { name: 'Chris Paul', tier: 'A' }, { name: 'Darius Garland', tier: 'B' },
-          { name: 'Markelle Fultz', tier: 'C' }, { name: 'T.J. McConnell', tier: 'D' }, { name: 'Davion Mitchell', tier: 'F' }
+        'Warriors': [
+          { name: 'Stephen Curry', attrs: { '3P': 'S', 'MID': 'S', 'FIN': 'B', 'DNK': 'D', 'HAN': 'S', 'PAS': 'A', 'PDEF': 'C', 'IDEF': 'D', 'BLK': 'D', 'REB': 'D', 'ATH': 'B', 'STR': 'C', 'CLU': 'S' } },
+          { name: 'Draymond Green', attrs: { '3P': 'C', 'MID': 'D', 'FIN': 'C', 'DNK': 'D', 'HAN': 'C', 'PAS': 'A', 'PDEF': 'A', 'IDEF': 'A', 'BLK': 'B', 'REB': 'B', 'ATH': 'C', 'STR': 'A', 'CLU': 'B' } },
+          { name: 'Jonathan Kuminga', attrs: { '3P': 'C', 'MID': 'C', 'FIN': 'B', 'DNK': 'A', 'HAN': 'D', 'PAS': 'D', 'PDEF': 'C', 'IDEF': 'C', 'BLK': 'C', 'REB': 'C', 'ATH': 'S', 'STR': 'A', 'CLU': 'C' } }
         ],
-        Athleticism: [
-          { name: 'Giannis Antetokounmpo', tier: 'S' }, { name: 'Zion Williamson', tier: 'A' }, { name: 'Anthony Edwards', tier: 'B' },
-          { name: 'Obi Toppin', tier: 'C' }, { name: 'KJ Martin', tier: 'D' }, { name: 'Frank Ntilikina', tier: 'F' }
+        'Bucks': [
+          { name: 'Giannis Antetokounmpo', attrs: { '3P': 'D', 'MID': 'C', 'FIN': 'S', 'DNK': 'S', 'HAN': 'B', 'PAS': 'B', 'PDEF': 'A', 'IDEF': 'A', 'BLK': 'B', 'REB': 'S', 'ATH': 'S', 'STR': 'S', 'CLU': 'A' } },
+          { name: 'Damian Lillard', attrs: { '3P': 'S', 'MID': 'A', 'FIN': 'B', 'DNK': 'D', 'HAN': 'A', 'PAS': 'A', 'PDEF': 'D', 'IDEF': 'D', 'BLK': 'D', 'REB': 'D', 'ATH': 'B', 'STR': 'C', 'CLU': 'S' } },
+          { name: 'Khris Middleton', attrs: { '3P': 'B', 'MID': 'A', 'FIN': 'C', 'DNK': 'C', 'HAN': 'C', 'PAS': 'C', 'PDEF': 'C', 'IDEF': 'D', 'BLK': 'D', 'REB': 'C', 'ATH': 'C', 'STR': 'C', 'CLU': 'B' } }
         ],
-        IQ: [
-          { name: 'LeBron James', tier: 'S' }, { name: 'Chris Paul', tier: 'A' }, { name: 'Draymond Green', tier: 'B' },
-          { name: 'Kyle Lowry', tier: 'C' }, { name: 'Dennis Schroder', tier: 'D' }, { name: 'Theo Maledon', tier: 'F' }
+        'Mavericks': [
+          { name: 'Luka Doncic', attrs: { '3P': 'A', 'MID': 'S', 'FIN': 'A', 'DNK': 'D', 'HAN': 'S', 'PAS': 'S', 'PDEF': 'C', 'IDEF': 'D', 'BLK': 'D', 'REB': 'B', 'ATH': 'B', 'STR': 'B', 'CLU': 'S' } },
+          { name: 'Kyrie Irving', attrs: { '3P': 'A', 'MID': 'S', 'FIN': 'A', 'DNK': 'D', 'HAN': 'S', 'PAS': 'B', 'PDEF': 'C', 'IDEF': 'D', 'BLK': 'D', 'REB': 'D', 'ATH': 'B', 'STR': 'C', 'CLU': 'S' } },
+          { name: 'Dereck Lively II', attrs: { '3P': 'D', 'MID': 'D', 'FIN': 'B', 'DNK': 'A', 'HAN': 'D', 'PAS': 'D', 'PDEF': 'C', 'IDEF': 'A', 'BLK': 'A', 'REB': 'A', 'ATH': 'B', 'STR': 'B', 'CLU': 'C' } }
+        ],
+        'Nuggets': [
+          { name: 'Nikola Jokic', attrs: { '3P': 'B', 'MID': 'A', 'FIN': 'S', 'DNK': 'C', 'HAN': 'A', 'PAS': 'S', 'PDEF': 'C', 'IDEF': 'A', 'BLK': 'C', 'REB': 'S', 'ATH': 'C', 'STR': 'A', 'CLU': 'S' } },
+          { name: 'Jamal Murray', attrs: { '3P': 'A', 'MID': 'A', 'FIN': 'B', 'DNK': 'C', 'HAN': 'A', 'PAS': 'B', 'PDEF': 'C', 'IDEF': 'D', 'BLK': 'D', 'REB': 'C', 'ATH': 'B', 'STR': 'C', 'CLU': 'A' } },
+          { name: 'Aaron Gordon', attrs: { '3P': 'C', 'MID': 'C', 'FIN': 'A', 'DNK': 'S', 'HAN': 'C', 'PAS': 'C', 'PDEF': 'B', 'IDEF': 'A', 'BLK': 'B', 'REB': 'B', 'ATH': 'A', 'STR': 'A', 'CLU': 'C' } }
         ]
       };
-      
-      // Attributes: scoring, defense, playmaking, athleticism, iq
-      let attributes = { scoring: 0, defense: 0, playmaking: 0, athleticism: 0, iq: 0 };
-      let currentDraftRound = 0;        // 0-indexed: 0->scoring, 1->defense, 2->playmaking, 3->athleticism, 4->iq
-      let phase = 'draft';              // 'draft' | 'highschool' | 'college' | 'nba'
-      let nbaYear = 0;                  // 0 until NBA phase, then increments after each NBA season (year1 -> nbaYear=1)
+
+      const TIER_VALUES = { S: 99, A: 90, B: 80, C: 70, D: 60, F: 50 };
+      const ATTRIBUTE_LIST = ['3P', 'MID', 'FIN', 'DNK', 'HAN', 'PAS', 'PDEF', 'IDEF', 'BLK', 'REB', 'ATH', 'STR', 'CLU'];
+
+      // ----- GAME STATE -----
+      let attributes = {};                // filled with tier strings
+      let currentDraftRound = 0;          // 0-12
+      let phase = 'draft';               // 'draft', 'highschool', 'college', 'nba'
+      let nbaYear = 0;                    // 0 until NBA phase
       let age = 18;
-      let seasonHistory = [];           // array of season objects
+      let seasonHistory = [];            // array of season objects
+      let seasonStats = null;            // current running season stats
+      let gamesPlayedThisSeason = 0;
+      let totalGamesInSeason = 20;       // default HS
+      let teamRecord = { wins: 0, losses: 0 };
       let overall = 0;
-      
-      // temporary candidate storage
-      let currentCandidates = [];
-      
+
+      // live game controls
+      let isSpinning = false;
+      let currentTeam = null;
+      let selectedPlayer = null;
+      let selectedAttribute = null;
+      let liveGameInterval = null;
+
       // UI elements
+      const phaseIndicator = document.getElementById('phaseIndicator');
       const draftSection = document.getElementById('draftSection');
       const simulationSection = document.getElementById('simulationSection');
-      const draftCandidatesDiv = document.getElementById('draftCandidates');
-      const draftInstruction = document.getElementById('draftInstruction');
-      const simulateBtn = document.getElementById('simulateBtn');
-      const loadingBarContainer = document.getElementById('loadingBarContainer');
-      const loadingBarFill = document.getElementById('loadingBarFill');
-      const progressPercent = document.getElementById('progressPercent');
-      const statsTableBody = document.getElementById('statsTableBody');
-      const phaseIndicator = document.getElementById('phaseIndicator');
+      const spinWheelBtn = document.getElementById('spinWheelBtn');
+      const wheelResult = document.getElementById('wheelResult');
+      const playerSelectionArea = document.getElementById('playerSelectionArea');
+      const teamNameDisplay = document.getElementById('teamNameDisplay');
+      const teamRosterDiv = document.getElementById('teamRosterDiv');
+      const attributeSelectionArea = document.getElementById('attributeSelectionArea');
+      const chosenPlayerName = document.getElementById('chosenPlayerName');
+      const attributeChoices = document.getElementById('attributeChoices');
+      const simulateGameBtn = document.getElementById('simulateGameBtn');
+      const liveMatchSection = document.getElementById('liveMatchSection');
+      const playByPlayContainer = document.getElementById('playByPlayContainer');
+      const gameResultArea = document.getElementById('gameResultArea');
+      const gameResultText = document.getElementById('gameResultText');
       const hubPhase = document.getElementById('hubPhase');
       const hubRecord = document.getElementById('hubRecord');
       const hubPpg = document.getElementById('hubPpg');
       const hubOvr = document.getElementById('hubOvr');
       const ageDisplay = document.getElementById('ageDisplay');
+      const seasonCountLabel = document.getElementById('seasonCountLabel');
       const awardBanner = document.getElementById('awardBanner');
       const awardText = document.getElementById('awardText');
-      const seasonCountLabel = document.getElementById('seasonCountLabel');
-      const nextPhaseLabel = document.getElementById('nextPhaseLabel');
-      
-      // attribute display spans
-      const attrScoring = document.getElementById('attrScoring');
-      const attrDefense = document.getElementById('attrDefense');
-      const attrPlay = document.getElementById('attrPlay');
-      const attrAthleticism = document.getElementById('attrAthleticism');
-      const attrIq = document.getElementById('attrIq');
-      
-      // Helper: update overall (average of attributes)
+      const statsTableBody = document.getElementById('statsTableBody');
+      const gameStatusText = document.getElementById('gameStatusText');
+      const seasonProgressLabel = document.getElementById('seasonProgressLabel');
+
+      // attribute display mapping
+      const attrDisplayMap = {
+        '3P': 'attr3P', 'MID': 'attrMID', 'FIN': 'attrFIN', 'DNK': 'attrDNK', 'HAN': 'attrHAN',
+        'PAS': 'attrPAS', 'PDEF': 'attrPDEF', 'IDEF': 'attrIDEF', 'BLK': 'attrBLK', 'REB': 'attrREB',
+        'ATH': 'attrATH', 'STR': 'attrSTR', 'CLU': 'attrCLU'
+      };
+
       function updateOverall() {
-        const sum = attributes.scoring + attributes.defense + attributes.playmaking + attributes.athleticism + attributes.iq;
-        overall = Math.round(sum / 5);
+        const keys = Object.keys(attributes);
+        if (keys.length === 0) { overall = 0; hubOvr.textContent = '-'; return; }
+        let sum = 0, count = 0;
+        keys.forEach(k => { if (attributes[k]) { sum += TIER_VALUES[attributes[k]]; count++; } });
+        overall = count ? Math.round(sum / count) : 0;
         hubOvr.textContent = overall;
       }
-      
-      // Helper: refresh attribute displays
+
       function refreshAttributeDisplays() {
-        attrScoring.textContent = attributes.scoring;
-        attrDefense.textContent = attributes.defense;
-        attrPlay.textContent = attributes.playmaking;
-        attrAthleticism.textContent = attributes.athleticism;
-        attrIq.textContent = attributes.iq;
+        ATTRIBUTE_LIST.forEach(attr => {
+          const el = document.getElementById(attrDisplayMap[attr]);
+          if (el) el.textContent = attributes[attr] || '-';
+        });
         updateOverall();
       }
-      
-      // Helper: update dashboard hub info
+
       function updateHub() {
-        ageDisplay.textContent = `Age: ${age}`;
         let phaseLabel = phase === 'highschool' ? 'HS' : phase === 'college' ? 'COLLEGE' : phase === 'nba' ? `NBA Y${nbaYear}` : 'DRAFT';
-        if (phase === 'draft') phaseLabel = 'DRAFT';
         hubPhase.textContent = phaseLabel;
-        phaseIndicator.textContent = phase === 'draft' ? '🏀 Draft Phase' : phase === 'highschool' ? 'High School' : phase === 'college' ? 'College' : (nbaYear ? `NBA Year ${nbaYear}` : 'NBA');
-        
-        // record from last season if exists
-        if (seasonHistory.length > 0) {
-          const last = seasonHistory[seasonHistory.length-1];
-          hubRecord.textContent = `${last.wins}-${last.losses}`;
-        } else {
-          hubRecord.textContent = '0-0';
-        }
-        // career ppg average
-        if (seasonHistory.length > 0) {
-          const totalPpg = seasonHistory.reduce((acc, s) => acc + s.ppg, 0);
-          hubPpg.textContent = (totalPpg / seasonHistory.length).toFixed(1);
+        phaseIndicator.textContent = phase === 'draft' ? 'Draft Phase' : phaseLabel;
+        ageDisplay.textContent = `Age: ${age}`;
+        hubRecord.textContent = `${teamRecord.wins}-${teamRecord.losses}`;
+        if (seasonStats && gamesPlayedThisSeason > 0) {
+          hubPpg.textContent = (seasonStats.totalPoints / gamesPlayedThisSeason).toFixed(1);
         } else {
           hubPpg.textContent = '0.0';
         }
         seasonCountLabel.textContent = `${seasonHistory.length} season${seasonHistory.length !== 1 ? 's' : ''}`;
+        if (phase !== 'draft') {
+          seasonProgressLabel.textContent = `Game ${gamesPlayedThisSeason} / ${totalGamesInSeason}`;
+        }
       }
-      
-      // Render draft candidates
-      function generateDraftRound() {
-        if (currentDraftRound > 4) return; // no more rounds
-        const categories = ['Scoring', 'Defense', 'Playmaking', 'Athleticism', 'IQ'];
-        const category = categories[currentDraftRound];
-        const pool = DRAFT_POOL[category];
-        // pick 3 random players without replacement
-        const shuffled = [...pool].sort(() => Math.random() - 0.5);
-        currentCandidates = shuffled.slice(0, 3);
-        
-        draftInstruction.textContent = `Round ${currentDraftRound+1} · ${category} — select a player to inherit his tier`;
-        draftCandidatesDiv.innerHTML = '';
-        currentCandidates.forEach((player, idx) => {
-          const card = document.createElement('button');
-          card.className = 'draft-card bg-slate-950/60 hover:bg-slate-800/80 p-4 rounded-2xl text-left flex justify-between items-center border border-slate-700/50';
-          card.innerHTML = `
-            <div>
-              <div class="font-black text-lg text-white">${player.name}</div>
-              <div class="text-xs uppercase tracking-wider text-slate-400">${category} tier</div>
-            </div>
-            <div class="text-3xl font-black ${player.tier === 'S' ? 'text-amber-300' : 'text-slate-200'}">${player.tier}</div>
-          `;
-          card.addEventListener('click', () => selectDraftCandidate(player, category));
-          draftCandidatesDiv.appendChild(card);
+
+      // Draft mechanics
+      function spinWheel() {
+        if (isSpinning || currentDraftRound >= ATTRIBUTE_LIST.length) return;
+        isSpinning = true;
+        spinWheelBtn.disabled = true;
+        spinWheelBtn.classList.add('opacity-50');
+        wheelResult.textContent = '🌀 Spinning...';
+        const teamNames = Object.keys(TEAMS);
+        let count = 0;
+        const maxLoops = 10;
+        const interval = setInterval(() => {
+          const randomTeam = teamNames[Math.floor(Math.random() * teamNames.length)];
+          wheelResult.textContent = randomTeam;
+          count++;
+          if (count > maxLoops) {
+            clearInterval(interval);
+            currentTeam = teamNames[Math.floor(Math.random() * teamNames.length)];
+            wheelResult.textContent = currentTeam;
+            isSpinning = false;
+            spinWheelBtn.disabled = false;
+            spinWheelBtn.classList.remove('opacity-50');
+            showPlayerSelection();
+          }
+        }, 80);
+      }
+
+      function showPlayerSelection() {
+        playerSelectionArea.classList.remove('hidden');
+        teamNameDisplay.textContent = currentTeam;
+        const roster = TEAMS[currentTeam];
+        teamRosterDiv.innerHTML = '';
+        roster.forEach(player => {
+          const btn = document.createElement('button');
+          btn.className = 'draft-player-card bg-slate-950/60 hover:bg-slate-800/80 p-3 rounded-xl text-left border border-slate-700/50';
+          btn.innerHTML = `<span class="font-bold text-white">${player.name}</span>`;
+          btn.addEventListener('click', () => selectPlayer(player));
+          teamRosterDiv.appendChild(btn);
+        });
+        attributeSelectionArea.classList.add('hidden');
+        selectedPlayer = null;
+      }
+
+      function selectPlayer(player) {
+        selectedPlayer = player;
+        chosenPlayerName.textContent = player.name;
+        attributeSelectionArea.classList.remove('hidden');
+        attributeChoices.innerHTML = '';
+        // Get available attributes (those not yet filled)
+        ATTRIBUTE_LIST.forEach(attr => {
+          if (!attributes[attr]) {
+            const chip = document.createElement('button');
+            chip.className = 'attribute-chip bg-slate-800 text-white px-3 py-1.5 rounded-lg text-sm font-semibold border border-slate-600';
+            chip.textContent = `${attr} (${selectedPlayer.attrs[attr]})`;
+            chip.addEventListener('click', () => stealAttribute(attr));
+            attributeChoices.appendChild(chip);
+          }
         });
       }
-      
-      function selectDraftCandidate(player, category) {
-        const value = TIER_VALUES[player.tier] || 65;
-        const attrKey = category.toLowerCase(); // scoring, defense, playmaking, athleticism, iq
-        attributes[attrKey] = value;
+
+      function stealAttribute(attr) {
+        if (!selectedPlayer) return;
+        const tier = selectedPlayer.attrs[attr];
+        attributes[attr] = tier;
         refreshAttributeDisplays();
-        
         currentDraftRound++;
-        if (currentDraftRound < 5) {
-          generateDraftRound();
+        // reset selection area
+        playerSelectionArea.classList.add('hidden');
+        attributeSelectionArea.classList.add('hidden');
+        selectedPlayer = null;
+        if (currentDraftRound >= ATTRIBUTE_LIST.length) {
+          completeDraft();
         } else {
-          // draft complete -> enter high school phase
-          phase = 'highschool';
-          draftSection.classList.add('hidden');
-          simulationSection.classList.remove('hidden');
-          nextPhaseLabel.textContent = 'Up next: High School (20 games)';
-          updateHub();
+          draftInstruction.textContent = `Round ${currentDraftRound+1} of 13: Spin for next team`;
         }
       }
-      
-      // Simulate one season based on phase
-      function simulateSeason() {
-        if (phase === 'highschool' || phase === 'college' || phase === 'nba') {
-          // Determine total games and win% factor
-          let totalGames, winPctFactor;
-          if (phase === 'highschool') { totalGames = 20; winPctFactor = 0.8; }
-          else if (phase === 'college') { totalGames = 40; winPctFactor = 0.6; }
-          else { totalGames = 82; winPctFactor = 0.4; }
-          
-          simulateBtn.disabled = true;
-          loadingBarContainer.classList.remove('hidden');
-          let progress = 0;
-          const totalSteps = totalGames;
-          let gameIndex = 0;
-          
-          // Simulate with interval to show loading bar
-          const interval = setInterval(() => {
-            gameIndex++;
-            progress = Math.min(100, Math.round((gameIndex / totalGames) * 100));
-            loadingBarFill.style.width = progress + '%';
-            progressPercent.textContent = progress + '%';
-            
-            if (gameIndex >= totalGames) {
-              clearInterval(interval);
-              // After simulation, compute stats
-              const stats = computeSeasonStats(totalGames, winPctFactor);
-              const record = stats.teamRecord; // { wins, losses }
-              const seasonData = {
-                year: getSeasonLabel(),
-                phaseLabel: phase === 'highschool' ? 'High School' : phase === 'college' ? 'College' : (nbaYear ? `NBA Y${nbaYear}` : 'NBA'),
-                wins: record.wins,
-                losses: record.losses,
-                ppg: stats.ppg,
-                rpg: stats.rpg,
-                apg: stats.apg,
-                stls: stats.stls,
-                blks: stats.blks,
-                awards: []
-              };
-              
-              // Evaluate awards
-              const awards = evaluateAwards(seasonData, phase, nbaYear);
-              seasonData.awards = awards;
-              seasonHistory.push(seasonData);
-              
-              // update UI
-              renderStatsTable();
-              updateHub();
-              if (awards.length > 0) {
-                awardBanner.classList.remove('hidden');
-                awardText.textContent = awards.join(' • ');
-                setTimeout(() => awardBanner.classList.add('hidden'), 5000);
-              } else {
-                awardBanner.classList.add('hidden');
-              }
-              
-              // progression to next phase/year
-              proceedToNextPhase();
-              
-              simulateBtn.disabled = false;
-              loadingBarContainer.classList.add('hidden');
-              loadingBarFill.style.width = '0%';
-              progressPercent.textContent = '0%';
-            }
-          }, 20); // fast simulation
-        }
-      }
-      
-      function computeSeasonStats(totalGames, winPctFactor) {
-        // Attributes
-        const scoring = attributes.scoring || 55;
-        const defense = attributes.defense || 55;
-        const playmaking = attributes.playmaking || 55;
-        const athleticism = attributes.athleticism || 55;
-        const iq = attributes.iq || 55;
-        
-        // Base per-game stats formulas
-        let basePpg = (scoring * 0.7 + athleticism * 0.15 + iq * 0.15) * 0.29;
-        let baseApg = (playmaking * 0.65 + iq * 0.35) * 0.18;
-        let baseRpg = (athleticism * 0.55 + defense * 0.45) * 0.15;
-        let baseStls = (defense * 0.6 + athleticism * 0.4) * 0.04;
-        let baseBlks = (defense * 0.7 + athleticism * 0.3) * 0.03;
-        
-        // Random variance -3 to +3 per game for each stat avg
-        const variance = () => (Math.random() * 6) - 3;
-        let ppg = Math.max(0, basePpg + variance());
-        let apg = Math.max(0, baseApg + variance());
-        let rpg = Math.max(0, baseRpg + variance());
-        let stls = Math.max(0, baseStls + variance());
-        let blks = Math.max(0, baseBlks + variance());
-        
-        // Round to 1 decimal
-        ppg = Math.round(ppg * 10) / 10;
-        apg = Math.round(apg * 10) / 10;
-        rpg = Math.round(rpg * 10) / 10;
-        stls = Math.round(stls * 10) / 10;
-        blks = Math.round(blks * 10) / 10;
-        
-        // Team wins
-        const ovr = Math.round((scoring+defense+playmaking+athleticism+iq)/5);
-        const randomFactor = Math.random() * 0.25 + 0.0; // 0 to 0.25
-        let winPct = (ovr * winPctFactor) / 100 + randomFactor;
-        winPct = Math.min(0.95, Math.max(0.05, winPct));
-        const wins = Math.round(winPct * totalGames);
-        const losses = totalGames - wins;
-        
-        return { ppg, apg, rpg, stls, blks, teamRecord: { wins, losses } };
-      }
-      
-      function evaluateAwards(season, phase, nbaYear) {
-        const awards = [];
-        if (phase === 'highschool') {
-          if (season.ppg > 25 || overall > 85) awards.push('Gatorade POY');
-        } else if (phase === 'college') {
-          if (season.wins > 32) awards.push('National Champion');
-          if (season.ppg > 22 && season.apg > 5) awards.push('Wooden Award');
-        } else if (phase === 'nba') {
-          if (nbaYear === 1 && season.ppg > 15) awards.push('Rookie of the Year');
-          if (season.ppg > 28 && season.wins > 50) awards.push('MVP');
-          if (attributes.defense > 85 && (season.stls + season.blks) > 3.5) awards.push('DPOY');
-        }
-        return awards;
-      }
-      
-      function getSeasonLabel() {
-        if (phase === 'highschool') return `Year ${seasonHistory.length+1} (HS)`;
-        if (phase === 'college') return `Year ${seasonHistory.length+1} (COL)`;
-        if (phase === 'nba') return `NBA Y${nbaYear}`;
-        return '';
-      }
-      
-      function proceedToNextPhase() {
-        if (phase === 'highschool') {
-          phase = 'college';
-          age = 19;
-          nextPhaseLabel.textContent = 'Up next: College (40 games)';
-        } else if (phase === 'college') {
-          phase = 'nba';
-          nbaYear = 1;
-          age = 20;
-          nextPhaseLabel.textContent = `Up next: NBA Year 1 (82 games)`;
-        } else if (phase === 'nba') {
-          if (nbaYear >= 15) {
-            // retire simulation (stop at 15 seasons)
-            simulateBtn.disabled = true;
-            nextPhaseLabel.textContent = 'Legendary career complete!';
-            phase = 'retired';
-            return;
-          }
-          nbaYear++;
-          age++;
-          nextPhaseLabel.textContent = `Up next: NBA Year ${nbaYear} (82 games)`;
-        }
+
+      function completeDraft() {
+        phase = 'highschool';
+        age = 18;
+        totalGamesInSeason = 20;
+        gamesPlayedThisSeason = 0;
+        seasonStats = { totalPoints: 0, totalRebounds: 0, totalAssists: 0, totalBlocks: 0, totalSteals: 0 };
+        teamRecord = { wins: 0, losses: 0 };
+        draftSection.classList.add('hidden');
+        simulationSection.classList.remove('hidden');
+        gameStatusText.textContent = 'High School season ready · 20 games';
         updateHub();
       }
-      
-      function renderStatsTable() {
-        if (seasonHistory.length === 0) {
-          statsTableBody.innerHTML = '<tr><td colspan="7" class="text-center py-6 text-slate-500 italic">No seasons yet</td></tr>';
+
+      function startNextGame() {
+        if (phase === 'retired') return;
+        if (gamesPlayedThisSeason >= totalGamesInSeason) {
+          completeSeasonAndAdvance();
           return;
         }
-        let html = '';
-        seasonHistory.forEach((s, idx) => {
-          html += `<tr class="hover:bg-slate-800/30">
-            <td class="px-3 py-2 font-bold">${s.year}</td>
-            <td class="px-3 py-2">${s.phaseLabel}</td>
-            <td class="px-3 py-2">${s.wins}-${s.losses}</td>
-            <td class="px-3 py-2">${s.ppg}</td>
-            <td class="px-3 py-2">${s.rpg}</td>
-            <td class="px-3 py-2">${s.apg}</td>
-            <td class="px-3 py-2 text-amber-300 font-semibold">${s.awards.length ? s.awards.join(', ') : '—'}</td>
-          </tr>`;
-        });
-        statsTableBody.innerHTML = html;
+        simulateGameBtn.disabled = true;
+        liveMatchSection.classList.remove('hidden');
+        playByPlayContainer.innerHTML = '';
+        gameResultArea.classList.add('hidden');
+        simulateLiveGame();
       }
-      
-      // Initialize
-      function initGame() {
-        currentDraftRound = 0;
-        phase = 'draft';
-        nbaYear = 0;
-        age = 18;
-        seasonHistory = [];
-        attributes = { scoring: 0, defense: 0, playmaking: 0, athleticism: 0, iq: 0 };
-        refreshAttributeDisplays();
-        draftSection.classList.remove('hidden');
-        simulationSection.classList.add('hidden');
-        awardBanner.classList.add('hidden');
+
+      function simulateLiveGame() {
+        const plays = [];
+        const totalPlays = 5 + Math.floor(Math.random() * 2); // 5-6 plays
+        for (let i = 0; i < totalPlays; i++) {
+          plays.push(generatePlayByPlay());
+        }
+        let idx = 0;
+        liveGameInterval = setInterval(() => {
+          if (idx < plays.length) {
+            const p = document.createElement('div');
+            p.className = 'play-by-play-item bg-slate-950/70 p-2 rounded-lg border border-slate-700/40';
+            p.textContent = plays[idx];
+            playByPlayContainer.appendChild(p);
+            playByPlayContainer.scrollTop = playByPlayContainer.scrollHeight;
+            idx++;
+          } else {
+            clearInterval(liveGameInterval);
+            finishGameSimulation();
+          }
+        }, 900);
+      }
+
+      function generatePlayByPlay() {
+        const attrs = ATTRIBUTE_LIST;
+        const randomAttr = attrs[Math.floor(Math.random() * attrs.length)];
+        const tierValue = TIER_VALUES[attributes[randomAttr]] || 60;
+        const good = tierValue >= 80;
+        const scenarios = [
+          `Uses ${randomAttr} to create space – ${good ? 'smooth move!' : 'struggles against defender.'}`,
+          `Down by 1, player leans on ${randomAttr} for a clutch look.`,
+          `Defensive play: relies on ${randomAttr} ${good ? '– steal!' : 'but gets beaten.'}`,
+          `Fast break opportunity, ${randomAttr} shines ${good ? 'with a dunk!' : 'but misses layup.'}`,
+          `Post up: ${randomAttr} advantage ${good ? 'converts' : 'gets blocked'}`,
+          `Handles: uses ${randomAttr} to cross over and dish assist.`,
+          `Rebound battle: ${randomAttr} matters – ${good ? 'grabs it!' : 'loses position.'}`
+        ];
+        return scenarios[Math.floor(Math.random() * scenarios.length)];
+      }
+
+      function finishGameSimulation() {
+        clearInterval(liveGameInterval);
+        gamesPlayedThisSeason++;
+        // Generate game stats based on attributes + variance
+        const stats = generateGameStatLine();
+        // update running averages
+        seasonStats.totalPoints += stats.points;
+        seasonStats.totalRebounds += stats.rebounds;
+        seasonStats.totalAssists += stats.assists;
+        seasonStats.totalBlocks += stats.blocks;
+        seasonStats.totalSteals += stats.steals;
+        // win determination based on overall
+        const winProb = (overall * 0.5) / 100 + Math.random() * 0.35;
+        const didWin = Math.random() < winProb;
+        if (didWin) teamRecord.wins++; else teamRecord.losses++;
+        // display result
+        gameResultArea.classList.remove('hidden');
+        gameResultText.textContent = didWin ? 'WIN!' : 'LOSS';
+        gameResultText.className = `font-black text-lg ${didWin ? 'text-emerald-400' : 'text-red-400'}`;
         updateHub();
-        renderStatsTable();
-        generateDraftRound();
-        simulateBtn.disabled = false;
-        nextPhaseLabel.textContent = 'Up next: High School';
+        simulateGameBtn.disabled = false;
+        if (gamesPlayedThisSeason >= totalGamesInSeason) {
+          completeSeasonAndAdvance();
+        } else {
+          gameStatusText.textContent = `Next game (${gamesPlayedThisSeason}/${totalGamesInSeason})`;
+        }
       }
-      
-      // Event listener for simulate button
-      simulateBtn.addEventListener('click', simulateSeason);
-      
-      // Start game
-      initGame();
-    })();
-  </script>
-</body>
-</html>
+
+      function generateGameStatLine() {
+        const points = Math.round((TIER_VALUES[attributes['3P']] * 0.2 + TIER_VALUES[attributes['MID']] * 0.2 + TIER_VALUES[attributes['FIN']] * 0.25 + TIER_VALUES[attributes['CLU']] * 0.15) * 0.35 + Math.random() * 8);
+        const rebounds = Math.round((TIER_VALUES[attributes['REB']] * 0.4 + TIER_VALUES[attributes['IDEF']] * 0.3 + TIER_VALUES[attributes['ATH']] * 0.3) * 0.18);
+        const assists = Math.round((TIER_VALUES[attributes['PAS']]
