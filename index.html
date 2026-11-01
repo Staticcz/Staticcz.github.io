@@ -1,560 +1,942 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HOOPER ASCENT · Team Wheel & Game-by-Game Sim</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap');
-    * { font-family: 'Inter', system-ui, sans-serif; }
-    .glow-card { box-shadow: 0 25px 40px -12px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.05); }
-    .stat-badge { transition: all 0.2s ease; }
-    .draft-player-card { transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1); border: 1px solid rgba(255,255,255,0.06); }
-    .draft-player-card:hover { border-color: #f59e0b; box-shadow: 0 0 0 3px rgba(245,158,11,0.25); transform: scale(1.02); }
-    .attribute-chip { transition: all 0.15s ease; }
-    .attribute-chip:hover { background: #f59e0b !important; color: #0f172a !important; border-color: #f59e0b !important; }
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #0f172a; }
-    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-    .wheel-animation { animation: pulse 0.3s infinite alternate; }
-    @keyframes pulse { from { opacity: 0.7; transform: scale(0.98); } to { opacity: 1; transform: scale(1.02); } }
-    .play-by-play-item { animation: fadeIn 0.4s ease; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Life · Simulator</title>
+    <style>
+        /* ---------- GLOBAL STYLES ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #0b1a2e 0%, #1d2f44 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 820px;
+            height: 90vh;
+            max-height: 880px;
+            background: rgba(18, 28, 40, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* ---------- APP HEADER ---------- */
+        .app-header {
+            padding: 18px 22px;
+            background: rgba(10, 20, 30, 0.7);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .app-header h1 {
+            font-size: 1.6rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #cfd9e6, #9bb8da);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .app-header h1 span {
+            font-size: 0.8rem;
+            background: #2e4b6b;
+            padding: 4px 10px;
+            border-radius: 30px;
+            color: #bdd3ea;
+            font-weight: 400;
+            letter-spacing: 0.3px;
+            -webkit-text-fill-color: #bdd3ea;
+        }
+
+        .new-life-btn {
+            background: rgba(220, 70, 70, 0.15);
+            border: 1px solid rgba(220, 70, 70, 0.5);
+            color: #f7baba;
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .new-life-btn:hover {
+            background: rgba(220, 70, 70, 0.3);
+            border-color: #e06e6e;
+            color: #ffe0e0;
+        }
+
+        /* ---------- MAIN SCREEN (NAV + CONTENT) ---------- */
+        .main-screen {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* ---------- NAVIGATION ---------- */
+        .nav-tabs {
+            display: flex;
+            padding: 12px 18px 0 18px;
+            gap: 8px;
+            background: transparent;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: #8ba1bb;
+            padding: 10px 18px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border-radius: 12px 12px 0 0;
+            cursor: pointer;
+            transition: all 0.15s;
+            letter-spacing: 0.2px;
+            position: relative;
+            top: 1px;
+        }
+
+        .nav-btn:hover {
+            color: #cbdae9;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .nav-btn.active {
+            color: #ffffff;
+            background: rgba(60, 100, 140, 0.3);
+            border-bottom: 2px solid #4f8bc9;
+        }
+
+        /* ---------- CONTENT AREA (scrollable) ---------- */
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 22px 22px 30px 22px;
+            scrollbar-width: thin;
+            scrollbar-color: #3e5a78 #1a2635;
+        }
+
+        .content-area::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .content-area::-webkit-scrollbar-track {
+            background: #1a2635;
+        }
+
+        .content-area::-webkit-scrollbar-thumb {
+            background: #3e5a78;
+            border-radius: 10px;
+        }
+
+        /* ---------- PANELS / CARDS ---------- */
+        .panel {
+            background: rgba(20, 32, 48, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 1.5rem;
+            padding: 22px 22px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .panel-header h2 {
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: #e2ecf7;
+            letter-spacing: -0.2px;
+        }
+
+        .age-display {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #9ac7ff;
+            text-shadow: 0 2px 10px rgba(100, 160, 255, 0.3);
+        }
+
+        .life-stage-badge {
+            background: #1d3f5e;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #c0dcff;
+            border: 1px solid #2d5477;
+        }
+
+        /* ---------- CHARACTER SUMMARY (home) ---------- */
+        .char-summary {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 24px;
+            margin: 16px 0 10px;
+            color: #b7c9dd;
+        }
+
+        .char-summary-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+        }
+
+        .char-summary-item strong {
+            color: #e5eff9;
+            font-weight: 500;
+        }
+
+        .label-icon {
+            opacity: 0.7;
+            font-size: 1.1rem;
+        }
+
+        /* ---------- BUTTONS ---------- */
+        .primary-btn {
+            background: linear-gradient(145deg, #2c5f8a, #1e4466);
+            border: none;
+            border-radius: 40px;
+            padding: 14px 32px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0, 60, 120, 0.4);
+            transition: all 0.15s ease;
+            border: 1px solid rgba(100, 180, 255, 0.3);
+            letter-spacing: 0.3px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .primary-btn:hover {
+            background: linear-gradient(145deg, #3878aa, #245b88);
+            box-shadow: 0 12px 28px rgba(0, 100, 200, 0.5);
+            transform: scale(1.01);
+        }
+
+        .primary-btn:active {
+            transform: scale(0.98);
+        }
+
+        .secondary-btn {
+            background: transparent;
+            border: 1px solid #3e6180;
+            color: #b8d1ea;
+            padding: 10px 22px;
+            border-radius: 40px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .secondary-btn:hover {
+            background: rgba(70, 110, 150, 0.2);
+            border-color: #5b8bb0;
+            color: white;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+
+        /* ---------- PROFILE GRID ---------- */
+        .profile-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 8px;
+        }
+
+        .profile-field {
+            background: rgba(10, 22, 34, 0.6);
+            border-radius: 1rem;
+            padding: 14px 16px;
+            border: 1px solid rgba(80, 130, 180, 0.15);
+        }
+
+        .profile-field .field-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: #6e8aa8;
+            margin-bottom: 6px;
+        }
+
+        .profile-field .field-value {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #e2ecf7;
+            word-break: break-word;
+        }
+
+        /* ---------- TIMELINE (life history) ---------- */
+        .timeline-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .timeline-entry {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            background: rgba(10, 22, 34, 0.5);
+            border-radius: 1rem;
+            padding: 14px 18px;
+            border-left: 3px solid #3b7bb3;
+            transition: background 0.15s;
+            animation: fadeSlideIn 0.3s ease;
+        }
+
+        .timeline-entry:hover {
+            background: rgba(25, 45, 65, 0.7);
+        }
+
+        .timeline-age {
+            font-weight: 700;
+            color: #8bb9e8;
+            font-size: 1.1rem;
+            min-width: 45px;
+            letter-spacing: -0.2px;
+        }
+
+        .timeline-text {
+            color: #ccdef0;
+            font-size: 0.98rem;
+            line-height: 1.4;
+        }
+
+        @keyframes fadeSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ---------- CREATE CHARACTER SCREEN ---------- */
+        .create-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 20px;
+        }
+
+        .create-card {
+            background: rgba(18, 30, 44, 0.9);
+            backdrop-filter: blur(8px);
+            border-radius: 2rem;
+            padding: 30px 28px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(70, 130, 190, 0.2);
+        }
+
+        .create-card h2 {
+            font-size: 1.6rem;
+            font-weight: 500;
+            color: #e5eff9;
+            margin-bottom: 22px;
+            text-align: center;
+            letter-spacing: -0.5px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #8faec9;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(10, 20, 30, 0.8);
+            border: 1px solid #2c4056;
+            border-radius: 40px;
+            font-size: 1rem;
+            color: #eef5fc;
+            outline: none;
+            transition: border 0.15s, box-shadow 0.15s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #4f8bc9;
+            box-shadow: 0 0 0 3px rgba(79, 139, 201, 0.2);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .form-actions {
+            margin-top: 26px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .error-msg {
+            color: #f7a6a6;
+            font-size: 0.8rem;
+            margin-top: 6px;
+            min-height: 18px;
+        }
+
+        /* ---------- HIDDEN / UTILITY ---------- */
+        .hidden {
+            display: none !important;
+        }
+
+        .text-muted {
+            color: #849eb8;
+            font-size: 0.9rem;
+        }
+
+        /* ---------- RESPONSIVE ---------- */
+        @media (max-width: 600px) {
+            .game-container {
+                height: 96vh;
+                border-radius: 1.5rem;
+            }
+
+            .app-header {
+                padding: 12px 16px;
+            }
+
+            .app-header h1 {
+                font-size: 1.3rem;
+            }
+
+            .new-life-btn {
+                padding: 6px 12px;
+                font-size: 0.75rem;
+            }
+
+            .nav-btn {
+                padding: 8px 12px;
+                font-size: 0.85rem;
+            }
+
+            .content-area {
+                padding: 16px;
+            }
+
+            .panel {
+                padding: 16px;
+            }
+
+            .age-display {
+                font-size: 1.4rem;
+            }
+
+            .profile-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
-<body class="bg-slate-950 text-slate-200 min-h-screen flex items-center justify-center p-4 md:p-6 selection:bg-amber-400 selection:text-slate-900">
+<body>
+    <div class="game-container" id="gameContainer">
+        <!-- ========== HEADER ========== -->
+        <header class="app-header">
+            <h1>LIFE <span>simulator</span></h1>
+            <button class="new-life-btn" id="newLifeBtn">↻ New Life</button>
+        </header>
 
-  <div class="max-w-7xl w-full mx-auto flex flex-col gap-6">
-    <!-- Header -->
-    <header class="flex flex-col md:flex-row items-start md:items-end justify-between gap-4">
-      <div>
-        <h1 class="text-5xl font-black tracking-tight text-white drop-shadow-lg">🏀 HOOPER <span class="text-amber-400">ASCENT</span></h1>
-        <p class="text-slate-400 mt-1 text-sm uppercase tracking-widest font-semibold">Steal attributes · Play every game · Become immortal</p>
-      </div>
-      <div id="phaseBadge" class="bg-slate-800/90 backdrop-blur px-6 py-3 rounded-2xl border border-slate-700 text-lg font-bold uppercase tracking-wider">
-        <span id="phaseIndicator" class="text-amber-300">Draft Phase</span>
-      </div>
-    </header>
-
-    <!-- Main Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <!-- LEFT & CENTER : Career Hub, Stats, Live Game -->
-      <div class="lg:col-span-2 space-y-6">
-        <!-- Career Hub -->
-        <section class="bg-slate-900/80 backdrop-blur-md p-6 rounded-3xl glow-card border border-slate-800">
-          <div class="flex items-center justify-between mb-3">
-            <h2 class="text-2xl font-extrabold text-white flex items-center gap-2"><span class="w-2.5 h-2.5 bg-amber-400 rounded-full"></span> Career Hub</h2>
-            <span id="ageDisplay" class="bg-slate-800 px-4 py-1.5 rounded-full text-sm font-bold text-amber-300">Age: 18</span>
-          </div>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
-            <div class="bg-slate-950/60 rounded-2xl p-4 border border-slate-700/50">
-              <div class="text-xs uppercase tracking-wider text-slate-400">Phase</div>
-              <div id="hubPhase" class="text-xl font-extrabold text-white mt-1">DRAFT</div>
+        <!-- ========== MAIN SCREEN (character exists) ========== -->
+        <div class="main-screen" id="mainScreen">
+            <!-- Navigation tabs -->
+            <div class="nav-tabs">
+                <button class="nav-btn active" data-tab="home">Home</button>
+                <button class="nav-btn" data-tab="profile">Profile</button>
+                <button class="nav-btn" data-tab="history">Life History</button>
             </div>
-            <div class="bg-slate-950/60 rounded-2xl p-4 border border-slate-700/50">
-              <div class="text-xs uppercase tracking-wider text-slate-400">Record</div>
-              <div id="hubRecord" class="text-xl font-extrabold text-white mt-1">0-0</div>
-            </div>
-            <div class="bg-slate-950/60 rounded-2xl p-4 border border-slate-700/50">
-              <div class="text-xs uppercase tracking-wider text-slate-400">PPG</div>
-              <div id="hubPpg" class="text-xl font-extrabold text-white mt-1">0.0</div>
-            </div>
-            <div class="bg-slate-950/60 rounded-2xl p-4 border border-slate-700/50">
-              <div class="text-xs uppercase tracking-wider text-slate-400">OVR</div>
-              <div id="hubOvr" class="text-xl font-extrabold text-white mt-1">-</div>
-            </div>
-          </div>
-          <!-- 13 attributes visual -->
-          <div class="mt-5 grid grid-cols-5 sm:grid-cols-7 gap-1 text-center">
-            <span class="text-xs text-slate-500">3P <span id="attr3P" class="font-bold text-slate-200">-</span></span>
-            <span class="text-xs text-slate-500">MID <span id="attrMID" class="font-bold text-slate-200">-</span></span>
-            <span class="text-xs text-slate-500">FIN <span id="attrFIN" class="font-bold text-slate-200">-</span></span>
-            <span class="text-xs text-slate-500">DNK <span id="attrDNK" class="font-bold text-slate-200">-</span></span>
-            <span class="text-xs text-slate-500">HAN <span id="attrHAN" class="font-bold text-slate-200">-</span></span>
-            <span class="text-xs text-slate-500">PAS <span id="attrPAS" class="font-bold text-slate-200">-</span></span>
-            <span class="text-xs text-slate-500">PDEF <span id="attrPDEF" class="font-bold text-slate-200">-</span></span>
-            <span class="text-xs text-slate-500">IDEF <span id="attrIDEF" class="font-bold text-slate-200">-</span></span>
-            <span class="text-xs text-slate-500">BLK <span id="attrBLK" class="font-bold text-slate-200">-</span></span>
-            <span class="text-xs text-slate-500">REB <span id="attrREB" class="font-bold text-slate-200">-</span></span>
-            <span class="text-xs text-slate-500">ATH <span id="attrATH" class="font-bold text-slate-200">-</span></span>
-            <span class="text-xs text-slate-500">STR <span id="attrSTR" class="font-bold text-slate-200">-</span></span>
-            <span class="text-xs text-slate-500">CLU <span id="attrCLU" class="font-bold text-slate-200">-</span></span>
-          </div>
-        </section>
 
-        <!-- LIVE GAME VIEW (hidden by default) -->
-        <section id="liveMatchSection" class="hidden bg-slate-900/80 backdrop-blur-md p-5 rounded-3xl glow-card border border-amber-500/30">
-          <h3 class="text-xl font-bold text-white flex items-center gap-2">🎙️ Live Play-by-Play</h3>
-          <div id="playByPlayContainer" class="mt-3 space-y-2 max-h-64 overflow-y-auto pr-2 text-sm"></div>
-          <div id="gameResultArea" class="mt-4 hidden text-center bg-slate-950/60 p-3 rounded-xl">
-            <span id="gameResultText" class="font-black text-lg text-amber-300"></span>
-          </div>
-        </section>
-
-        <!-- Career Stats History Table -->
-        <section class="bg-slate-900/80 backdrop-blur-md p-5 rounded-3xl glow-card border border-slate-800">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-xl font-bold text-white">📊 Career Stats History</h3>
-            <span id="seasonCountLabel" class="text-xs bg-slate-800 px-3 py-1 rounded-full text-slate-300">0 seasons</span>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-sm">
-              <thead class="text-xs uppercase text-slate-400 bg-slate-950/50">
-                <tr>
-                  <th class="px-3 py-2 rounded-l-lg">Year</th>
-                  <th class="px-3 py-2">Phase</th>
-                  <th class="px-3 py-2">Record</th>
-                  <th class="px-3 py-2">PPG</th>
-                  <th class="px-3 py-2">RPG</th>
-                  <th class="px-3 py-2">APG</th>
-                  <th class="px-3 py-2">Awards</th>
-                </tr>
-              </thead>
-              <tbody id="statsTableBody" class="divide-y divide-slate-800">
-                <tr><td colspan="7" class="text-center py-6 text-slate-500 italic">No seasons completed</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-      </div>
-
-      <!-- RIGHT PANEL: Draft & Action Buttons -->
-      <div class="space-y-6">
-        <!-- Draft / Action Panel -->
-        <div id="actionPanel" class="bg-slate-900/80 backdrop-blur-md p-6 rounded-3xl glow-card border border-slate-800">
-          <!-- DRAFT SECTION -->
-          <div id="draftSection">
-            <h2 class="text-2xl font-black text-white mb-2">🎡 Spin the Team Wheel</h2>
-            <p class="text-slate-400 text-sm mb-3" id="draftInstruction">Click spin to receive your next team</p>
-            <button id="spinWheelBtn" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-4 rounded-2xl transition-all text-lg shadow-lg shadow-amber-500/20 active:scale-95 disabled:opacity-50">
-              SPIN WHEEL
-            </button>
-            <div id="wheelResult" class="mt-4 text-center text-xl font-extrabold text-white bg-slate-950/60 p-4 rounded-xl border border-slate-700">—</div>
-            <!-- Player & attribute selection -->
-            <div id="playerSelectionArea" class="mt-4 hidden">
-              <p class="text-xs uppercase text-slate-500 mb-2">Select a player from <span id="teamNameDisplay" class="text-amber-300"></span></p>
-              <div id="teamRosterDiv" class="grid grid-cols-1 gap-2"></div>
-              <div id="attributeSelectionArea" class="mt-4 hidden">
-                <p class="text-xs uppercase text-slate-500 mb-2">Choose ONE attribute to steal from <span id="chosenPlayerName" class="text-amber-300"></span></p>
-                <div id="attributeChoices" class="flex flex-wrap gap-2"></div>
-              </div>
+            <!-- Dynamic content area -->
+            <div class="content-area" id="contentArea">
+                <!-- rendered by JS -->
             </div>
-          </div>
-
-          <!-- SIMULATION / GAME BUTTONS -->
-          <div id="simulationSection" class="hidden">
-            <h2 class="text-2xl font-black text-white mb-2">⚡ Next Game</h2>
-            <p class="text-slate-400 text-sm mb-4" id="gameStatusText">Season ready</p>
-            <button id="simulateGameBtn" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-4 rounded-2xl transition-all text-lg shadow-lg shadow-amber-500/20 active:scale-95">
-              SIMULATE NEXT GAME
-            </button>
-            <div id="seasonProgressLabel" class="mt-3 text-center text-sm text-slate-400 bg-slate-950/50 rounded-xl p-2"></div>
-          </div>
         </div>
 
-        <!-- Awards Banner -->
-        <div id="awardBanner" class="bg-gradient-to-br from-amber-500/20 to-slate-900 p-5 rounded-3xl border border-amber-500/30 text-center hidden">
-          <p class="text-amber-300 font-bold text-sm uppercase tracking-widest">🏆 Season Complete!</p>
-          <p id="awardText" class="text-white text-lg font-extrabold mt-1"></p>
+        <!-- ========== CREATE CHARACTER SCREEN ========== -->
+        <div class="create-screen" id="createScreen">
+            <div class="create-card">
+                <h2>Create your character</h2>
+                <form id="createForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>First name</label>
+                            <input type="text" id="firstName" placeholder="e.g. Alex" maxlength="30" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Last name</label>
+                            <input type="text" id="lastName" placeholder="e.g. Rivera" maxlength="30" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Gender</label>
+                        <select id="gender" required>
+                            <option value="">Select gender</option>
+                            <option value="Female">Female</option>
+                            <option value="Male">Male</option>
+                            <option value="Non-binary">Non-binary</option>
+                            <option value="Prefer not to say">Prefer not to say</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Country of birth</label>
+                            <input type="text" id="country" placeholder="e.g. Canada" maxlength="40" required>
+                        </div>
+                        <div class="form-group">
+                            <label>City of birth</label>
+                            <input type="text" id="city" placeholder="e.g. Toronto" maxlength="40" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Date of birth</label>
+                        <input type="date" id="dob" required>
+                    </div>
+                    <div class="error-msg" id="formError"></div>
+                    <div class="form-actions">
+                        <button type="submit" class="primary-btn" style="padding: 12px 28px;">Begin Life →</button>
+                    </div>
+                </form>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 
-  <script>
-    (function() {
-      // ----- DATA: Teams & Roster (hardcoded with attribute tiers for each player) -----
-      const TEAMS = {
-        'Lakers': [
-          { name: 'LeBron James', attrs: { '3P': 'B', 'MID': 'A', 'FIN': 'S', 'DNK': 'B', 'HAN': 'A', 'PAS': 'S', 'PDEF': 'B', 'IDEF': 'B', 'BLK': 'C', 'REB': 'B', 'ATH': 'A', 'STR': 'S', 'CLU': 'S' } },
-          { name: 'Anthony Davis', attrs: { '3P': 'C', 'MID': 'B', 'FIN': 'A', 'DNK': 'A', 'HAN': 'C', 'PAS': 'C', 'PDEF': 'B', 'IDEF': 'S', 'BLK': 'S', 'REB': 'S', 'ATH': 'A', 'STR': 'A', 'CLU': 'B' } },
-          { name: 'Austin Reaves', attrs: { '3P': 'B', 'MID': 'B', 'FIN': 'C', 'DNK': 'D', 'HAN': 'B', 'PAS': 'B', 'PDEF': 'C', 'IDEF': 'D', 'BLK': 'D', 'REB': 'D', 'ATH': 'C', 'STR': 'C', 'CLU': 'B' } }
-        ],
-        'Celtics': [
-          { name: 'Jayson Tatum', attrs: { '3P': 'A', 'MID': 'A', 'FIN': 'A', 'DNK': 'B', 'HAN': 'B', 'PAS': 'B', 'PDEF': 'B', 'IDEF': 'C', 'BLK': 'D', 'REB': 'C', 'ATH': 'A', 'STR': 'B', 'CLU': 'A' } },
-          { name: 'Jaylen Brown', attrs: { '3P': 'B', 'MID': 'A', 'FIN': 'B', 'DNK': 'A', 'HAN': 'C', 'PAS': 'C', 'PDEF': 'B', 'IDEF': 'B', 'BLK': 'D', 'REB': 'C', 'ATH': 'A', 'STR': 'A', 'CLU': 'B' } },
-          { name: 'Derrick White', attrs: { '3P': 'B', 'MID': 'C', 'FIN': 'C', 'DNK': 'D', 'HAN': 'B', 'PAS': 'B', 'PDEF': 'A', 'IDEF': 'C', 'BLK': 'C', 'REB': 'D', 'ATH': 'C', 'STR': 'C', 'CLU': 'C' } }
-        ],
-        'Warriors': [
-          { name: 'Stephen Curry', attrs: { '3P': 'S', 'MID': 'S', 'FIN': 'B', 'DNK': 'D', 'HAN': 'S', 'PAS': 'A', 'PDEF': 'C', 'IDEF': 'D', 'BLK': 'D', 'REB': 'D', 'ATH': 'B', 'STR': 'C', 'CLU': 'S' } },
-          { name: 'Draymond Green', attrs: { '3P': 'C', 'MID': 'D', 'FIN': 'C', 'DNK': 'D', 'HAN': 'C', 'PAS': 'A', 'PDEF': 'A', 'IDEF': 'A', 'BLK': 'B', 'REB': 'B', 'ATH': 'C', 'STR': 'A', 'CLU': 'B' } },
-          { name: 'Jonathan Kuminga', attrs: { '3P': 'C', 'MID': 'C', 'FIN': 'B', 'DNK': 'A', 'HAN': 'D', 'PAS': 'D', 'PDEF': 'C', 'IDEF': 'C', 'BLK': 'C', 'REB': 'C', 'ATH': 'S', 'STR': 'A', 'CLU': 'C' } }
-        ],
-        'Bucks': [
-          { name: 'Giannis Antetokounmpo', attrs: { '3P': 'D', 'MID': 'C', 'FIN': 'S', 'DNK': 'S', 'HAN': 'B', 'PAS': 'B', 'PDEF': 'A', 'IDEF': 'A', 'BLK': 'B', 'REB': 'S', 'ATH': 'S', 'STR': 'S', 'CLU': 'A' } },
-          { name: 'Damian Lillard', attrs: { '3P': 'S', 'MID': 'A', 'FIN': 'B', 'DNK': 'D', 'HAN': 'A', 'PAS': 'A', 'PDEF': 'D', 'IDEF': 'D', 'BLK': 'D', 'REB': 'D', 'ATH': 'B', 'STR': 'C', 'CLU': 'S' } },
-          { name: 'Khris Middleton', attrs: { '3P': 'B', 'MID': 'A', 'FIN': 'C', 'DNK': 'C', 'HAN': 'C', 'PAS': 'C', 'PDEF': 'C', 'IDEF': 'D', 'BLK': 'D', 'REB': 'C', 'ATH': 'C', 'STR': 'C', 'CLU': 'B' } }
-        ],
-        'Mavericks': [
-          { name: 'Luka Doncic', attrs: { '3P': 'A', 'MID': 'S', 'FIN': 'A', 'DNK': 'D', 'HAN': 'S', 'PAS': 'S', 'PDEF': 'C', 'IDEF': 'D', 'BLK': 'D', 'REB': 'B', 'ATH': 'B', 'STR': 'B', 'CLU': 'S' } },
-          { name: 'Kyrie Irving', attrs: { '3P': 'A', 'MID': 'S', 'FIN': 'A', 'DNK': 'D', 'HAN': 'S', 'PAS': 'B', 'PDEF': 'C', 'IDEF': 'D', 'BLK': 'D', 'REB': 'D', 'ATH': 'B', 'STR': 'C', 'CLU': 'S' } },
-          { name: 'Dereck Lively II', attrs: { '3P': 'D', 'MID': 'D', 'FIN': 'B', 'DNK': 'A', 'HAN': 'D', 'PAS': 'D', 'PDEF': 'C', 'IDEF': 'A', 'BLK': 'A', 'REB': 'A', 'ATH': 'B', 'STR': 'B', 'CLU': 'C' } }
-        ],
-        'Nuggets': [
-          { name: 'Nikola Jokic', attrs: { '3P': 'B', 'MID': 'A', 'FIN': 'S', 'DNK': 'C', 'HAN': 'A', 'PAS': 'S', 'PDEF': 'C', 'IDEF': 'A', 'BLK': 'C', 'REB': 'S', 'ATH': 'C', 'STR': 'A', 'CLU': 'S' } },
-          { name: 'Jamal Murray', attrs: { '3P': 'A', 'MID': 'A', 'FIN': 'B', 'DNK': 'C', 'HAN': 'A', 'PAS': 'B', 'PDEF': 'C', 'IDEF': 'D', 'BLK': 'D', 'REB': 'C', 'ATH': 'B', 'STR': 'C', 'CLU': 'A' } },
-          { name: 'Aaron Gordon', attrs: { '3P': 'C', 'MID': 'C', 'FIN': 'A', 'DNK': 'S', 'HAN': 'C', 'PAS': 'C', 'PDEF': 'B', 'IDEF': 'A', 'BLK': 'B', 'REB': 'B', 'ATH': 'A', 'STR': 'A', 'CLU': 'C' } }
-        ]
-      };
+    <script>
+        (function() {
+            // ============================================================
+            // 1. GAME STATE & CONFIGURATION
+            // ============================================================
+            const STORAGE_KEY = 'life_simulator_character_v1';
+            let character = null;          // holds current character data
+            let activeTab = 'home';        // current navigation tab
 
-      const TIER_VALUES = { S: 99, A: 90, B: 80, C: 70, D: 60, F: 50 };
-      const ATTRIBUTE_LIST = ['3P', 'MID', 'FIN', 'DNK', 'HAN', 'PAS', 'PDEF', 'IDEF', 'BLK', 'REB', 'ATH', 'STR', 'CLU'];
+            // Life stages thresholds (inclusive lower bound)
+            const LIFE_STAGES = [
+                { name: 'Baby', minAge: 0, maxAge: 2 },
+                { name: 'Toddler', minAge: 3, maxAge: 4 },
+                { name: 'Child', minAge: 5, maxAge: 12 },
+                { name: 'Teenager', minAge: 13, maxAge: 17 },
+                { name: 'Young Adult', minAge: 18, maxAge: 24 },
+                { name: 'Adult', minAge: 25, maxAge: 44 },
+                { name: 'Middle-Aged Adult', minAge: 45, maxAge: 64 },
+                { name: 'Senior', minAge: 65, maxAge: 89 },
+                { name: 'Elderly', minAge: 90, maxAge: Infinity }
+            ];
 
-      // ----- GAME STATE -----
-      let attributes = {};                // filled with tier strings
-      let currentDraftRound = 0;          // 0-12
-      let phase = 'draft';               // 'draft', 'highschool', 'college', 'nba'
-      let nbaYear = 0;                    // 0 until NBA phase
-      let age = 18;
-      let seasonHistory = [];            // array of season objects
-      let seasonStats = null;            // current running season stats
-      let gamesPlayedThisSeason = 0;
-      let totalGamesInSeason = 20;       // default HS
-      let teamRecord = { wins: 0, losses: 0 };
-      let overall = 0;
+            // DOM references
+            const mainScreen = document.getElementById('mainScreen');
+            const createScreen = document.getElementById('createScreen');
+            const contentArea = document.getElementById('contentArea');
+            const navBtns = document.querySelectorAll('.nav-btn');
+            const newLifeBtn = document.getElementById('newLifeBtn');
+            const createForm = document.getElementById('createForm');
+            const formError = document.getElementById('formError');
 
-      // live game controls
-      let isSpinning = false;
-      let currentTeam = null;
-      let selectedPlayer = null;
-      let selectedAttribute = null;
-      let liveGameInterval = null;
+            // ============================================================
+            // 2. UTILITY FUNCTIONS
+            // ============================================================
 
-      // UI elements
-      const phaseIndicator = document.getElementById('phaseIndicator');
-      const draftSection = document.getElementById('draftSection');
-      const simulationSection = document.getElementById('simulationSection');
-      const spinWheelBtn = document.getElementById('spinWheelBtn');
-      const wheelResult = document.getElementById('wheelResult');
-      const playerSelectionArea = document.getElementById('playerSelectionArea');
-      const teamNameDisplay = document.getElementById('teamNameDisplay');
-      const teamRosterDiv = document.getElementById('teamRosterDiv');
-      const attributeSelectionArea = document.getElementById('attributeSelectionArea');
-      const chosenPlayerName = document.getElementById('chosenPlayerName');
-      const attributeChoices = document.getElementById('attributeChoices');
-      const simulateGameBtn = document.getElementById('simulateGameBtn');
-      const liveMatchSection = document.getElementById('liveMatchSection');
-      const playByPlayContainer = document.getElementById('playByPlayContainer');
-      const gameResultArea = document.getElementById('gameResultArea');
-      const gameResultText = document.getElementById('gameResultText');
-      const hubPhase = document.getElementById('hubPhase');
-      const hubRecord = document.getElementById('hubRecord');
-      const hubPpg = document.getElementById('hubPpg');
-      const hubOvr = document.getElementById('hubOvr');
-      const ageDisplay = document.getElementById('ageDisplay');
-      const seasonCountLabel = document.getElementById('seasonCountLabel');
-      const awardBanner = document.getElementById('awardBanner');
-      const awardText = document.getElementById('awardText');
-      const statsTableBody = document.getElementById('statsTableBody');
-      const gameStatusText = document.getElementById('gameStatusText');
-      const seasonProgressLabel = document.getElementById('seasonProgressLabel');
+            /** Get life stage name based on age */
+            function getLifeStage(age) {
+                for (let stage of LIFE_STAGES) {
+                    if (age >= stage.minAge && age <= stage.maxAge) return stage.name;
+                }
+                return 'Elderly'; // fallback
+            }
 
-      // attribute display mapping
-      const attrDisplayMap = {
-        '3P': 'attr3P', 'MID': 'attrMID', 'FIN': 'attrFIN', 'DNK': 'attrDNK', 'HAN': 'attrHAN',
-        'PAS': 'attrPAS', 'PDEF': 'attrPDEF', 'IDEF': 'attrIDEF', 'BLK': 'attrBLK', 'REB': 'attrREB',
-        'ATH': 'attrATH', 'STR': 'attrSTR', 'CLU': 'attrCLU'
-      };
+            /** Generate a friendly birthday string from stored date */
+            function formatBirthday(dateStr) {
+                if (!dateStr) return '—';
+                const d = new Date(dateStr + 'T00:00:00');
+                if (isNaN(d)) return dateStr;
+                return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            }
 
-      function updateOverall() {
-        const keys = Object.keys(attributes);
-        if (keys.length === 0) { overall = 0; hubOvr.textContent = '-'; return; }
-        let sum = 0, count = 0;
-        keys.forEach(k => { if (attributes[k]) { sum += TIER_VALUES[attributes[k]]; count++; } });
-        overall = count ? Math.round(sum / count) : 0;
-        hubOvr.textContent = overall;
-      }
+            /** Return the full name */
+            function fullName(char) {
+                return `${char.firstName} ${char.lastName}`.trim() || 'Unnamed';
+            }
 
-      function refreshAttributeDisplays() {
-        ATTRIBUTE_LIST.forEach(attr => {
-          const el = document.getElementById(attrDisplayMap[attr]);
-          if (el) el.textContent = attributes[attr] || '-';
-        });
-        updateOverall();
-      }
+            /** Generate timeline entry text based on age and name */
+            function getTimelineText(age, firstName) {
+                if (age === 0) return 'Your life begins!';
+                if (age === 1) return `You celebrated your first birthday!`;
+                if (age === 2) return `You turned 2 years old!`;
+                return `You turned ${age} years old!`;
+            }
 
-      function updateHub() {
-        let phaseLabel = phase === 'highschool' ? 'HS' : phase === 'college' ? 'COLLEGE' : phase === 'nba' ? `NBA Y${nbaYear}` : 'DRAFT';
-        hubPhase.textContent = phaseLabel;
-        phaseIndicator.textContent = phase === 'draft' ? 'Draft Phase' : phaseLabel;
-        ageDisplay.textContent = `Age: ${age}`;
-        hubRecord.textContent = `${teamRecord.wins}-${teamRecord.losses}`;
-        if (seasonStats && gamesPlayedThisSeason > 0) {
-          hubPpg.textContent = (seasonStats.totalPoints / gamesPlayedThisSeason).toFixed(1);
-        } else {
-          hubPpg.textContent = '0.0';
-        }
-        seasonCountLabel.textContent = `${seasonHistory.length} season${seasonHistory.length !== 1 ? 's' : ''}`;
-        if (phase !== 'draft') {
-          seasonProgressLabel.textContent = `Game ${gamesPlayedThisSeason} / ${totalGamesInSeason}`;
-        }
-      }
+            /** Build a timeline entry object for a given age */
+            function createTimelineEntry(age, firstName) {
+                return {
+                    age: age,
+                    text: getTimelineText(age, firstName)
+                };
+            }
 
-      // Draft mechanics
-      function spinWheel() {
-        if (isSpinning || currentDraftRound >= ATTRIBUTE_LIST.length) return;
-        isSpinning = true;
-        spinWheelBtn.disabled = true;
-        spinWheelBtn.classList.add('opacity-50');
-        wheelResult.textContent = '🌀 Spinning...';
-        const teamNames = Object.keys(TEAMS);
-        let count = 0;
-        const maxLoops = 10;
-        const interval = setInterval(() => {
-          const randomTeam = teamNames[Math.floor(Math.random() * teamNames.length)];
-          wheelResult.textContent = randomTeam;
-          count++;
-          if (count > maxLoops) {
-            clearInterval(interval);
-            currentTeam = teamNames[Math.floor(Math.random() * teamNames.length)];
-            wheelResult.textContent = currentTeam;
-            isSpinning = false;
-            spinWheelBtn.disabled = false;
-            spinWheelBtn.classList.remove('opacity-50');
-            showPlayerSelection();
-          }
-        }, 80);
-      }
+            // ============================================================
+            // 3. STORAGE (localStorage)
+            // ============================================================
 
-      function showPlayerSelection() {
-        playerSelectionArea.classList.remove('hidden');
-        teamNameDisplay.textContent = currentTeam;
-        const roster = TEAMS[currentTeam];
-        teamRosterDiv.innerHTML = '';
-        roster.forEach(player => {
-          const btn = document.createElement('button');
-          btn.className = 'draft-player-card bg-slate-950/60 hover:bg-slate-800/80 p-3 rounded-xl text-left border border-slate-700/50';
-          btn.innerHTML = `<span class="font-bold text-white">${player.name}</span>`;
-          btn.addEventListener('click', () => selectPlayer(player));
-          teamRosterDiv.appendChild(btn);
-        });
-        attributeSelectionArea.classList.add('hidden');
-        selectedPlayer = null;
-      }
+            function saveCharacter() {
+                if (character) {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(character));
+                }
+            }
 
-      function selectPlayer(player) {
-        selectedPlayer = player;
-        chosenPlayerName.textContent = player.name;
-        attributeSelectionArea.classList.remove('hidden');
-        attributeChoices.innerHTML = '';
-        // Get available attributes (those not yet filled)
-        ATTRIBUTE_LIST.forEach(attr => {
-          if (!attributes[attr]) {
-            const chip = document.createElement('button');
-            chip.className = 'attribute-chip bg-slate-800 text-white px-3 py-1.5 rounded-lg text-sm font-semibold border border-slate-600';
-            chip.textContent = `${attr} (${selectedPlayer.attrs[attr]})`;
-            chip.addEventListener('click', () => stealAttribute(attr));
-            attributeChoices.appendChild(chip);
-          }
-        });
-      }
+            function loadCharacter() {
+                const stored = localStorage.getItem(STORAGE_KEY);
+                if (!stored) return null;
+                try {
+                    const parsed = JSON.parse(stored);
+                    // basic validation
+                    if (parsed && parsed.firstName && parsed.lastName && typeof parsed.age === 'number') {
+                        return parsed;
+                    }
+                } catch (e) { /* ignore corrupt data */ }
+                return null;
+            }
 
-      function stealAttribute(attr) {
-        if (!selectedPlayer) return;
-        const tier = selectedPlayer.attrs[attr];
-        attributes[attr] = tier;
-        refreshAttributeDisplays();
-        currentDraftRound++;
-        // reset selection area
-        playerSelectionArea.classList.add('hidden');
-        attributeSelectionArea.classList.add('hidden');
-        selectedPlayer = null;
-        if (currentDraftRound >= ATTRIBUTE_LIST.length) {
-          completeDraft();
-        } else {
-          draftInstruction.textContent = `Round ${currentDraftRound+1} of 13: Spin for next team`;
-        }
-      }
+            function clearCharacter() {
+                localStorage.removeItem(STORAGE_KEY);
+                character = null;
+            }
 
-      function completeDraft() {
-        phase = 'highschool';
-        age = 18;
-        totalGamesInSeason = 20;
-        gamesPlayedThisSeason = 0;
-        seasonStats = { totalPoints: 0, totalRebounds: 0, totalAssists: 0, totalBlocks: 0, totalSteals: 0 };
-        teamRecord = { wins: 0, losses: 0 };
-        draftSection.classList.add('hidden');
-        simulationSection.classList.remove('hidden');
-        gameStatusText.textContent = 'High School season ready · 20 games';
-        updateHub();
-      }
+            // ============================================================
+            // 4. CHARACTER CREATION
+            // ============================================================
 
-      function startNextGame() {
-        if (phase === 'retired') return;
-        if (gamesPlayedThisSeason >= totalGamesInSeason) {
-          completeSeasonAndAdvance();
-          return;
-        }
-        simulateGameBtn.disabled = true;
-        liveMatchSection.classList.remove('hidden');
-        playByPlayContainer.innerHTML = '';
-        gameResultArea.classList.add('hidden');
-        simulateLiveGame();
-      }
+            function createNewCharacter(data) {
+                const newChar = {
+                    firstName: data.firstName.trim(),
+                    lastName: data.lastName.trim(),
+                    gender: data.gender,
+                    country: data.country.trim(),
+                    city: data.city.trim(),
+                    dob: data.dob,                    // ISO string YYYY-MM-DD
+                    age: 0,
+                    lifeStage: getLifeStage(0),
+                    timeline: [ createTimelineEntry(0, data.firstName.trim()) ]
+                };
+                return newChar;
+            }
 
-      function simulateLiveGame() {
-        const plays = [];
-        const totalPlays = 5 + Math.floor(Math.random() * 2); // 5-6 plays
-        for (let i = 0; i < totalPlays; i++) {
-          plays.push(generatePlayByPlay());
-        }
-        let idx = 0;
-        liveGameInterval = setInterval(() => {
-          if (idx < plays.length) {
-            const p = document.createElement('div');
-            p.className = 'play-by-play-item bg-slate-950/70 p-2 rounded-lg border border-slate-700/40';
-            p.textContent = plays[idx];
-            playByPlayContainer.appendChild(p);
-            playByPlayContainer.scrollTop = playByPlayContainer.scrollHeight;
-            idx++;
-          } else {
-            clearInterval(liveGameInterval);
-            finishGameSimulation();
-          }
-        }, 900);
-      }
+            // ============================================================
+            // 5. RENDER FUNCTIONS (UI)
+            // ============================================================
 
-      function generatePlayByPlay() {
-        const attrs = ATTRIBUTE_LIST;
-        const randomAttr = attrs[Math.floor(Math.random() * attrs.length)];
-        const tierValue = TIER_VALUES[attributes[randomAttr]] || 60;
-        const good = tierValue >= 80;
-        const scenarios = [
-          `Uses ${randomAttr} to create space – ${good ? 'smooth move!' : 'struggles against defender.'}`,
-          `Down by 1, player leans on ${randomAttr} for a clutch look.`,
-          `Defensive play: relies on ${randomAttr} ${good ? '– steal!' : 'but gets beaten.'}`,
-          `Fast break opportunity, ${randomAttr} shines ${good ? 'with a dunk!' : 'but misses layup.'}`,
-          `Post up: ${randomAttr} advantage ${good ? 'converts' : 'gets blocked'}`,
-          `Handles: uses ${randomAttr} to cross over and dish assist.`,
-          `Rebound battle: ${randomAttr} matters – ${good ? 'grabs it!' : 'loses position.'}`
-        ];
-        return scenarios[Math.floor(Math.random() * scenarios.length)];
-      }
+            /** Show main game screen (when character exists) */
+            function showMainScreen() {
+                mainScreen.classList.remove('hidden');
+                createScreen.classList.add('hidden');
+            }
 
-      function finishGameSimulation() {
-        clearInterval(liveGameInterval);
-        gamesPlayedThisSeason++;
-        // Generate game stats based on attributes + variance
-        const stats = generateGameStatLine();
-        // update running averages
-        seasonStats.totalPoints += stats.points;
-        seasonStats.totalRebounds += stats.rebounds;
-        seasonStats.totalAssists += stats.assists;
-        seasonStats.totalBlocks += stats.blocks;
-        seasonStats.totalSteals += stats.steals;
-        // win determination based on overall
-        const winProb = (overall * 0.5) / 100 + Math.random() * 0.35;
-        const didWin = Math.random() < winProb;
-        if (didWin) teamRecord.wins++; else teamRecord.losses++;
-        // display result
-        gameResultArea.classList.remove('hidden');
-        gameResultText.textContent = didWin ? 'WIN!' : 'LOSS';
-        gameResultText.className = `font-black text-lg ${didWin ? 'text-emerald-400' : 'text-red-400'}`;
-        updateHub();
-        simulateGameBtn.disabled = false;
-        if (gamesPlayedThisSeason >= totalGamesInSeason) {
-          completeSeasonAndAdvance();
-        } else {
-          gameStatusText.textContent = `Next game (${gamesPlayedThisSeason}/${totalGamesInSeason})`;
-        }
-      }
+            /** Show create character screen */
+            function showCreateScreen() {
+                mainScreen.classList.add('hidden');
+                createScreen.classList.remove('hidden');
+                // reset form
+                createForm.reset();
+                formError.textContent = '';
+                // set default date? none
+            }
 
-      function generateGameStatLine() {
-        const points = Math.round((TIER_VALUES[attributes['3P']] * 0.2 + TIER_VALUES[attributes['MID']] * 0.2 + TIER_VALUES[attributes['FIN']] * 0.25 + TIER_VALUES[attributes['CLU']] * 0.15) * 0.35 + Math.random() * 8);
-        const rebounds = Math.round((TIER_VALUES[attributes['REB']] * 0.4 + TIER_VALUES[attributes['IDEF']] * 0.3 + TIER_VALUES[attributes['ATH']] * 0.3) * 0.18);
-        const assists = Math.round((TIER_VALUES[attributes['PAS']] * 0.5 + TIER_VALUES[attributes['HAN']] * 0.3 + TIER_VALUES[attributes['CLU']] * 0.2) * 0.25);
-        const blocks = Math.round((TIER_VALUES[attributes['BLK']] * 0.5 + TIER_VALUES[attributes['IDEF']] * 0.3) * 0.08);
-        const steals = Math.round((TIER_VALUES[attributes['PDEF']] * 0.5 + TIER_VALUES[attributes['ATH']] * 0.3) * 0.06);
-        return { points: Math.max(0, points), rebounds: Math.max(0, rebounds), assists: Math.max(0, assists), blocks: Math.max(0, blocks), steals: Math.max(0, steals) };
-      }
+            /** Update navigation active state */
+            function setActiveTab(tab) {
+                activeTab = tab;
+                navBtns.forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.tab === tab);
+                });
+                renderContent();
+            }
 
-      function completeSeasonAndAdvance() {
-        // calculate season averages
-        const ppg = (seasonStats.totalPoints / gamesPlayedThisSeason).toFixed(1);
-        const rpg = (seasonStats.totalRebounds / gamesPlayedThisSeason).toFixed(1);
-        const apg = (seasonStats.totalAssists / gamesPlayedThisSeason).toFixed(1);
-        const bpg = (seasonStats.totalBlocks / gamesPlayedThisSeason).toFixed(1);
-        const spg = (seasonStats.totalSteals / gamesPlayedThisSeason).toFixed(1);
-        
-        let awards = [];
-        if (phase === 'highschool') {
-          if (parseFloat(ppg) > 25 || overall > 85) awards.push('Gatorade POY');
-        } else if (phase === 'college') {
-          if (teamRecord.wins > 32) awards.push('National Champion');
-          if (parseFloat(ppg) > 22 && parseFloat(apg) > 5) awards.push('Wooden Award');
-        } else if (phase === 'nba') {
-          if (nbaYear === 1 && parseFloat(ppg) > 15) awards.push('ROTY');
-          if (parseFloat(ppg) > 28 && teamRecord.wins > 50) awards.push('MVP');
-          if (attributes['PDEF'] && TIER_VALUES[attributes['PDEF']] > 85 && (parseFloat(spg)+parseFloat(bpg)) > 3.5) awards.push('DPOY');
-        }
-        
-        const seasonObj = {
-          year: getYearLabel(),
-          phase: phase === 'highschool' ? 'HS' : phase === 'college' ? 'COL' : (nbaYear ? `NBA Y${nbaYear}` : 'NBA'),
-          record: `${teamRecord.wins}-${teamRecord.losses}`,
-          ppg, rpg, apg, bpg, spg,
-          awards: awards
-        };
-        seasonHistory.push(seasonObj);
-        renderStatsTable();
-        if (awards.length) {
-          awardBanner.classList.remove('hidden');
-          awardText.textContent = awards.join(' • ');
-          setTimeout(() => awardBanner.classList.add('hidden'), 4000);
-        }
-        
-        // Advance phase
-        if (phase === 'highschool') {
-          phase = 'college'; age = 19; totalGamesInSeason = 40;
-        } else if (phase === 'college') {
-          phase = 'nba'; nbaYear = 1; age = 20; totalGamesInSeason = 82;
-        } else if (phase === 'nba') {
-          if (nbaYear >= 15) { phase = 'retired'; simulateGameBtn.disabled = true; gameStatusText.textContent = 'Legendary career complete'; return; }
-          nbaYear++; age++; totalGamesInSeason = 82;
-        }
-        // reset current season stats
-        gamesPlayedThisSeason = 0;
-        seasonStats = { totalPoints: 0, totalRebounds: 0, totalAssists: 0, totalBlocks: 0, totalSteals: 0 };
-        teamRecord = { wins: 0, losses: 0 };
-        updateHub();
-        gameStatusText.textContent = `New season: ${phase === 'highschool' ? 'HS' : phase === 'college' ? 'College' : 'NBA'} ready`;
-      }
+            /** Render content based on active tab */
+            function renderContent() {
+                if (!character) return;
 
-      function getYearLabel() {
-        return `Y${seasonHistory.length+1}`;
-      }
+                let html = '';
 
-      function renderStatsTable() {
-        if (!seasonHistory.length) {
-          statsTableBody.innerHTML = '<tr><td colspan="7" class="text-center py-6 text-slate-500 italic">No seasons completed</td></tr>';
-          return;
-        }
-        let html = '';
-        seasonHistory.forEach((s, i) => {
-          html += `<tr class="hover:bg-slate-800/30">
-            <td class="px-3 py-2 font-bold">${s.year}</td>
-            <td class="px-3 py-2">${s.phase}</td>
-            <td class="px-3 py-2">${s.record}</td>
-            <td class="px-3 py-2">${s.ppg}</td>
-            <td class="px-3 py-2">${s.rpg}</td>
-            <td class="px-3 py-2">${s.apg}</td>
-            <td class="px-3 py-2 text-amber-300 font-semibold">${s.awards.length ? s.awards.join(', ') : '—'}</td>
-          </tr>`;
-        });
-        statsTableBody.innerHTML = html;
-      }
+                if (activeTab === 'home') {
+                    html = renderHomeTab();
+                } else if (activeTab === 'profile') {
+                    html = renderProfileTab();
+                } else if (activeTab === 'history') {
+                    html = renderHistoryTab();
+                }
 
-      // Event listeners
-      spinWheelBtn.addEventListener('click', spinWheel);
-      simulateGameBtn.addEventListener('click', startNextGame);
+                contentArea.innerHTML = html;
+                // Attach event listener to the Age Up button if present
+                const ageUpBtn = document.getElementById('ageUpBtn');
+                if (ageUpBtn) {
+                    ageUpBtn.addEventListener('click', handleAgeUp);
+                }
+            }
 
-      // Initial
-      refreshAttributeDisplays();
-      updateHub();
-      gameStatusText.textContent = 'Draft phase active';
-      seasonProgressLabel.textContent = '';
-    })();
-  </script>
+            /** Home tab: character overview + Age Up button */
+            function renderHomeTab() {
+                const stage = character.lifeStage;
+                return `
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h2>${fullName(character)}</h2>
+                            <span class="life-stage-badge">${stage}</span>
+                        </div>
+                        <div style="display:flex; align-items:baseline; gap:14px; flex-wrap:wrap;">
+                            <span class="age-display">${character.age} years</span>
+                            <span class="text-muted">· ${character.gender} · ${character.city}, ${character.country}</span>
+                        </div>
+                        <div class="char-summary">
+                            <div class="char-summary-item"><span class="label-icon">🎂</span> <strong>Born:</strong> ${formatBirthday(character.dob)}</div>
+                        </div>
+                        <div class="btn-row" style="margin-top: 24px;">
+                            <button class="primary-btn" id="ageUpBtn">⏳ Age Up +1 year</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            /** Profile tab: detailed character info */
+            function renderProfileTab() {
+                return `
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h2>Character Profile</h2>
+                        </div>
+                        <div class="profile-grid">
+                            <div class="profile-field">
+                                <div class="field-label">Full name</div>
+                                <div class="field-value">${fullName(character)}</div>
+                            </div>
+                            <div class="profile-field">
+                                <div class="field-label">Age</div>
+                                <div class="field-value">${character.age}</div>
+                            </div>
+                            <div class="profile-field">
+                                <div class="field-label">Gender</div>
+                                <div class="field-value">${character.gender}</div>
+                            </div>
+                            <div class="profile-field">
+                                <div class="field-label">Birthday</div>
+                                <div class="field-value">${formatBirthday(character.dob)}</div>
+                            </div>
+                            <div class="profile-field">
+                                <div class="field-label">Country</div>
+                                <div class="field-value">${character.country}</div>
+                            </div>
+                            <div class="profile-field">
+                                <div class="field-label">City</div>
+                                <div class="field-value">${character.city}</div>
+                            </div>
+                            <div class="profile-field">
+                                <div class="field-label">Life stage</div>
+                                <div class="field-value">${character.lifeStage}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            /** Life History tab: timeline entries (newest first) */
+            function renderHistoryTab() {
+                // timeline is stored oldest first; we reverse for display
+                const entries = [...character.timeline].reverse();
+                const listHtml = entries.map(entry => `
+                    <div class="timeline-entry">
+                        <div class="timeline-age">Age ${entry.age}</div>
+                        <div class="timeline-text">${entry.text}</div>
+                    </div>
+                `).join('');
+
+                return `
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h2>Life Timeline</h2>
+                            <span class="text-muted">newest first</span>
+                        </div>
+                        <div class="timeline-list">
+                            ${listHtml || '<div class="text-muted">No entries yet.</div>'}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // ============================================================
+            // 6. AGING SYSTEM
+            // ============================================================
+
+            function handleAgeUp() {
+                if (!character) return;
+
+                // Increment age
+                const newAge = character.age + 1;
+                character.age = newAge;
+                character.lifeStage = getLifeStage(newAge);
+
+                // Add timeline entry
+                const newEntry = createTimelineEntry(newAge, character.firstName);
+                character.timeline.push(newEntry);
+
+                // Save & re-render
+                saveCharacter();
+                renderContent();
+
+                // Optional: subtle notification (no UI clutter, just re-render)
+            }
+
+            // ============================================================
+            // 7. NAVIGATION & EVENT LISTENERS
+            // ============================================================
+
+            // Tab buttons
+            navBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    setActiveTab(btn.dataset.tab);
+                });
+            });
+
+            // New Life button (with confirmation)
+            newLifeBtn.addEventListener('click', () => {
+                if (character) {
+                    const confirm = window.confirm(
+                        '⚠️ Start a new life?\n\nYour current character and all progress will be permanently deleted.'
+                    );
+                    if (!confirm) return;
+                }
+                // Clear existing character
+                clearCharacter();
+                showCreateScreen();
+            });
+
+            // Create form submission
+            createForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                formError.textContent = '';
+
+                const firstName = document.getElementById('firstName').value.trim();
+                const lastName = document.getElementById('lastName').value.trim();
+                const gender = document.getElementById('gender').value;
+                const country = document.getElementById('country').value.trim();
+                const city = document.getElementById('city').value.trim();
+                const dob = document.getElementById('dob').value;
+
+                // Validation
+                if (!firstName || !lastName || !gender || !country || !city || !dob) {
+                    formError.textContent = 'Please fill in all fields.';
+                    return;
+                }
+
+                // Build new character
+                const newChar = createNewCharacter({
+                    firstName, lastName, gender, country, city, dob
+                });
+
+                // Save and set as current
+                character = newChar;
+                saveCharacter();
+
+                // Switch to main screen and default tab 'home'
+                showMainScreen();
+                setActiveTab('home');
+            });
+
+            // ============================================================
+            // 8. INITIALIZATION
+            // ============================================================
+
+            function init() {
+                // Try to load saved character
+                const saved = loadCharacter();
+                if (saved) {
+                    character = saved;
+                    // Ensure lifeStage and timeline are consistent (safety)
+                    if (!character.lifeStage) character.lifeStage = getLifeStage(character.age);
+                    if (!character.timeline) character.timeline = [];
+                    // Always ensure age0 exists
+                    if (character.timeline.length === 0) {
+                        character.timeline.push(createTimelineEntry(0, character.firstName));
+                    }
+                    // Ensure lifeStage is up-to-date
+                    character.lifeStage = getLifeStage(character.age);
+
+                    showMainScreen();
+                    setActiveTab('home');
+                } else {
+                    // No character: show creation screen
+                    showCreateScreen();
+                }
+            }
+
+            // Start the game
+            init();
+
+        })();
+    </script>
 </body>
 </html>
