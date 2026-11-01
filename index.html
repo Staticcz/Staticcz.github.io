@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Life · Simulator</title>
     <style>
-        /* ---------- GLOBAL STYLES ---------- */
+        /* ============================================================
+           GLOBAL
+           ============================================================ */
         * {
             margin: 0;
             padding: 0;
@@ -24,9 +26,9 @@
 
         .game-container {
             width: 100%;
-            max-width: 820px;
+            max-width: 860px;
             height: 90vh;
-            max-height: 880px;
+            max-height: 900px;
             background: rgba(18, 28, 40, 0.85);
             backdrop-filter: blur(12px);
             border-radius: 2rem;
@@ -37,7 +39,9 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        /* ---------- APP HEADER ---------- */
+        /* ============================================================
+           HEADER
+           ============================================================ */
         .app-header {
             padding: 18px 22px;
             background: rgba(10, 20, 30, 0.7);
@@ -45,6 +49,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            flex-shrink: 0;
         }
 
         .app-header h1 {
@@ -67,7 +72,6 @@
             border-radius: 30px;
             color: #bdd3ea;
             font-weight: 400;
-            letter-spacing: 0.3px;
             -webkit-text-fill-color: #bdd3ea;
         }
 
@@ -81,18 +85,16 @@
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
-
         .new-life-btn:hover {
             background: rgba(220, 70, 70, 0.3);
             border-color: #e06e6e;
             color: #ffe0e0;
         }
 
-        /* ---------- MAIN SCREEN (NAV + CONTENT) ---------- */
+        /* ============================================================
+           MAIN SCREEN + NAVIGATION
+           ============================================================ */
         .main-screen {
             flex: 1;
             display: flex;
@@ -100,272 +102,62 @@
             overflow: hidden;
         }
 
-        /* ---------- NAVIGATION ---------- */
         .nav-tabs {
             display: flex;
             padding: 12px 18px 0 18px;
-            gap: 8px;
-            background: transparent;
+            gap: 4px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            overflow-x: auto;
+            flex-shrink: 0;
+            scrollbar-width: none;
         }
+        .nav-tabs::-webkit-scrollbar { display: none; }
 
         .nav-btn {
             background: transparent;
             border: none;
             color: #8ba1bb;
-            padding: 10px 18px;
-            font-size: 0.95rem;
+            padding: 10px 16px;
+            font-size: 0.92rem;
             font-weight: 500;
             border-radius: 12px 12px 0 0;
             cursor: pointer;
             transition: all 0.15s;
-            letter-spacing: 0.2px;
+            white-space: nowrap;
             position: relative;
             top: 1px;
         }
-
         .nav-btn:hover {
             color: #cbdae9;
             background: rgba(255, 255, 255, 0.03);
         }
-
         .nav-btn.active {
             color: #ffffff;
             background: rgba(60, 100, 140, 0.3);
             border-bottom: 2px solid #4f8bc9;
         }
 
-        /* ---------- CONTENT AREA (scrollable) ---------- */
         .content-area {
             flex: 1;
             overflow-y: auto;
-            padding: 22px 22px 30px 22px;
+            padding: 22px;
             scrollbar-width: thin;
             scrollbar-color: #3e5a78 #1a2635;
         }
+        .content-area::-webkit-scrollbar { width: 6px; }
+        .content-area::-webkit-scrollbar-track { background: #1a2635; }
+        .content-area::-webkit-scrollbar-thumb { background: #3e5a78; border-radius: 10px; }
 
-        .content-area::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .content-area::-webkit-scrollbar-track {
-            background: #1a2635;
-        }
-
-        .content-area::-webkit-scrollbar-thumb {
-            background: #3e5a78;
-            border-radius: 10px;
-        }
-
-        /* ---------- PANELS / CARDS ---------- */
-        .panel {
-            background: rgba(20, 32, 48, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 1.5rem;
-            padding: 22px 22px;
-            margin-bottom: 20px;
-            backdrop-filter: blur(4px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .panel-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        .panel-header h2 {
-            font-size: 1.3rem;
-            font-weight: 500;
-            color: #e2ecf7;
-            letter-spacing: -0.2px;
-        }
-
-        .age-display {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #9ac7ff;
-            text-shadow: 0 2px 10px rgba(100, 160, 255, 0.3);
-        }
-
-        .life-stage-badge {
-            background: #1d3f5e;
-            padding: 6px 16px;
-            border-radius: 30px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: #c0dcff;
-            border: 1px solid #2d5477;
-        }
-
-        /* ---------- CHARACTER SUMMARY (home) ---------- */
-        .char-summary {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px 24px;
-            margin: 16px 0 10px;
-            color: #b7c9dd;
-        }
-
-        .char-summary-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 1rem;
-        }
-
-        .char-summary-item strong {
-            color: #e5eff9;
-            font-weight: 500;
-        }
-
-        .label-icon {
-            opacity: 0.7;
-            font-size: 1.1rem;
-        }
-
-        /* ---------- BUTTONS ---------- */
-        .primary-btn {
-            background: linear-gradient(145deg, #2c5f8a, #1e4466);
-            border: none;
-            border-radius: 40px;
-            padding: 14px 32px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: white;
-            cursor: pointer;
-            box-shadow: 0 8px 20px rgba(0, 60, 120, 0.4);
-            transition: all 0.15s ease;
-            border: 1px solid rgba(100, 180, 255, 0.3);
-            letter-spacing: 0.3px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .primary-btn:hover {
-            background: linear-gradient(145deg, #3878aa, #245b88);
-            box-shadow: 0 12px 28px rgba(0, 100, 200, 0.5);
-            transform: scale(1.01);
-        }
-
-        .primary-btn:active {
-            transform: scale(0.98);
-        }
-
-        .secondary-btn {
-            background: transparent;
-            border: 1px solid #3e6180;
-            color: #b8d1ea;
-            padding: 10px 22px;
-            border-radius: 40px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.15s ease;
-        }
-
-        .secondary-btn:hover {
-            background: rgba(70, 110, 150, 0.2);
-            border-color: #5b8bb0;
-            color: white;
-        }
-
-        .btn-row {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-top: 12px;
-        }
-
-        /* ---------- PROFILE GRID ---------- */
-        .profile-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 16px;
-            margin-top: 8px;
-        }
-
-        .profile-field {
-            background: rgba(10, 22, 34, 0.6);
-            border-radius: 1rem;
-            padding: 14px 16px;
-            border: 1px solid rgba(80, 130, 180, 0.15);
-        }
-
-        .profile-field .field-label {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.6px;
-            color: #6e8aa8;
-            margin-bottom: 6px;
-        }
-
-        .profile-field .field-value {
-            font-size: 1.1rem;
-            font-weight: 500;
-            color: #e2ecf7;
-            word-break: break-word;
-        }
-
-        /* ---------- TIMELINE (life history) ---------- */
-        .timeline-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 8px;
-        }
-
-        .timeline-entry {
-            display: flex;
-            align-items: flex-start;
-            gap: 14px;
-            background: rgba(10, 22, 34, 0.5);
-            border-radius: 1rem;
-            padding: 14px 18px;
-            border-left: 3px solid #3b7bb3;
-            transition: background 0.15s;
-            animation: fadeSlideIn 0.3s ease;
-        }
-
-        .timeline-entry:hover {
-            background: rgba(25, 45, 65, 0.7);
-        }
-
-        .timeline-age {
-            font-weight: 700;
-            color: #8bb9e8;
-            font-size: 1.1rem;
-            min-width: 45px;
-            letter-spacing: -0.2px;
-        }
-
-        .timeline-text {
-            color: #ccdef0;
-            font-size: 0.98rem;
-            line-height: 1.4;
-        }
-
-        @keyframes fadeSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-6px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* ---------- CREATE CHARACTER SCREEN ---------- */
+        /* ============================================================
+           CREATE SCREEN
+           ============================================================ */
         .create-screen {
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100%;
             padding: 20px;
+            overflow-y: auto;
         }
 
         .create-card {
@@ -385,16 +177,13 @@
             color: #e5eff9;
             margin-bottom: 22px;
             text-align: center;
-            letter-spacing: -0.5px;
         }
 
-        .form-group {
-            margin-bottom: 16px;
-        }
+        .form-group { margin-bottom: 16px; }
 
         .form-group label {
             display: block;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             color: #8faec9;
@@ -414,7 +203,6 @@
             outline: none;
             transition: border 0.15s, box-shadow 0.15s;
         }
-
         .form-group input:focus,
         .form-group select:focus {
             border-color: #4f8bc9;
@@ -430,7 +218,6 @@
         .form-actions {
             margin-top: 26px;
             display: flex;
-            gap: 10px;
             justify-content: flex-end;
         }
 
@@ -441,91 +228,282 @@
             min-height: 18px;
         }
 
-        /* ---------- HIDDEN / UTILITY ---------- */
-        .hidden {
-            display: none !important;
+        .hidden { display: none !important; }
+        .text-muted { color: #849eb8; font-size: 0.9rem; }
+
+        /* ============================================================
+           COMPONENTS
+           ============================================================ */
+        .panel {
+            background: rgba(20, 32, 48, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 1.5rem;
+            padding: 22px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
         }
 
-        .text-muted {
-            color: #849eb8;
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .panel-header h2 {
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: #e2ecf7;
+        }
+
+        .age-display {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #9ac7ff;
+            text-shadow: 0 2px 10px rgba(100, 160, 255, 0.3);
+        }
+
+        .life-stage-badge {
+            background: #1d3f5e;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #c0dcff;
+            border: 1px solid #2d5477;
+        }
+
+        .primary-btn {
+            background: linear-gradient(145deg, #2c5f8a, #1e4466);
+            border: 1px solid rgba(100, 180, 255, 0.3);
+            border-radius: 40px;
+            padding: 14px 32px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0, 60, 120, 0.4);
+            transition: all 0.15s ease;
+            letter-spacing: 0.3px;
+        }
+        .primary-btn:hover {
+            background: linear-gradient(145deg, #3878aa, #245b88);
+            box-shadow: 0 12px 28px rgba(0, 100, 200, 0.5);
+            transform: scale(1.01);
+        }
+
+        .secondary-btn {
+            background: transparent;
+            border: 1px solid #3e6180;
+            color: #b8d1ea;
+            padding: 10px 22px;
+            border-radius: 40px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
             font-size: 0.9rem;
         }
+        .secondary-btn:hover {
+            background: rgba(70, 110, 150, 0.2);
+            border-color: #5b8bb0;
+            color: white;
+        }
 
-        /* ---------- RESPONSIVE ---------- */
+        .danger-btn {
+            background: rgba(220, 70, 70, 0.15);
+            border: 1px solid rgba(220, 70, 70, 0.5);
+            color: #f7baba;
+            padding: 10px 22px;
+            border-radius: 40px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-size: 0.9rem;
+        }
+        .danger-btn:hover {
+            background: rgba(220, 70, 70, 0.3);
+            border-color: #e06e6e;
+            color: #ffe0e0;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
+        /* PROFILE GRID */
+        .profile-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+            gap: 14px;
+            margin-top: 8px;
+        }
+
+        .profile-field {
+            background: rgba(10, 22, 34, 0.6);
+            border-radius: 1rem;
+            padding: 14px 16px;
+            border: 1px solid rgba(80, 130, 180, 0.15);
+        }
+        .profile-field .field-label {
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: #6e8aa8;
+            margin-bottom: 6px;
+        }
+        .profile-field .field-value {
+            font-size: 1.05rem;
+            font-weight: 500;
+            color: #e2ecf7;
+            word-break: break-word;
+        }
+
+        /* STATS GRID */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 14px;
+            margin-top: 8px;
+        }
+
+        .stat-card {
+            background: rgba(10, 22, 34, 0.6);
+            border-radius: 1rem;
+            padding: 14px 16px;
+            border: 1px solid rgba(80, 130, 180, 0.15);
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 8px;
+        }
+
+        .stat-name {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #8faec9;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #dbe9f7;
+        }
+
+        .stat-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .stat-bar-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+            background: linear-gradient(90deg, #3f7fbf, #6eb3ee);
+        }
+        .stat-bar-fill.high { background: linear-gradient(90deg, #2fa36b, #5dd996); }
+        .stat-bar-fill.low  { background: linear-gradient(90deg, #b85656, #e08686); }
+        .stat-bar-fill.mid  { background: linear-gradient(90deg, #b89146, #e0c876); }
+
+        /* TIMELINE */
+        .timeline-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .timeline-entry {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            background: rgba(10, 22, 34, 0.5);
+            border-radius: 1rem;
+            padding: 14px 18px;
+            border-left: 3px solid #3b7bb3;
+            transition: background 0.15s;
+            animation: fadeSlideIn 0.3s ease;
+        }
+        .timeline-entry:hover { background: rgba(25, 45, 65, 0.7); }
+
+        .timeline-age {
+            font-weight: 700;
+            color: #8bb9e8;
+            font-size: 1rem;
+            min-width: 50px;
+        }
+
+        .timeline-text { color: #ccdef0; font-size: 0.95rem; line-height: 1.4; }
+
+        @keyframes fadeSlideIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* MORE TAB */
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .setting-row:last-child { border-bottom: none; }
+
+        .setting-label { color: #dbe9f7; font-weight: 500; font-size: 0.95rem; }
+        .setting-desc  { color: #7f97b0; font-size: 0.8rem; margin-top: 2px; }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
         @media (max-width: 600px) {
-            .game-container {
-                height: 96vh;
-                border-radius: 1.5rem;
-            }
-
-            .app-header {
-                padding: 12px 16px;
-            }
-
-            .app-header h1 {
-                font-size: 1.3rem;
-            }
-
-            .new-life-btn {
-                padding: 6px 12px;
-                font-size: 0.75rem;
-            }
-
-            .nav-btn {
-                padding: 8px 12px;
-                font-size: 0.85rem;
-            }
-
-            .content-area {
-                padding: 16px;
-            }
-
-            .panel {
-                padding: 16px;
-            }
-
-            .age-display {
-                font-size: 1.4rem;
-            }
-
-            .profile-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
-            }
+            .game-container { height: 96vh; border-radius: 1.5rem; }
+            .app-header { padding: 12px 16px; }
+            .app-header h1 { font-size: 1.3rem; }
+            .nav-btn { padding: 8px 12px; font-size: 0.82rem; }
+            .content-area { padding: 16px; }
+            .form-row { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
     <div class="game-container" id="gameContainer">
-        <!-- ========== HEADER ========== -->
         <header class="app-header">
             <h1>LIFE <span>simulator</span></h1>
             <button class="new-life-btn" id="newLifeBtn">↻ New Life</button>
         </header>
 
-        <!-- ========== MAIN SCREEN (character exists) ========== -->
-        <div class="main-screen" id="mainScreen">
-            <!-- Navigation tabs -->
-            <div class="nav-tabs">
+        <!-- MAIN SCREEN -->
+        <div class="main-screen hidden" id="mainScreen">
+            <div class="nav-tabs" id="navTabs">
                 <button class="nav-btn active" data-tab="home">Home</button>
                 <button class="nav-btn" data-tab="profile">Profile</button>
+                <button class="nav-btn" data-tab="stats">Statistics</button>
                 <button class="nav-btn" data-tab="history">Life History</button>
+                <button class="nav-btn" data-tab="more">More</button>
             </div>
-
-            <!-- Dynamic content area -->
-            <div class="content-area" id="contentArea">
-                <!-- rendered by JS -->
-            </div>
+            <div class="content-area" id="contentArea"></div>
         </div>
 
-        <!-- ========== CREATE CHARACTER SCREEN ========== -->
+        <!-- CREATE CHARACTER SCREEN -->
         <div class="create-screen" id="createScreen">
             <div class="create-card">
                 <h2>Create your character</h2>
-                <form id="createForm">
+                <form id="createForm" novalidate>
                     <div class="form-row">
                         <div class="form-group">
                             <label>First name</label>
@@ -562,7 +540,7 @@
                     </div>
                     <div class="error-msg" id="formError"></div>
                     <div class="form-actions">
-                        <button type="submit" class="primary-btn" style="padding: 12px 28px;">Begin Life →</button>
+                        <button type="submit" class="primary-btn">Begin Life →</button>
                     </div>
                 </form>
             </div>
@@ -570,15 +548,69 @@
     </div>
 
     <script>
-        (function() {
-            // ============================================================
-            // 1. GAME STATE & CONFIGURATION
-            // ============================================================
-            const STORAGE_KEY = 'life_simulator_character_v1';
-            let character = null;          // holds current character data
-            let activeTab = 'home';        // current navigation tab
+    (function () {
+        'use strict';
 
-            // Life stages thresholds (inclusive lower bound)
+        // ============================================================
+        // MODULE: STATISTICS
+        // ============================================================
+        const STATS = (function () {
+            const PRIMARY = ['happiness', 'health', 'intelligence', 'appearance', 'athleticism', 'confidence'];
+            const SECONDARY = ['reputation', 'stress', 'discipline', 'creativity', 'socialSkills', 'leadership', 'financialKnowledge'];
+
+            const LABELS = {
+                happiness: 'Happiness', health: 'Health', intelligence: 'Intelligence',
+                appearance: 'Appearance', athleticism: 'Athleticism', confidence: 'Confidence',
+                reputation: 'Reputation', stress: 'Stress', discipline: 'Discipline',
+                creativity: 'Creativity', socialSkills: 'Social Skills', leadership: 'Leadership',
+                financialKnowledge: 'Financial Knowledge'
+            };
+
+            function rollStat(baseline, variance) {
+                const v = Math.round(baseline + (Math.random() * 2 - 1) * variance);
+                return Math.max(0, Math.min(100, v));
+            }
+
+            function generateStartingStats() {
+                return {
+                    happiness: rollStat(75, 15),
+                    health: rollStat(80, 15),
+                    intelligence: rollStat(50, 25),
+                    appearance: rollStat(50, 30),
+                    athleticism: rollStat(50, 25),
+                    confidence: rollStat(45, 20),
+                    reputation: rollStat(10, 10),
+                    stress: rollStat(10, 10),
+                    discipline: rollStat(30, 20),
+                    creativity: rollStat(50, 25),
+                    socialSkills: rollStat(35, 20),
+                    leadership: rollStat(25, 20),
+                    financialKnowledge: rollStat(10, 10)
+                };
+            }
+
+            function ensureComplete(stats) {
+                const baseline = generateStartingStats();
+                const out = {};
+                Object.keys(baseline).forEach(k => {
+                    out[k] = (stats && typeof stats[k] === 'number') ? stats[k] : baseline[k];
+                });
+                return out;
+            }
+
+            function forDisplay(stats) {
+                const primary = PRIMARY.map(k => ({ key: k, label: LABELS[k], value: stats[k] }));
+                const secondary = SECONDARY.map(k => ({ key: k, label: LABELS[k], value: stats[k] }));
+                return { primary, secondary };
+            }
+
+            return { PRIMARY, SECONDARY, LABELS, generateStartingStats, ensureComplete, forDisplay };
+        })();
+
+        // ============================================================
+        // MODULE: CHARACTER
+        // ============================================================
+        const CHARACTER = (function () {
             const LIFE_STAGES = [
                 { name: 'Baby', minAge: 0, maxAge: 2 },
                 { name: 'Toddler', minAge: 3, maxAge: 4 },
@@ -591,28 +623,17 @@
                 { name: 'Elderly', minAge: 90, maxAge: Infinity }
             ];
 
-            // DOM references
-            const mainScreen = document.getElementById('mainScreen');
-            const createScreen = document.getElementById('createScreen');
-            const contentArea = document.getElementById('contentArea');
-            const navBtns = document.querySelectorAll('.nav-btn');
-            const newLifeBtn = document.getElementById('newLifeBtn');
-            const createForm = document.getElementById('createForm');
-            const formError = document.getElementById('formError');
-
-            // ============================================================
-            // 2. UTILITY FUNCTIONS
-            // ============================================================
-
-            /** Get life stage name based on age */
             function getLifeStage(age) {
-                for (let stage of LIFE_STAGES) {
-                    if (age >= stage.minAge && age <= stage.maxAge) return stage.name;
+                for (const s of LIFE_STAGES) {
+                    if (age >= s.minAge && age <= s.maxAge) return s.name;
                 }
-                return 'Elderly'; // fallback
+                return 'Elderly';
             }
 
-            /** Generate a friendly birthday string from stored date */
+            function fullName(c) {
+                return `${c.firstName} ${c.lastName}`.trim() || 'Unnamed';
+            }
+
             function formatBirthday(dateStr) {
                 if (!dateStr) return '—';
                 const d = new Date(dateStr + 'T00:00:00');
@@ -620,323 +641,301 @@
                 return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
             }
 
-            /** Return the full name */
-            function fullName(char) {
-                return `${char.firstName} ${char.lastName}`.trim() || 'Unnamed';
-            }
-
-            /** Generate timeline entry text based on age and name */
-            function getTimelineText(age, firstName) {
+            function timelineTextForAge(age) {
                 if (age === 0) return 'Your life begins!';
-                if (age === 1) return `You celebrated your first birthday!`;
-                if (age === 2) return `You turned 2 years old!`;
+                if (age === 1) return 'You celebrated your first birthday!';
                 return `You turned ${age} years old!`;
             }
 
-            /** Build a timeline entry object for a given age */
-            function createTimelineEntry(age, firstName) {
+            function makeTimelineEntry(age) {
+                return { age, text: timelineTextForAge(age), timestamp: Date.now() };
+            }
+
+            function create({ firstName, lastName, gender, country, city, dob }) {
                 return {
-                    age: age,
-                    text: getTimelineText(age, firstName)
-                };
-            }
-
-            // ============================================================
-            // 3. STORAGE (localStorage)
-            // ============================================================
-
-            function saveCharacter() {
-                if (character) {
-                    localStorage.setItem(STORAGE_KEY, JSON.stringify(character));
-                }
-            }
-
-            function loadCharacter() {
-                const stored = localStorage.getItem(STORAGE_KEY);
-                if (!stored) return null;
-                try {
-                    const parsed = JSON.parse(stored);
-                    // basic validation
-                    if (parsed && parsed.firstName && parsed.lastName && typeof parsed.age === 'number') {
-                        return parsed;
-                    }
-                } catch (e) { /* ignore corrupt data */ }
-                return null;
-            }
-
-            function clearCharacter() {
-                localStorage.removeItem(STORAGE_KEY);
-                character = null;
-            }
-
-            // ============================================================
-            // 4. CHARACTER CREATION
-            // ============================================================
-
-            function createNewCharacter(data) {
-                const newChar = {
-                    firstName: data.firstName.trim(),
-                    lastName: data.lastName.trim(),
-                    gender: data.gender,
-                    country: data.country.trim(),
-                    city: data.city.trim(),
-                    dob: data.dob,                    // ISO string YYYY-MM-DD
+                    firstName: firstName.trim(),
+                    lastName: lastName.trim(),
+                    gender,
+                    country: country.trim(),
+                    city: city.trim(),
+                    dob,
                     age: 0,
                     lifeStage: getLifeStage(0),
-                    timeline: [ createTimelineEntry(0, data.firstName.trim()) ]
+                    stats: STATS.generateStartingStats(),
+                    timeline: [ makeTimelineEntry(0) ],
+                    createdAt: Date.now(),
+                    schemaVersion: 1
                 };
-                return newChar;
             }
 
-            // ============================================================
-            // 5. RENDER FUNCTIONS (UI)
-            // ============================================================
-
-            /** Show main game screen (when character exists) */
-            function showMainScreen() {
-                mainScreen.classList.remove('hidden');
-                createScreen.classList.add('hidden');
+            function normalize(c) {
+                if (!c) return c;
+                if (!c.lifeStage) c.lifeStage = getLifeStage(c.age || 0);
+                if (!Array.isArray(c.timeline)) c.timeline = [];
+                if (c.timeline.length === 0) c.timeline.push(makeTimelineEntry(c.age || 0));
+                c.stats = STATS.ensureComplete(c.stats);
+                if (!c.schemaVersion) c.schemaVersion = 1;
+                return c;
             }
 
-            /** Show create character screen */
-            function showCreateScreen() {
-                mainScreen.classList.add('hidden');
-                createScreen.classList.remove('hidden');
-                // reset form
-                createForm.reset();
-                formError.textContent = '';
-                // set default date? none
-            }
+            return { LIFE_STAGES, getLifeStage, fullName, formatBirthday, makeTimelineEntry, create, normalize };
+        })();
 
-            /** Update navigation active state */
-            function setActiveTab(tab) {
-                activeTab = tab;
-                navBtns.forEach(btn => {
-                    btn.classList.toggle('active', btn.dataset.tab === tab);
-                });
-                renderContent();
-            }
-
-            /** Render content based on active tab */
-            function renderContent() {
-                if (!character) return;
-
-                let html = '';
-
-                if (activeTab === 'home') {
-                    html = renderHomeTab();
-                } else if (activeTab === 'profile') {
-                    html = renderProfileTab();
-                } else if (activeTab === 'history') {
-                    html = renderHistoryTab();
-                }
-
-                contentArea.innerHTML = html;
-                // Attach event listener to the Age Up button if present
-                const ageUpBtn = document.getElementById('ageUpBtn');
-                if (ageUpBtn) {
-                    ageUpBtn.addEventListener('click', handleAgeUp);
-                }
-            }
-
-            /** Home tab: character overview + Age Up button */
-            function renderHomeTab() {
-                const stage = character.lifeStage;
-                return `
-                    <div class="panel">
-                        <div class="panel-header">
-                            <h2>${fullName(character)}</h2>
-                            <span class="life-stage-badge">${stage}</span>
-                        </div>
-                        <div style="display:flex; align-items:baseline; gap:14px; flex-wrap:wrap;">
-                            <span class="age-display">${character.age} years</span>
-                            <span class="text-muted">· ${character.gender} · ${character.city}, ${character.country}</span>
-                        </div>
-                        <div class="char-summary">
-                            <div class="char-summary-item"><span class="label-icon">🎂</span> <strong>Born:</strong> ${formatBirthday(character.dob)}</div>
-                        </div>
-                        <div class="btn-row" style="margin-top: 24px;">
-                            <button class="primary-btn" id="ageUpBtn">⏳ Age Up +1 year</button>
-                        </div>
-                    </div>
-                `;
-            }
-
-            /** Profile tab: detailed character info */
-            function renderProfileTab() {
-                return `
-                    <div class="panel">
-                        <div class="panel-header">
-                            <h2>Character Profile</h2>
-                        </div>
-                        <div class="profile-grid">
-                            <div class="profile-field">
-                                <div class="field-label">Full name</div>
-                                <div class="field-value">${fullName(character)}</div>
-                            </div>
-                            <div class="profile-field">
-                                <div class="field-label">Age</div>
-                                <div class="field-value">${character.age}</div>
-                            </div>
-                            <div class="profile-field">
-                                <div class="field-label">Gender</div>
-                                <div class="field-value">${character.gender}</div>
-                            </div>
-                            <div class="profile-field">
-                                <div class="field-label">Birthday</div>
-                                <div class="field-value">${formatBirthday(character.dob)}</div>
-                            </div>
-                            <div class="profile-field">
-                                <div class="field-label">Country</div>
-                                <div class="field-value">${character.country}</div>
-                            </div>
-                            <div class="profile-field">
-                                <div class="field-label">City</div>
-                                <div class="field-value">${character.city}</div>
-                            </div>
-                            <div class="profile-field">
-                                <div class="field-label">Life stage</div>
-                                <div class="field-value">${character.lifeStage}</div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-
-            /** Life History tab: timeline entries (newest first) */
-            function renderHistoryTab() {
-                // timeline is stored oldest first; we reverse for display
-                const entries = [...character.timeline].reverse();
-                const listHtml = entries.map(entry => `
-                    <div class="timeline-entry">
-                        <div class="timeline-age">Age ${entry.age}</div>
-                        <div class="timeline-text">${entry.text}</div>
-                    </div>
-                `).join('');
-
-                return `
-                    <div class="panel">
-                        <div class="panel-header">
-                            <h2>Life Timeline</h2>
-                            <span class="text-muted">newest first</span>
-                        </div>
-                        <div class="timeline-list">
-                            ${listHtml || '<div class="text-muted">No entries yet.</div>'}
-                        </div>
-                    </div>
-                `;
-            }
-
-            // ============================================================
-            // 6. AGING SYSTEM
-            // ============================================================
-
-            function handleAgeUp() {
-                if (!character) return;
-
-                // Increment age
+        // ============================================================
+        // MODULE: AGING
+        // ============================================================
+        const AGING = (function () {
+            function ageUp(character) {
                 const newAge = character.age + 1;
                 character.age = newAge;
-                character.lifeStage = getLifeStage(newAge);
-
-                // Add timeline entry
-                const newEntry = createTimelineEntry(newAge, character.firstName);
-                character.timeline.push(newEntry);
-
-                // Save & re-render
-                saveCharacter();
-                renderContent();
-
-                // Optional: subtle notification (no UI clutter, just re-render)
+                character.lifeStage = CHARACTER.getLifeStage(newAge);
+                character.timeline.push(CHARACTER.makeTimelineEntry(newAge));
+                // STAGE 4 HOOK — apply annual stat drift here in future.
+                return character;
             }
-
-            // ============================================================
-            // 7. NAVIGATION & EVENT LISTENERS
-            // ============================================================
-
-            // Tab buttons
-            navBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    setActiveTab(btn.dataset.tab);
-                });
-            });
-
-            // New Life button (with confirmation)
-            newLifeBtn.addEventListener('click', () => {
-                if (character) {
-                    const confirm = window.confirm(
-                        '⚠️ Start a new life?\n\nYour current character and all progress will be permanently deleted.'
-                    );
-                    if (!confirm) return;
-                }
-                // Clear existing character
-                clearCharacter();
-                showCreateScreen();
-            });
-
-            // Create form submission
-            createForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                formError.textContent = '';
-
-                const firstName = document.getElementById('firstName').value.trim();
-                const lastName = document.getElementById('lastName').value.trim();
-                const gender = document.getElementById('gender').value;
-                const country = document.getElementById('country').value.trim();
-                const city = document.getElementById('city').value.trim();
-                const dob = document.getElementById('dob').value;
-
-                // Validation
-                if (!firstName || !lastName || !gender || !country || !city || !dob) {
-                    formError.textContent = 'Please fill in all fields.';
-                    return;
-                }
-
-                // Build new character
-                const newChar = createNewCharacter({
-                    firstName, lastName, gender, country, city, dob
-                });
-
-                // Save and set as current
-                character = newChar;
-                saveCharacter();
-
-                // Switch to main screen and default tab 'home'
-                showMainScreen();
-                setActiveTab('home');
-            });
-
-            // ============================================================
-            // 8. INITIALIZATION
-            // ============================================================
-
-            function init() {
-                // Try to load saved character
-                const saved = loadCharacter();
-                if (saved) {
-                    character = saved;
-                    // Ensure lifeStage and timeline are consistent (safety)
-                    if (!character.lifeStage) character.lifeStage = getLifeStage(character.age);
-                    if (!character.timeline) character.timeline = [];
-                    // Always ensure age0 exists
-                    if (character.timeline.length === 0) {
-                        character.timeline.push(createTimelineEntry(0, character.firstName));
-                    }
-                    // Ensure lifeStage is up-to-date
-                    character.lifeStage = getLifeStage(character.age);
-
-                    showMainScreen();
-                    setActiveTab('home');
-                } else {
-                    // No character: show creation screen
-                    showCreateScreen();
-                }
-            }
-
-            // Start the game
-            init();
-
+            return { ageUp };
         })();
-    </script>
-</body>
-</html>
+
+        // ============================================================
+        // MODULE: SAVE
+        // ============================================================
+        const SAVE = (function () {
+            const KEY = 'life_simulator_character_v1';
+
+            function save(character) {
+                if (!character) return;
+                try {
+                    localStorage.setItem(KEY, JSON.stringify(character));
+                } catch (e) {
+                    console.error('Save failed:', e);
+                }
+            }
+
+            function load() {
+                const raw = localStorage.getItem(KEY);
+                if (!raw) return null;
+                try { return JSON.parse(raw); }
+                catch (e) { return null; }
+            }
+
+            function clear() { localStorage.removeItem(KEY); }
+
+            function exportToFile(character) {
+                const blob = new Blob([JSON.stringify(character, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `life-save-${character.firstName}-${character.lastName}-age${character.age}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+
+            function importFromFile(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = e => {
+                        try { resolve(JSON.parse(e.target.result)); }
+                        catch (err) { reject(err); }
+                    };
+                    reader.onerror = reject;
+                    reader.readAsText(file);
+                });
+            }
+
+            return { save, load, clear, exportToFile, importFromFile };
+        })();
+
+        // ============================================================
+        // MODULE: MAIN (UI + wiring)
+        // ============================================================
+        let character = null;
+        let activeTab = 'home';
+
+        const mainScreen   = document.getElementById('mainScreen');
+        const createScreen = document.getElementById('createScreen');
+        const contentArea  = document.getElementById('contentArea');
+        const navBtns      = document.querySelectorAll('.nav-btn');
+        const newLifeBtn   = document.getElementById('newLifeBtn');
+        const createForm   = document.getElementById('createForm');
+        const formError    = document.getElementById('formError');
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        function showCreate() {
+            mainScreen.classList.add('hidden');
+            createScreen.classList.remove('hidden');
+            createForm.reset();
+            formError.textContent = '';
+        }
+
+        function showMain() {
+            mainScreen.classList.remove('hidden');
+            createScreen.classList.add('hidden');
+        }
+
+        function setActiveTab(tab) {
+            activeTab = tab;
+            navBtns.forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+            renderContent();
+        }
+
+        function renderContent() {
+            if (!character) return;
+            let html = '';
+            switch (activeTab) {
+                case 'home':    html = renderHome();    break;
+                case 'profile': html = renderProfile(); break;
+                case 'stats':   html = renderStats();   break;
+                case 'history': html = renderHistory(); break;
+                case 'more':    html = renderMore();    break;
+            }
+            contentArea.innerHTML = html;
+            wireContentEvents();
+        }
+
+        // ---- HOME ----
+        function renderHome() {
+            const name  = CHARACTER.fullName(character);
+            const stage = character.lifeStage;
+            return `
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>${escapeHtml(name)}</h2>
+                        <span class="life-stage-badge">${stage}</span>
+                    </div>
+                    <div style="display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; margin-bottom:6px;">
+                        <span class="age-display">${character.age} years</span>
+                        <span class="text-muted">· ${escapeHtml(character.gender)} · ${escapeHtml(character.city)}, ${escapeHtml(character.country)}</span>
+                    </div>
+                    <div class="text-muted">🎂 Born ${CHARACTER.formatBirthday(character.dob)}</div>
+                    <div class="btn-row" style="margin-top: 24px;">
+                        <button class="primary-btn" id="ageUpBtn">⏳ Age Up +1 year</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ---- PROFILE ----
+        function renderProfile() {
+            const f = (label, value) => `
+                <div class="profile-field">
+                    <div class="field-label">${label}</div>
+                    <div class="field-value">${escapeHtml(String(value))}</div>
+                </div>`;
+            return `
+                <div class="panel">
+                    <div class="panel-header"><h2>Character Profile</h2></div>
+                    <div class="profile-grid">
+                        ${f('Full name', CHARACTER.fullName(character))}
+                        ${f('Age', character.age)}
+                        ${f('Gender', character.gender)}
+                        ${f('Birthday', CHARACTER.formatBirthday(character.dob))}
+                        ${f('Country', character.country)}
+                        ${f('City', character.city)}
+                        ${f('Life stage', character.lifeStage)}
+                    </div>
+                </div>
+            `;
+        }
+
+        // ---- STATS ----
+        function renderStats() {
+            const { primary, secondary } = STATS.forDisplay(character.stats);
+            const card = s => {
+                const cls = s.value >= 70 ? 'high' : s.value <= 30 ? 'low' : 'mid';
+                return `
+                    <div class="stat-card">
+                        <div class="stat-row">
+                            <span class="stat-name">${s.label}</span>
+                            <span class="stat-value">${s.value}</span>
+                        </div>
+                        <div class="stat-bar">
+                            <div class="stat-bar-fill ${cls}" style="width:${s.value}%"></div>
+                        </div>
+                    </div>`;
+            };
+            return `
+                <div class="panel">
+                    <div class="panel-header"><h2>Primary Statistics</h2></div>
+                    <div class="stats-grid">${primary.map(card).join('')}</div>
+                </div>
+                <div class="panel">
+                    <div class="panel-header"><h2>Secondary Statistics</h2></div>
+                    <div class="stats-grid">${secondary.map(card).join('')}</div>
+                </div>
+                <div class="text-muted" style="padding: 0 4px;">
+                    ℹ️ Statistics will evolve in future updates as activities, education, and careers are added.
+                </div>
+            `;
+        }
+
+        // ---- LIFE HISTORY ----
+        function renderHistory() {
+            const entries = [...character.timeline].reverse();
+            const listHtml = entries.map(e => `
+                <div class="timeline-entry">
+                    <div class="timeline-age">Age ${e.age}</div>
+                    <div class="timeline-text">${escapeHtml(e.text)}</div>
+                </div>
+            `).join('');
+            return `
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>Life Timeline</h2>
+                        <span class="text-muted">newest first</span>
+                    </div>
+                    <div class="timeline-list">${listHtml || '<div class="text-muted">No entries yet.</div>'}</div>
+                </div>
+            `;
+        }
+
+        // ---- MORE ----
+        function renderMore() {
+            return `
+                <div class="panel">
+                    <div class="panel-header"><h2>Save Management</h2></div>
+                    <div class="setting-row">
+                        <div>
+                            <div class="setting-label">Export save file</div>
+                            <div class="setting-desc">Download your character as a JSON file.</div>
+                        </div>
+                        <button class="secondary-btn" id="exportBtn">Export</button>
+                    </div>
+                    <div class="setting-row">
+                        <div>
+                            <div class="setting-label">Import save file</div>
+                            <div class="setting-desc">Load a character from a JSON file. Overwrites current save.</div>
+                        </div>
+                        <div>
+                            <input type="file" id="importInput" accept=".json,application/json" style="display:none;">
+                            <button class="secondary-btn" id="importBtn">Import</button>
+                        </div>
+                    </div>
+                    <div class="setting-row">
+                        <div>
+                            <div class="setting-label">Delete current save</div>
+                            <div class="setting-desc">Permanently remove this character from your browser.</div>
+                        </div>
+                        <button class="danger-btn" id="deleteBtn">Delete</button>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header"><h2>About</h2></div>
+                    <div class="text-muted">
+                        <p style="margin-bottom:8px;">Life Simulator · Stage 1 foundation</p>
+                        <p>This build includes character creation, aging, statistics display, life timeline, and local saving. Future updates will add family, education, careers, and relationships.</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ---- CONTENT EVENTS ----
+        function wireContentEvents() {
+            const
